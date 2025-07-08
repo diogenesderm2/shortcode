@@ -71,7 +71,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
           ARGS: "-rlgoDzvc --delete"
           SOURCE: "/var/www/shortcode"
-          remoteHost: ${{secrets.SSH_HOST}}
-          remoteUser: ${{secrets.SSH_USER}}
-          remotePort: ${{vars.REMOTE_PORT}}
-          target: ${{vars.TARGET}}
+          REMOTE_HOST: ${{secrets.SSH_HOST}}
+          REMOTE_USER: ${{secrets.SSH_USER}}
+          REMOTE_PORT: ${{vars.REMOTE_PORT}}
+          TARGET: ${{vars.TARGET}}
