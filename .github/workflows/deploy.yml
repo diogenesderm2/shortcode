@@ -26,13 +26,13 @@ jobs:
       - name: Shortcode Deployment
         uses: easingthemes/ssh-deploy@main
         with:
-          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          sshPrivateKey: ${{secrets.SSH_PRIVATE_KEY}}
           ARGS: "-rlgoDzvc --delete"
-          SOURCE: "/var/www/shortcodeDev"
+          SOURCE: "."
           REMOTE_HOST: ${{secrets.SSH_HOST}}
           REMOTE_USER: ${{secrets.SSH_USER}}
           REMOTE_PORT: ${{vars.REMOTE_PORT}}
-          TARGET: ${{vars.TARGET}}
+          TARGET: "/var/www/shortcodeDev"
 
   #deploy em stage
   deploy-stage:
@@ -47,13 +47,13 @@ jobs:
       - name: Shortcode Deployment
         uses: easingthemes/ssh-deploy@main
         with:
-          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          sshPrivateKey: ${{secrets.SSH_PRIVATE_KEY}}
           ARGS: "-rlgoDzvc --delete"
-          SOURCE: "/var/www/shortcodeStage"
+          SOURCE: "."
           REMOTE_HOST: ${{secrets.SSH_HOST}}
           REMOTE_USER: ${{secrets.SSH_USER}}
           REMOTE_PORT: ${{vars.REMOTE_PORT}}
-          TARGET: ${{vars.TARGET}}
+          TARGET: "/var/www/shortcodeStage"
 
   #deploy em production
   deploy-production:
@@ -68,10 +68,10 @@ jobs:
       - name: Shortcode Deployment
         uses: easingthemes/ssh-deploy@main
         with:
-          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          sshPrivateKey: ${{secrets.SSH_PRIVATE_KEY}}
           ARGS: "-rlgoDzvc --delete"
-          SOURCE: "/var/www/shortcode"
+          SOURCE: "."
           REMOTE_HOST: ${{secrets.SSH_HOST}}
           REMOTE_USER: ${{secrets.SSH_USER}}
           REMOTE_PORT: ${{vars.REMOTE_PORT}}
-          TARGET: ${{vars.TARGET}}
+          TARGET: "/var/www/shortcode"
