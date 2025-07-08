@@ -2,9 +2,9 @@ name: Deploy Shortcode
 
 on:
   push:
-    branches: [master, stage, develop]
+    branches: [main, stage, develop]
   pull_request:
-    branches: [master]
+    branches: [main]
 
 jobs:
   deploy:
