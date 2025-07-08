@@ -70,4 +70,4 @@ jobs:
           sudo chown -R www-data:www-data storage bootstrap/cache
           sudo chmod -R 775 storage bootstrap/cache
 
-          echo "Deploy completed successfully for ${{ env.ENVIRONMENT }}!"
+          echo "Deploy completed successfully for ${{ env.ENVIRONMENT }}!"  
