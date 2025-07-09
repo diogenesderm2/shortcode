@@ -23,6 +23,16 @@ jobs:
     steps:
       - name: Repo Checkout
         uses: actions/checkout@v4
+
+      - name: Instalar dependências PHP
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Instalar dependências Node.js
+        run: npm install
+
+      - name: Gerar assets frontend
+        run: npm run build
+
       - name: Shortcode Deployment
         uses: easingthemes/ssh-deploy@main
         with:
