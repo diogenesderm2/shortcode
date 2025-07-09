@@ -18,3 +18,4 @@ class Category extends Model
         return $this->hasMany(\App\Models\Admin\Posts\Post::class);
     }
 }
+
