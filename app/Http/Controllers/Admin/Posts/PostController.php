@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Admin\Categories\Category;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -41,7 +42,25 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        $validated = $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'required',
+            'category_id' => 'required|exists:categories,id'
+        ]);
 
+        $post = Post::create([
+            'title' => $validated['title'],
+            'slug' => Str::slug($validated['title']),
+            'content' => $validated['content'],
+            'category_id' => $validated['category_id'],
+            'user_id' => $request->user()->id,
+        ]);
+
+        // Log para debug
+        Log::info('Post criado com sucesso', ['post_id' => $post->id, 'title' => $validated['title']]);
+
+        return redirect()->route('admin.posts.index')
+            ->with('message', 'Post criado com sucesso!');
     }
 
     /**
