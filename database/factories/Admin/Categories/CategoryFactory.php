@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Admin\Categories;
 
 use App\Models\Admin\Categories\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
