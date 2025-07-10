@@ -52,11 +52,6 @@ jobs:
       - name: Gerar chave da aplicação
         run: php artisan key:generate
 
-      - name: Configurar banco de dados SQLite para testes
-        run: |
-          touch database/database.sqlite
-          php artisan migrate --env=testing --force
-
       - name: Rodar testes
         run: php artisan test
 
