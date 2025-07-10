@@ -17,7 +17,7 @@ class CategoriesController extends Controller
         $categories = Category::with('posts')->paginate(100);
 
        return  Inertia::render("Admin/Categories/Index", [
-            'categorias' => $categories
+            'categories' => $categories
         ]);
     }
 
