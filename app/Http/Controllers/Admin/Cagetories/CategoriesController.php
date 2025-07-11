@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin\Categories\Category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class CategoriesController extends Controller
 {
@@ -34,7 +35,21 @@ class CategoriesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255|unique:categories',
+            'description' => 'nullable|string|max:1000',
+            'slug' => 'nullable|string|max:255|unique:categories',
+            'is_active' => 'boolean'
+        ]);
+
+        $category = Category::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'slug' => $request->slug ?: Str::slug($request->name),
+            'is_active' => $request->boolean('is_active', true)
+        ]);
+
+        return redirect()->back()->with('message', 'Categoria criada com sucesso!');
     }
 
     /**
@@ -58,7 +73,23 @@ class CategoriesController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $category = Category::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name,' . $id,
+            'description' => 'nullable|string|max:1000',
+            'slug' => 'nullable|string|max:255|unique:categories,slug,' . $id,
+            'is_active' => 'boolean'
+        ]);
+
+        $category->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'slug' => $request->slug ?: Str::slug($request->name),
+            'is_active' => $request->boolean('is_active', true)
+        ]);
+
+        return redirect()->back()->with('message', 'Categoria atualizada com sucesso!');
     }
 
     /**
