@@ -5,59 +5,63 @@
                 Categorias
             </h2>
         </template>
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="">
+            <div class="">
                 <!-- Flash Message -->
-                <transition
-                    enter-active-class="ease-out duration-300"
+                <transition enter-active-class="ease-out duration-300"
                     enter-from-class="opacity-0 transform translate-y-2"
-                    enter-to-class="opacity-100 transform translate-y-0"
-                    leave-active-class="ease-in duration-200"
+                    enter-to-class="opacity-100 transform translate-y-0" leave-active-class="ease-in duration-200"
                     leave-from-class="opacity-100 transform translate-y-0"
-                    leave-to-class="opacity-0 transform translate-y-2"
-                >
+                    leave-to-class="opacity-0 transform translate-y-2">
                     <div v-if="$page.props.flash?.message"
-                        class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg shadow-sm">
+                        class="mb-2 p-2 bg-green-100 border border-green-400 text-green-700 rounded-lg shadow-sm">
                         <div class="flex items-center">
                             <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"></path>
                             </svg>
                             {{ $page.props.flash.message }}
                         </div>
                     </div>
                 </transition>
 
-                <!-- Header com botão -->
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <h3 class="text-lg font-medium text-gray-900">Gerenciar Categorias</h3>
-                        <p class="text-sm text-gray-600">Crie e gerencie as categorias do seu site</p>
-                    </div>
-                    <button
-                        @click="openModal()"
-                        class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105 shadow-sm hover:shadow-md flex items-center space-x-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                        </svg>
-                        <span>Nova Categoria</span>
-                    </button>
-                </div>
+
 
                 <!-- Tabela -->
                 <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg border border-gray-200">
-                    <div class="p-6">
+                    <div class="">
+                        <!-- Header com botão -->
+                        <div class="flex justify-between items-center mb-6 mt-6 mr-6
+                        ">
+                            <div>
+
+                            </div>
+                            <button @click="openModal()"
+                                class="p-y-6 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105 shadow-sm hover:shadow-md flex items-center space-x-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                <span>Nova Categoria</span>
+                            </button>
+                        </div>
                         <div v-if="categories.data.length === 0" class="text-center py-12">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                                </path>
                             </svg>
                             <h3 class="mt-2 text-sm font-medium text-gray-900">Nenhuma categoria</h3>
                             <p class="mt-1 text-sm text-gray-500">Comece criando sua primeira categoria.</p>
                             <div class="mt-6">
-                                <button
-                                    @click="openModal()"
+                                <button @click="openModal()"
                                     class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                    <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                     </svg>
                                     Nova Categoria
                                 </button>
@@ -103,8 +107,9 @@
                                             </div>
                                         </td>
                                         <td class="p-3">
-                                            <span :class="category.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
-                                                  class="px-2 py-1 text-xs font-medium rounded-full">
+                                            <span
+                                                :class="category.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                                                class="px-2 py-1 text-xs font-medium rounded-full">
                                                 {{ category.is_active ? 'Ativa' : 'Inativa' }}
                                             </span>
                                         </td>
@@ -115,11 +120,10 @@
                                         </td>
                                         <td class="p-3">
                                             <div class="flex items-center gap-2">
-                                                <button
-                                                    @click="editCategory(category)"
+                                                <button @click="editCategory(category)"
                                                     class="text-blue-600 hover:text-blue-800 p-2 rounded-lg transition-all duration-200 hover:bg-blue-50"
                                                     title="Editar">
-                                                   <PencilSquareIcon class="w-5 h-5"/>
+                                                    <PencilSquareIcon class="w-5 h-5" />
                                                 </button>
                                                 <button
                                                     class="text-red-600 hover:text-red-800 p-2 rounded-lg transition-all duration-200 hover:bg-red-50"
@@ -138,12 +142,7 @@
         </div>
 
         <!-- Modal de Categoria -->
-        <CategoryModal
-            :show="showModal"
-            :category="selectedCategory"
-            @close="closeModal"
-            @saved="onCategorySaved"
-        />
+        <CategoryModal :show="showModal" :category="selectedCategory" @close="closeModal" @saved="onCategorySaved" />
     </AppLayout>
 </template>
 
