@@ -24,7 +24,14 @@ Route::middleware([
     })->name('dashboard');
 });
 
+use Santander\Token\Token;
+Route::get('santander', function () {
+    $crt = storage_path('app/cert/certificate.crt');
+    $key = storage_path('app/cert/private.key');
 
+    $token = new Token();
+    return $token->getToken();
+});
 
 Route::get('auth/google', [GoogleController::class, 'redirectToProvider'])->name('auth.google');
 Route::get('auth/google/callback', [GoogleController::class, 'handleProviderCallback']);
