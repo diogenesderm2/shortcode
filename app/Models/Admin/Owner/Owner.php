@@ -10,6 +10,7 @@ class Owner extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'registration',
         'user_id',
         'user_registered',
         'user_financial',

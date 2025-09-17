@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin\Owner\Owner;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Http\Requests\Admin\Owner\OwnerRequest;
+use App\Models\User;
 
 class OwnerController extends Controller
 {
@@ -15,9 +17,9 @@ class OwnerController extends Controller
     public function index()
     {
 
-       $owners = Owner::query()->paginate(100);
+        $owners = Owner::query()->paginate(100);
 
-       return  Inertia::render("Admin/Owner/Index", [
+        return  Inertia::render("Admin/Owner/Index", [
             'owners' => $owners
         ]);
     }
@@ -33,9 +35,12 @@ class OwnerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(OwnerRequest $request)
     {
-        //
+
+        Owner::create($request->validated());
+
+        return redirect()->route('admin.owner.index')->with('message', 'Proprietário criado com sucesso');
     }
 
     /**
