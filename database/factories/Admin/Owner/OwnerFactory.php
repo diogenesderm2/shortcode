@@ -20,9 +20,8 @@ class OwnerFactory extends Factory
     {
 
         return [
+            'registration' => $this->faker->unique()->numberBetween(1000000000, 9999999999),
             'user_id' => User::factory(), // ou definido manualmente no seeder
-            'user_registered' => User::inRandomOrder()->first()->id,
-            'user_financial' => User::inRandomOrder()->first()->id,
             'name' => $this->faker->name(),
             'rg' => $this->faker->numerify('#########'),
             'cpf' => $this->faker->numerify('###########'),
