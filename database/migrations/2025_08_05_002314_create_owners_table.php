@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('rg', 10)->nullable();
             $table->string('cpf', 11)->nullable();
             $table->string('cnpj', 14)->nullable();
-            $table->string('property', 100)->nullable();
+            $table->string('property_name', 100)->nullable();
             $table->string('image', 64)->nullable();
             $table->boolean('is_active')->default(true);
             $table->softDeletes();
