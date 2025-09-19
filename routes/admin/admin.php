@@ -10,6 +10,5 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('owner', OwnerController::class);
         Route::resource('categories', CategoriesController::class);
-        Route::resource('posts', PostController::class);
     });
 });

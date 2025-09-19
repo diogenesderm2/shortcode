@@ -21,12 +21,12 @@ class OwnerFactory extends Factory
 
         return [
             'registration' => $this->faker->unique()->numberBetween(1000000000, 9999999999),
-            'user_id' => User::factory(), // ou definido manualmente no seeder
+            'user_id' => User::factory(),
             'name' => $this->faker->name(),
             'rg' => $this->faker->numerify('#########'),
             'cpf' => $this->faker->numerify('###########'),
             'cnpj' => $this->faker->numerify('##############'),
-            'property' => $this->faker->sentence(),
+            'property_name' => $this->faker->sentence(),
             'image' => 'https://placehold.co/80x80',
         ];
     }

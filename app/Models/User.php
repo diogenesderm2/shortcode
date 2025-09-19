@@ -67,14 +67,6 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * Get the posts for the user.
-     */
-    public function posts()
-    {
-        return $this->hasMany(Post::class);
-    }
-
     public function owners()
     {
         return $this->hasMany(Owner::class);
