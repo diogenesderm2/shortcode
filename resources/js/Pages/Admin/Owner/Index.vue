@@ -85,7 +85,7 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">
-                                            {{ owner.name }}
+                                         <Link :href="route('admin.owner.show', owner.id)" class="text-blue-500">{{ owner.name }}</Link>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -105,31 +105,34 @@
                                     </td>
                                     <td class="px-6 py-4 ">
                                         <div class="text-sm font-medium text-gray-900">
-                                            {{ owner.property }}
+                                            {{ owner.property_name }}
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex space-x-2">
-                                            <button class="bg-blue-500 text-white px-2 py-1 rounded-md">Editar</button>
+                                            <button @click="openNewOwnerModal" class="bg-blue-500 text-white px-2 py-1 rounded-md">Editar</button>
                                             <button class="bg-red-500 text-white px-2 py-1 rounded-md">Excluir</button>
                                         </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
+                           <Pagination :meta="owners.meta"></Pagination>
                     </div>
                 </div>
             </div>
         </div>
-        {{ showModal }}
+
         <NewOwnerModal :show="showModal" :owner="selectedOwner" @close="closeModal"  />
     </AppLayout>
 </template>
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import Pagination from '@/Components/Pagination.vue'
 import { ref } from 'vue';
 import NewOwnerModal from '@/Components/NewOwnerModal.vue'
+import { Link } from '@inertiajs/vue3'
 const props = defineProps({
     owners: Object,
     require: true

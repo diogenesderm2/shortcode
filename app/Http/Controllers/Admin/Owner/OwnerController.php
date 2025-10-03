@@ -7,6 +7,7 @@ use App\Models\Admin\Owner\Owner;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Requests\Admin\Owner\OwnerRequest;
+use App\Http\Resources\Admin\Owner\OwnerResource;
 use App\Models\User;
 
 class OwnerController extends Controller
@@ -16,11 +17,9 @@ class OwnerController extends Controller
      */
     public function index()
     {
-
-        $owners = Owner::query()->paginate(100);
-
+        $owners = Owner::query()->orderByDesc('id')->paginate(100);
         return  Inertia::render("Admin/Owner/Index", [
-            'owners' => $owners
+            'owners' => OwnerResource::collection($owners),
         ]);
     }
 
@@ -48,7 +47,10 @@ class OwnerController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $owner = Owner::query()->findOrFail($id);
+        return  Inertia::render("Admin/Owner/Show", [
+            'owner' => new OwnerResource($owner),
+        ]);
     }
 
     /**
