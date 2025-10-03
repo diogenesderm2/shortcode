@@ -28,7 +28,7 @@ class OwnerRequest extends FormRequest
             'rg' => 'required|string|max:11',
             'cpf' => 'required|string|max:11',
             'cnpj' => 'required|string|max:14',
-            'property' => 'required|string|max:255',
+            'property_name' => 'required|string|max:255',
             'image' => 'required|string|max:255',
             'is_active' => 'required|boolean',
         ];

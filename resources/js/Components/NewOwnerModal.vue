@@ -57,11 +57,11 @@
                     <InputError :message="formOwner.errors.cnpj" class="mt-2" />
                 </div>
                  <div class="space-y-2">
-                    <InputLabel for="property" value="Propriedade do Proprietário" class="text-sm font-medium text-gray-700" />
-                    <TextInput id="property" v-model="formOwner.property" type="text"
+                    <InputLabel for="property_name" value="Propriedade do Proprietário" class="text-sm font-medium text-gray-700" />
+                    <TextInput id="property_name" v-model="formOwner.property_name" type="text"
                         class="mt-1 block w-full transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         required autofocus placeholder="Digite o nome da propriedade do proprietário" />
-                    <InputError :message="formOwner.errors.property" class="mt-2" />
+                    <InputError :message="formOwner.errors.property_name" class="mt-2" />
                 </div>
 
                 <div class="flex items-center space-x-3">
@@ -115,12 +115,12 @@ const registration = ref(generateRegistrationNumber()); // Gera automaticamente 
 
 const formOwner = useForm({
     registration: registration.value,
-    user_id: user.value.id, // Agora vai ter um valor
+    user_id: user.value.id,
     name: 'Diogenes',
     rg: '4561157',
     cpf: '12765471290',
     cnpj: '12346598732165',
-    property: 'Minha fazenda',
+    property_name: 'Minha fazenda',
     image: 'https://placehold.co/80x80',
     is_active: true,
 })
