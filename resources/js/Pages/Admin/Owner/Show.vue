@@ -110,12 +110,156 @@
                                 </div>
                             </a>
                         </div>
-                        <div class="card-owner-personal-data py-4">
+
+                    </div>
+                </div>
+
+                <div class="card-owner-personal-data grid grid-cols-1 lg:grid-cols-2 gap-6 ">
+                    <div class="card bg-white rounded-xl shadow-md p-6 border border-gray-100">
+                        <div class="flex items-center mb-4">
                             <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                                <i class="fas fa-user text-blue-600"></i>
+                                <i class="fas fa-user text-blue-600 text-xl"></i>
                             </div>
                             <h2 class="text-xl font-bold text-gray-800">Dados Pessoais</h2>
                         </div>
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 mb-1">Nome Completo</h3>
+                                <p class="text-lg font-semibold text-gray-800">Diogenes Estevao</p>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 mb-1">RG:</h3>
+                                <p class="text-lg font-semibold text-gray-800">MG-12.345.678</p>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 mb-1">CPF:</h3>
+                                <p class="text-lg font-semibold text-gray-800">127.654.712-90</p>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 mb-1">CNPJ:</h3>
+                                <p class="text-lg font-semibold text-gray-800">00.123.456/0001-90</p>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 mb-1">Data de Cadastro:</h3>
+                                <p class="text-lg font-semibold text-gray-800">30/09/2025, 22:38</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card bg-white rounded-xl shadow-md p-6 border border-gray-100">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-map-marker-alt text-green-600"></i>
+                            </div>
+                            <h2 class="text-xl font-bold text-gray-800">Endereço</h2>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 mb-1">Logradouro</h3>
+                                <p class="text-lg font-semibold text-gray-800">Rodovia BR-050, Km 245</p>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 mb-1">Cidade:</h3>
+                                <p class="text-lg font-semibold text-gray-800">Belo Horizonte</p>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 mb-1">Estado:</h3>
+                                <p class="text-lg font-semibold text-gray-800">Minas Gerais</p>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 mb-1">CEP:</h3>
+                                <p class="text-lg font-semibold text-gray-800">30.450-000</p>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500 mb-1">País:</h3>
+                                <p class="text-lg font-semibold text-gray-800">Brasil</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card bg-white rounded-xl shadow-md p-6 border border-gray-100">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-address-book text-purple-600"></i>
+                            </div>
+                            <h2 class="text-xl font-bold text-gray-800">Contatos</h2>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex items-center mb-2">
+                                    <div
+                                        class="w-5 h-5 rounded-full flex items-center justify-center mr-2 border border-purple-600">
+                                        <i class="fas fa-envelope text-white text-xs text-purple-600"></i>
+                                    </div>
+                                    <h3 class="font-medium text-gray-700">E-mails</h3>
+                                </div>
+                                <div class="ml-7 space-y-1">
+                                    <p class="text-gray-800">diogenes@fazenda.com.br</p>
+                                    <p class="text-gray-800">financeiro@fazenda.com.br</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center mb-2">
+                                    <div
+                                        class="w-5 h-5 rounded-full flex items-center justify-center mr-2 border border-purple-600">
+                                        <i class="fas fa-phone-alt text-white text-xs text-purple-600"></i>
+                                    </div>
+                                    <h3 class="font-medium text-gray-700">Telefones</h3>
+                                </div>
+                                <div class="ml-7 space-y-1">
+                                    <p class="text-gray-800">(34) 99999-8888</p>
+                                    <p class="text-gray-800">(34) 3333-4444</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card bg-white rounded-xl shadow-md p-6 border border-gray-100">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-paw text-amber-600"></i>
+                            </div>
+                            <h2 class="text-xl font-bold text-gray-800">Associações de Raças</h2>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="font-medium text-gray-700 mb-1">Nelore</h3>
+                                <p class="text-gray-600 text-sm">registro@nelore.org.br</p>
+                            </div>
+
+                            <div>
+                                <h3 class="font-medium text-gray-700 mb-1">Mangalarga Marchador</h3>
+                                <p class="text-gray-600 text-sm">contato@mangalarga.com.br</p>
+                            </div>
+
+                            <div>
+                                <h3 class="font-medium text-gray-700 mb-1">Girolando</h3>
+                                <p class="text-gray-600 text-sm">cadastro@girolando.org.br</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="owner-finances ">
+                    <div class="border border-gray-100 rounded-xl shadow-md p-6 bg-white">
+                        <div class="flex  space-x-4">
+                            <div
+                                class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-hand-holding-usd text-yellow-600"></i>
+                            </div>
+                            <div class="">
+                                <h2 class="text-xl font-bold text-gray-900">Historico de Pagamentos</h2>
+                                <p class="text-sm text-gray-500">Gerenciar pedidos pagos e pendentes</p>
+                            </div>
+
+                            <div>
+                                <p class="text-sm text-gray-500">Total pendente</p>
+                                <p class="text-xl font-bold text-orange-600">R$ 1000,00</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="owner-filter-finences border border-gray-100 rounded-xl shadow-md p-6 bg-white mt-6">
+                     <i class="fas  fa-solid fa-sliders"></i>
+                        <h1 class="text-xl font-bold text-gray-900">Filtros</h1>
                     </div>
                 </div>
             </div>
