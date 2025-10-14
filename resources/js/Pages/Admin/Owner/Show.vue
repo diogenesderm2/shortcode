@@ -241,29 +241,459 @@
                 <div class="owner-finances ">
                     <div class="border border-gray-100 rounded-xl shadow-md p-6 bg-white">
                         <div class="flex  space-x-4">
-                            <div
-                                class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                            <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
                                 <i class="fas fa-hand-holding-usd text-yellow-600"></i>
                             </div>
                             <div class="">
                                 <h2 class="text-xl font-bold text-gray-900">Historico de Pagamentos</h2>
                                 <p class="text-sm text-gray-500">Gerenciar pedidos pagos e pendentes</p>
                             </div>
-
-                            <div>
+                            <div class=" flex-1 text-right">
                                 <p class="text-sm text-gray-500">Total pendente</p>
-                                <p class="text-xl font-bold text-orange-600">R$ 1000,00</p>
+                                <p class="text-xl font-bold font-black text-orange-600">R$ 1000,00</p>
                             </div>
                         </div>
                     </div>
+                    <div class="owner-tabs-order-payed-and-not-payed py-6">
+                        <div class="flex gap-4">
+                            <button @click="setActiveTab('pagos')" :class="[
+                                'flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg transition-colors duration-200 shadow-sm',
+                                activeTab === 'pagos'
+                                    ? 'bg-green-500 text-white hover:bg-green-600'
+                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            ]">
+                                <i class="far fa-check-circle"
+                                    :class="activeTab === 'pagos' ? 'text-white' : 'text-gray-700'"></i>
+                                <span>Pedidos Pagos</span>
+                                <span :class="[
+                                    'px-2 py-1 rounded-full text-sm font-semibold',
+                                    activeTab === 'pagos'
+                                        ? 'bg-white bg-opacity-20 text-white'
+                                        : 'bg-gray-300 text-gray-700'
+                                ]">5</span>
+                            </button>
 
+                            <button @click="setActiveTab('pendentes')" :class="[
+                                'flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg transition-colors duration-200 shadow-sm',
+                                activeTab === 'pendentes'
+                                    ? 'bg-blue-500 text-white hover:bg-blue-600'
+                                    : 'bg-gray-300 text-gray-700 hover:bg-gray-300'
+                            ]">
+                                <i class="far fa-clock"
+                                    :class="activeTab === 'pendentes' ? 'text-white' : 'text-gray-700'"></i>
+                                <span>Pedidos Pendentes</span>
+                                <span :class="[
+                                    'px-2 py-1 rounded-full text-sm font-semibold',
+                                    activeTab === 'pendentes'
+                                        ? 'bg-white bg-opacity-20 text-white'
+                                        : 'bg-gray-400 text-gray-700'
+                                ]">2</span>
+                            </button>
+                        </div>
+                    </div>
                     <div class="owner-filter-finences border border-gray-100 rounded-xl shadow-md p-6 bg-white mt-6">
-                     <i class="fas  fa-solid fa-sliders"></i>
-                        <h1 class="text-xl font-bold text-gray-900">Filtros</h1>
+                        <div class="mb-4  flex items-center space-x-3">
+                            <i class="fas  fa-solid fa-sliders"></i>
+                            <h1 class="text-xl  text-gray-600 text-sm">Filtros</h1>
+                        </div>
+                        <div class="flex gap-4 items-center">
+                            <div class="input-search relative w-1/2">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <i class="fas fa-search text-gray-400 pointer-events-none"></i>
+                                </div>
+                                <input
+                                    class="pl-10 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent focus:border-blue-500 outline-none transition duration-300"
+                                    type="text" name="search" id="" placeholder="Buscar por numero, cliente...">
+                            </div>
+
+                            <div class="input-payment-forms w-1/2">
+                                <select
+                                    class="w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent focus:border-blue-500 outline-none transition duration-300"
+                                    name="payment-form" id="">
+                                    <option value="">Todos os meios de pagamento</option>
+                                    <option value="1">Cartão de Crédito</option>
+                                    <option value="2">Pix</option>
+                                    <option value="3">Credito no Sistema</option>
+                                    <option value="4">Boleto Bancário</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="owner-cards-order-payed-and-not-payed mt-6">
+                        <!-- Cards de Pedidos Pagos -->
+                        <div v-if="activeTab === 'pagos'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Card 1 - Pago -->
+                            <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h3 class="text-lg font-bold text-gray-900">
+                                        Pedido #118473
+                                        <span class="bg-green-500 text-white text-xs font-medium px-2.5 py-1 rounded-full ml-2">Pago</span>
+                                    </h3>
+                                    <span class="text-2xl font-bold text-green-500">R$ 1,00</span>
+                                </div>
+
+                                <div class="flex justify-between items-center mb-4">
+                                    <p class="text-sm text-gray-600">Rosival Martins</p>
+                                </div>
+
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="fas fa-calendar mr-2"></i>
+                                        <span>Emitido: 03/07/2024</span>
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="far fa-check-circle mr-2"></i>
+                                        <span>Pago: 03/07/2024</span>
+                                    </div>
+                                </div>
+
+                                <div class="border-t pt-4">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center text-sm text-gray-600">
+                                            <i class="fab fa-pix mr-2 text-teal-600"></i>
+                                            <span>PIX</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                            Pagar Agora
+                                        </button>
+                                        <button
+                                          class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
+                                          @click="openPaidDetails({
+                                            number: 118473,
+                                            cliente: 'Rosival Martins',
+                                            total: 36.00,
+                                            pagamento: 'PIX',
+                                            emitidoEm: '05/06/2024 às 21:16',
+                                            pagoEm: '05/06/2024 às 21:16',
+                                            animais: [
+                                              { ord: 1, entrada: '04/06/2024', rg: 'JST300', nome: 'RELÂMPAGO', raca: 'NELORE', especie: 'BOVINO', tipo: 'SANGUE', valor: 36.00 }
+                                            ]
+                                          })"
+                                        >
+                                            Ver Detalhes
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 2 - Pago -->
+                            <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h3 class="text-lg font-bold text-gray-900">
+                                        Pedido #118418
+                                        <span class="bg-green-500 text-white text-xs font-medium px-2.5 py-1 rounded-full ml-2">Pago</span>
+                                    </h3>
+                                    <span class="text-2xl font-bold text-green-500">R$ 1,10</span>
+                                </div>
+
+                                <div class="flex justify-between items-center mb-4">
+                                    <p class="text-sm text-gray-600">Rosival Martins</p>
+                                </div>
+
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="fas fa-calendar mr-2"></i>
+                                        <span>Emitido: 03/07/2024</span>
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="far fa-check-circle mr-2"></i>
+                                        <span>Pago: 03/07/2024</span>
+                                    </div>
+                                </div>
+
+                                <div class="border-t pt-4">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center text-sm text-gray-600">
+                                            <i class="fab fa-pix mr-2 text-teal-600"></i>
+                                            <span>PIX</span>
+                                        </div>
+                                    </div>
+                                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
+                                      @click="openPaidDetails({
+                                        number: 118418,
+                                        cliente: 'Rosival Martins',
+                                        total: 1.10,
+                                        pagamento: 'PIX',
+                                        emitidoEm: '03/07/2024',
+                                        pagoEm: '03/07/2024',
+                                        animais: [
+                                          { ord: 1, entrada: '03/07/2024', rg: 'RM001', nome: 'ANIMAL B', raca: 'NELORE', especie: 'BOVINO', tipo: 'SANGUE', valor: 1.10 }
+                                        ]
+                                      })"
+                                    >
+                                        Ver Detalhes
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Card 3 - Pago -->
+                            <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h3 class="text-lg font-bold text-gray-900">
+                                        Pedido #103182
+                                        <span class="bg-green-500 text-white text-xs font-medium px-2.5 py-1 rounded-full ml-2">Pago</span>
+                                    </h3>
+                                    <span class="text-2xl font-bold text-green-500">R$ 129,24</span>
+                                </div>
+
+                                <div class="flex justify-between items-center mb-4">
+                                    <p class="text-sm text-gray-600">Maria Silva</p>
+                                </div>
+
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="fas fa-calendar mr-2"></i>
+                                        <span>Emitido: 23/08/2023</span>
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="far fa-check-circle mr-2"></i>
+                                        <span>Pago: 23/08/2023</span>
+                                    </div>
+                                </div>
+
+                                <div class="border-t pt-4">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center text-sm text-gray-600">
+                                            <i class="fas fa-credit-card mr-2 text-blue-600"></i>
+                                            <span>CARTÃO DE CRÉDITO</span>
+                                        </div>
+                                    </div>
+                                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
+                                      @click="openPaidDetails({
+                                        number: 103182,
+                                        cliente: 'Maria Silva',
+                                        total: 129.24,
+                                        pagamento: 'CARTÃO DE CRÉDITO',
+                                        emitidoEm: '23/08/2023',
+                                        pagoEm: '23/08/2023',
+                                        animais: [
+                                          { ord: 1, entrada: '23/08/2023', rg: 'XYZ789', nome: 'ANIMAL 2', raca: 'NELORE', especie: 'BOVINO', tipo: 'SANGUE', valor: 129.24 }
+                                        ]
+                                      })"
+                                    >
+                                        Ver Detalhes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cards de Pedidos Pendentes -->
+                        <div v-if="activeTab === 'pendentes'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Card 1 - Pendente -->
+                            <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h3 class="text-lg font-bold text-gray-900">
+                                        Pedido #118500
+                                        <span class="bg-blue-500 text-white text-xs font-medium px-2.5 py-1 rounded-full ml-2">Pendente</span>
+                                    </h3>
+                                    <span class="text-2xl font-bold text-blue-500">R$ 25,50</span>
+                                </div>
+
+                                <div class="flex justify-between items-center mb-4">
+                                    <p class="text-sm text-gray-600">Carlos Silva</p>
+                                </div>
+
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="fas fa-calendar mr-2"></i>
+                                        <span>Emitido: 15/01/2025</span>
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="far fa-clock mr-2"></i>
+                                        <span>Aguardando pagamento</span>
+                                    </div>
+                                </div>
+
+                                <div class="border-t pt-4">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center text-sm text-gray-600">
+                                            <i class="fab fa-pix mr-2 text-teal-600"></i>
+                                            <span>PIX</span>
+                                        </div>
+                                    </div>
+                                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
+
+                                      @click="openUnpaidDetails({
+                                        number: 118500,
+                                        cliente: 'Carlos Silva',
+                                        total: 25.50,
+                                        pagamento: 'PIX',
+                                        emitidoEm: '15/01/2025',
+                                        animais: [
+                                          { ord: 1, entrada: '15/01/2025', rg: 'CS001', nome: 'ANIMAL A', raca: 'NELORE', especie: 'BOVINO', tipo: 'SANGUE', valor: 25.50 }
+                                        ]
+                                      })"
+                                    >
+                                      Ver Detalhes
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Card 2 - Pendente -->
+                            <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h3 class="text-lg font-bold text-gray-900">
+                                        Pedido #118501
+                                        <span class="bg-blue-500 text-white text-xs font-medium px-2.5 py-1 rounded-full ml-2">Pendente</span>
+                                    </h3>
+                                    <span class="text-2xl font-bold text-blue-500">R$ 45,00</span>
+                                </div>
+
+                                <div class="flex justify-between items-center mb-4">
+                                    <p class="text-sm text-gray-600">Ana Costa</p>
+                                </div>
+
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="fas fa-calendar mr-2"></i>
+                                        <span>Emitido: 14/01/2025</span>
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="far fa-clock mr-2"></i>
+                                        <span>Aguardando pagamento</span>
+                                    </div>
+                                </div>
+
+                                <div class="border-t pt-4">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center text-sm text-gray-600">
+                                            <i class="fas fa-credit-card mr-2 text-blue-600"></i>
+                                            <span>CARTÃO DE CRÉDITO</span>
+                                        </div>
+                                    </div>
+                                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
+                                      @click="openUnpaidDetails({
+                                        number: 118501,
+                                        cliente: 'Ana Costa',
+                                        total: 45.00,
+                                        pagamento: 'CARTÃO DE CRÉDITO',
+                                        emitidoEm: '14/01/2025',
+                                        animais: [
+                                          { ord: 1, entrada: '14/01/2025', rg: 'AC001', nome: 'ANIMAL C', raca: 'NELORE', especie: 'BOVINO', tipo: 'SANGUE', valor: 45.00 }
+                                        ]
+                                      })"
+                                    >
+                                        Ver Detalhes
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Card 3 - Pendente -->
+                            <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h3 class="text-lg font-bold text-gray-900">
+                                        Pedido #118502
+                                        <span class="bg-blue-500 text-white text-xs font-medium px-2.5 py-1 rounded-full ml-2">Pendente</span>
+                                    </h3>
+                                    <span class="text-2xl font-bold text-blue-500">R$ 78,90</span>
+                                </div>
+
+                                <div class="flex justify-between items-center mb-4">
+                                    <p class="text-sm text-gray-600">Pedro Santos</p>
+                                </div>
+
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="fas fa-calendar mr-2"></i>
+                                        <span>Emitido: 13/01/2025</span>
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="far fa-clock mr-2"></i>
+                                        <span>Aguardando pagamento</span>
+                                    </div>
+                                </div>
+
+                                <div class="border-t pt-4">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center text-sm text-gray-600">
+                                            <i class="fab fa-pix mr-2 text-teal-600"></i>
+                                            <span>PIX</span>
+                                        </div>
+                                    </div>
+                                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
+                                                @click="openUnpaidDetails({
+                                                number: 118502,
+                                                cliente: 'Pedro Santos',
+                                                total: 78.90,
+                                                pagamento: 'PIX',
+                                                emitidoEm: '13/01/2025',
+                                                animais: [
+                                                { ord: 1, entrada: '13/01/2025', rg: 'PS001', nome: 'ANIMAL D', raca: 'NELORE', especie: 'BOVINO', tipo: 'SANGUE', valor: 78.90 }
+                                                ]
+                                                })"
+                                                >
+                                                    Ver Detalhes
+                                                </button>
+                                </div>
+                            </div>
+
+                            <!-- Card 4 - Pendente -->
+                            <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h3 class="text-lg font-bold text-gray-900">
+                                        Pedido #118503
+                                        <span class="bg-blue-500 text-white text-xs font-medium px-2.5 py-1 rounded-full ml-2">Pendente</span>
+                                    </h3>
+                                    <span class="text-2xl font-bold text-blue-500">R$ 120,00</span>
+                                </div>
+
+                                <div class="flex justify-between items-center mb-4">
+                                    <p class="text-sm text-gray-600">Lucia Oliveira</p>
+                                </div>
+
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="fas fa-calendar mr-2"></i>
+                                        <span>Emitido: 12/01/2025</span>
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-600">
+                                        <i class="far fa-clock mr-2"></i>
+                                        <span>Aguardando pagamento</span>
+                                    </div>
+                                </div>
+
+                                <div class="border-t pt-4">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center text-sm text-gray-600">
+                                            <i class="fas fa-credit-card mr-2 text-blue-600"></i>
+                                            <span>CARTÃO DE CRÉDITO</span>
+                                        </div>
+                                    </div>
+                                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
+                                      @click="openUnpaidDetails({
+                                        number: 118503,
+                                        cliente: 'Lucia Oliveira',
+                                        total: 120.00,
+                                        pagamento: 'CARTÃO DE CRÉDITO',
+                                        emitidoEm: '12/01/2025',
+                                        animais: [
+                                          { ord: 1, entrada: '12/01/2025', rg: 'LO001', nome: 'ANIMAL E', raca: 'NELORE', especie: 'BOVINO', tipo: 'SANGUE', valor: 120.00 }
+                                        ]
+                                      })"
+                                    >
+                                        Ver Detalhes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+          <OrderPaidDetailsModal
+        v-if="paidDetailsOpen && selectedOrder"
+        :order="selectedOrder"
+        @close="paidDetailsOpen = false"
+    />
+        <OrderUnpaidDetailsModal
+      v-if="unpaidDetailsOpen && selectedUnpaidOrder"
+      :order="selectedUnpaidOrder"
+      @close="unpaidDetailsOpen = false"
+    />
     </AppLayout>
 </template>
 
@@ -271,6 +701,8 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Pagination from '@/Components/Pagination.vue'
 import { ref } from 'vue';
+import OrderPaidDetailsModal from '@/Components/OrderPaidDetailsModal.vue'
+import OrderUnpaidDetailsModal from '@/Components/OrderUnpaidDetailsModal.vue'
 import NewOwnerModal from '@/Components/NewOwnerModal.vue'
 import { Link } from '@inertiajs/vue3'
 
@@ -279,6 +711,27 @@ defineProps({
     require: true
 })
 
+const activeTab = ref('pagos');
+
+const setActiveTab = (tab) => {
+    activeTab.value = tab;
+}
+
+const paidDetailsOpen = ref(false)
+const selectedOrder = ref(null)
+
+const openPaidDetails = (order) => {
+    selectedOrder.value = order
+    paidDetailsOpen.value = true
+}
+
+const unpaidDetailsOpen = ref(false)
+const selectedUnpaidOrder = ref(null)
+
+const openUnpaidDetails = (order) => {
+  selectedUnpaidOrder.value = order
+  unpaidDetailsOpen.value = true
+}
 </script>
 
 
@@ -292,3 +745,5 @@ defineProps({
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 </style>
+
+
