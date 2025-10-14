@@ -357,7 +357,7 @@
                                         </div>
                                     </div>
                                     <div class="flex gap-2">
-                                        <button 
+                                        <button
                                             class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
                                             @click="openPaymentModal({
                                                 number: 118473,
@@ -524,21 +524,34 @@
                                             <span>PIX</span>
                                         </div>
                                     </div>
-                                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
-
-                                      @click="openUnpaidDetails({
-                                        number: 118500,
-                                        cliente: 'Carlos Silva',
-                                        total: 25.50,
-                                        pagamento: 'PIX',
-                                        emitidoEm: '15/01/2025',
-                                        animais: [
-                                          { ord: 1, entrada: '15/01/2025', rg: 'CS001', nome: 'ANIMAL A', raca: 'NELORE', especie: 'BOVINO', tipo: 'SANGUE', valor: 25.50 }
-                                        ]
-                                      })"
-                                    >
-                                      Ver Detalhes
-                                    </button>
+                                    <div class="flex gap-2">
+                                        <button 
+                                            class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                                            @click="openPaymentModal({
+                                                number: 118500,
+                                                cliente: 'Carlos Silva',
+                                                total: 25.50,
+                                                pagamento: 'PIX',
+                                                emitidoEm: '15/01/2025'
+                                            })"
+                                        >
+                                            Pagar Agora
+                                        </button>
+                                        <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
+                                          @click="openUnpaidDetails({
+                                            number: 118500,
+                                            cliente: 'Carlos Silva',
+                                            total: 25.50,
+                                            pagamento: 'PIX',
+                                            emitidoEm: '15/01/2025',
+                                            animais: [
+                                              { ord: 1, entrada: '15/01/2025', rg: 'CS001', nome: 'ANIMAL A', raca: 'NELORE', especie: 'BOVINO', tipo: 'SANGUE', valor: 25.50 }
+                                            ]
+                                          })"
+                                        >
+                                          Ver Detalhes
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -574,20 +587,34 @@
                                             <span>CARTÃO DE CRÉDITO</span>
                                         </div>
                                     </div>
-                                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
-                                      @click="openUnpaidDetails({
-                                        number: 118501,
-                                        cliente: 'Ana Costa',
-                                        total: 45.00,
-                                        pagamento: 'CARTÃO DE CRÉDITO',
-                                        emitidoEm: '14/01/2025',
-                                        animais: [
-                                          { ord: 1, entrada: '14/01/2025', rg: 'AC001', nome: 'ANIMAL C', raca: 'NELORE', especie: 'BOVINO', tipo: 'SANGUE', valor: 45.00 }
-                                        ]
-                                      })"
-                                    >
-                                        Ver Detalhes
-                                    </button>
+                                    <div class="flex gap-2">
+                                        <button 
+                                            class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                                            @click="openPaymentModal({
+                                                number: 118501,
+                                                cliente: 'Ana Costa',
+                                                total: 45.00,
+                                                pagamento: 'CARTÃO DE CRÉDITO',
+                                                emitidoEm: '14/01/2025'
+                                            })"
+                                        >
+                                            Pagar Agora
+                                        </button>
+                                        <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
+                                          @click="openUnpaidDetails({
+                                            number: 118501,
+                                            cliente: 'Ana Costa',
+                                            total: 45.00,
+                                            pagamento: 'CARTÃO DE CRÉDITO',
+                                            emitidoEm: '14/01/2025',
+                                            animais: [
+                                              { ord: 1, entrada: '14/01/2025', rg: 'AC001', nome: 'ANIMAL C', raca: 'NELORE', especie: 'BOVINO', tipo: 'SANGUE', valor: 45.00 }
+                                            ]
+                                          })"
+                                        >
+                                            Ver Detalhes
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -623,20 +650,34 @@
                                             <span>PIX</span>
                                         </div>
                                     </div>
-                                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
-                                                @click="openUnpaidDetails({
+                                    <div class="flex gap-2">
+                                        <button 
+                                            class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                                            @click="openPaymentModal({
                                                 number: 118502,
                                                 cliente: 'Pedro Santos',
                                                 total: 78.90,
                                                 pagamento: 'PIX',
-                                                emitidoEm: '13/01/2025',
-                                                animais: [
-                                                { ord: 1, entrada: '13/01/2025', rg: 'PS001', nome: 'ANIMAL D', raca: 'NELORE', especie: 'BOVINO', tipo: 'SANGUE', valor: 78.90 }
-                                                ]
-                                                })"
-                                                >
-                                                    Ver Detalhes
-                                                </button>
+                                                emitidoEm: '13/01/2025'
+                                            })"
+                                        >
+                                            Pagar Agora
+                                        </button>
+                                        <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
+                                            @click="openUnpaidDetails({
+                                            number: 118502,
+                                            cliente: 'Pedro Santos',
+                                            total: 78.90,
+                                            pagamento: 'PIX',
+                                            emitidoEm: '13/01/2025',
+                                            animais: [
+                                            { ord: 1, entrada: '13/01/2025', rg: 'PS001', nome: 'ANIMAL D', raca: 'NELORE', especie: 'BOVINO', tipo: 'SANGUE', valor: 78.90 }
+                                            ]
+                                            })"
+                                            >
+                                                Ver Detalhes
+                                            </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -672,20 +713,34 @@
                                             <span>CARTÃO DE CRÉDITO</span>
                                         </div>
                                     </div>
-                                    <button class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
-                                      @click="openUnpaidDetails({
-                                        number: 118503,
-                                        cliente: 'Lucia Oliveira',
-                                        total: 120.00,
-                                        pagamento: 'CARTÃO DE CRÉDITO',
-                                        emitidoEm: '12/01/2025',
-                                        animais: [
-                                          { ord: 1, entrada: '12/01/2025', rg: 'LO001', nome: 'ANIMAL E', raca: 'NELORE', especie: 'BOVINO', tipo: 'SANGUE', valor: 120.00 }
-                                        ]
-                                      })"
-                                    >
-                                        Ver Detalhes
-                                    </button>
+                                    <div class="flex gap-2">
+                                        <button 
+                                            class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                                            @click="openPaymentModal({
+                                                number: 118503,
+                                                cliente: 'Lucia Oliveira',
+                                                total: 120.00,
+                                                pagamento: 'CARTÃO DE CRÉDITO',
+                                                emitidoEm: '12/01/2025'
+                                            })"
+                                        >
+                                            Pagar Agora
+                                        </button>
+                                        <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
+                                          @click="openUnpaidDetails({
+                                            number: 118503,
+                                            cliente: 'Lucia Oliveira',
+                                            total: 120.00,
+                                            pagamento: 'CARTÃO DE CRÉDITO',
+                                            emitidoEm: '12/01/2025',
+                                            animais: [
+                                              { ord: 1, entrada: '12/01/2025', rg: 'LO001', nome: 'ANIMAL E', raca: 'NELORE', especie: 'BOVINO', tipo: 'SANGUE', valor: 120.00 }
+                                            ]
+                                          })"
+                                        >
+                                            Ver Detalhes
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -721,7 +776,7 @@
                     <!-- Opções de Pagamento -->
                     <div class="space-y-3">
                         <!-- PIX -->
-                        <button 
+                        <button
                             @click="selectPaymentMethod('pix')"
                             class="w-full flex items-center p-4 border-2 border-red-200 rounded-lg hover:border-red-300 hover:bg-red-50 transition-colors group"
                         >
@@ -735,7 +790,7 @@
                         </button>
 
                         <!-- Cartão de Crédito -->
-                        <button 
+                        <button
                             @click="selectPaymentMethod('cartao')"
                             class="w-full flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-gray-300 hover:bg-gray-50 transition-colors"
                         >
@@ -749,7 +804,7 @@
                         </button>
 
                         <!-- Boleto Bancário -->
-                        <button 
+                        <button
                             @click="selectPaymentMethod('boleto')"
                             class="w-full flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-gray-300 hover:bg-gray-50 transition-colors"
                         >
@@ -766,7 +821,7 @@
 
                 <!-- Footer do Modal -->
                 <div class="px-6 py-4 border-t bg-gray-50 rounded-b-lg">
-                    <button 
+                    <button
                         @click="closePaymentModal"
                         class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
@@ -777,18 +832,150 @@
         </div>
 
         <!-- Modais existentes -->
-        <OrderPaidDetailsModal 
+        <!-- Modal PIX -->
+        <div v-if="pixModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+                <!-- Header do Modal -->
+                <div class="flex items-center justify-between p-6 border-b">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">Pagamento via PIX</h3>
+                        <!-- Número do Pedido no Header -->
+                        <p v-if="selectedPaymentOrder" class="text-sm text-gray-600 mt-1">
+                            Pedido #{{ selectedPaymentOrder.number }} - Escaneie o QR Code ou copie o código
+                        </p>
+                    </div>
+                    <button @click="closePixModal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Conteúdo do Modal -->
+                <div class="p-6">
+                    <!-- Valor a Pagar no Topo -->
+                    <div v-if="selectedPaymentOrder" class="mb-6 text-center">
+                        <p class="text-xs text-gray-400 mb-2">Valor a pagar</p>
+                        <p class="text-2xl font-bold text-red-500">R$ {{ Number(selectedPaymentOrder.total).toFixed(2).replace('.', ',') }}</p>
+                    </div>
+
+                    <!-- QR Code -->
+                    <div class="flex justify-center mb-6">
+                        <div class="border-2 border-red-500 rounded-lg p-4 bg-white">
+                            <!-- QR Code placeholder - você pode usar uma biblioteca como qrcode.js -->
+                            <div class="w-48 h-48 bg-white flex items-center justify-center">
+                                <svg class="w-full h-full" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- QR Code pattern baseado na imagem -->
+                                    <rect width="200" height="200" fill="white"/>
+                                    <!-- Cantos do QR Code -->
+                                    <rect x="10" y="10" width="50" height="50" fill="#C53030" rx="5"/>
+                                    <rect x="20" y="20" width="30" height="30" fill="white" rx="2"/>
+                                    <rect x="25" y="25" width="20" height="20" fill="#C53030" rx="2"/>
+                                    
+                                    <rect x="140" y="10" width="50" height="50" fill="#C53030" rx="5"/>
+                                    <rect x="150" y="20" width="30" height="30" fill="white" rx="2"/>
+                                    <rect x="155" y="25" width="20" height="20" fill="#C53030" rx="2"/>
+                                    
+                                    <rect x="10" y="140" width="50" height="50" fill="#C53030" rx="5"/>
+                                    <rect x="20" y="150" width="30" height="30" fill="white" rx="2"/>
+                                    <rect x="25" y="155" width="20" height="20" fill="#C53030" rx="2"/>
+                                    
+                                    <!-- Padrão de dados do QR Code -->
+                                    <g fill="#C53030">
+                                        <circle cx="80" cy="30" r="3"/>
+                                        <circle cx="90" cy="30" r="3"/>
+                                        <circle cx="100" cy="30" r="3"/>
+                                        <circle cx="110" cy="30" r="3"/>
+                                        <circle cx="120" cy="30" r="3"/>
+                                        
+                                        <circle cx="30" cy="80" r="3"/>
+                                        <circle cx="30" cy="90" r="3"/>
+                                        <circle cx="30" cy="100" r="3"/>
+                                        <circle cx="30" cy="110" r="3"/>
+                                        <circle cx="30" cy="120" r="3"/>
+                                        
+                                        <circle cx="170" cy="80" r="3"/>
+                                        <circle cx="170" cy="90" r="3"/>
+                                        <circle cx="170" cy="100" r="3"/>
+                                        <circle cx="170" cy="110" r="3"/>
+                                        <circle cx="170" cy="120" r="3"/>
+                                        
+                                        <circle cx="80" cy="170" r="3"/>
+                                        <circle cx="90" cy="170" r="3"/>
+                                        <circle cx="100" cy="170" r="3"/>
+                                        <circle cx="110" cy="170" r="3"/>
+                                        <circle cx="120" cy="170" r="3"/>
+                                        <circle cx="130" cy="170" r="3"/>
+                                        <circle cx="140" cy="170" r="3"/>
+                                        <circle cx="150" cy="170" r="3"/>
+                                        <circle cx="160" cy="170" r="3"/>
+                                        <circle cx="170" cy="170" r="3"/>
+                                        
+                                        <!-- Padrão central e outros elementos -->
+                                        <rect x="80" y="80" width="40" height="40" fill="#C53030" rx="3"/>
+                                        <rect x="85" y="85" width="30" height="30" fill="white" rx="2"/>
+                                        <rect x="90" y="90" width="20" height="20" fill="#C53030" rx="2"/>
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Texto "Ou copie o código PIX" -->
+                    <div class="text-center mb-4">
+                        <p class="text-sm text-gray-600">Ou copie o código PIX</p>
+                    </div>
+
+                    <!-- Código PIX -->
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <p class="text-xs text-gray-500 break-all font-mono">{{ pixCode }}</p>
+                    </div>
+
+                    <!-- Botão Copiar -->
+                    <button 
+                        @click="copyPixCode"
+                        class="w-full flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors mb-4"
+                    >
+                        <i class="far fa-copy"></i>
+                        Copiar Código PIX
+                    </button>
+
+                    <!-- Aviso -->
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                        <div class="flex items-start gap-2">
+                            <i class="fas fa-info-circle text-green-600 mt-0.5"></i>
+                            <p class="text-sm text-green-700">
+                                Após o pagamento, a confirmação pode levar alguns minutos
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer do Modal -->
+                <div class="px-6 py-4 border-t bg-gray-50 rounded-b-lg">
+                    <button 
+                        @click="closePixModal"
+                        class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                        Fechar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modais existentes -->
+        <OrderPaidDetailsModal
             v-if="paidDetailsOpen && selectedOrder"
-            :open="paidDetailsOpen" 
-            :order="selectedOrder" 
-            @close="paidDetailsOpen = false" 
+            :open="paidDetailsOpen"
+            :order="selectedOrder"
+            @close="paidDetailsOpen = false"
         />
 
-        <OrderUnpaidDetailsModal 
+        <OrderUnpaidDetailsModal
             v-if="unpaidDetailsOpen && selectedUnpaidOrder"
-            :open="unpaidDetailsOpen" 
-            :order="selectedUnpaidOrder" 
-            @close="unpaidDetailsOpen = false" 
+            :open="unpaidDetailsOpen"
+            :order="selectedUnpaidOrder"
+            @close="unpaidDetailsOpen = false"
         />
     </AppLayout>
 </template>
@@ -833,6 +1020,10 @@ const openUnpaidDetails = (order) => {
 const paymentModalOpen = ref(false)
 const selectedPaymentOrder = ref(null)
 
+// Modal de pagamento PIX
+const pixModalOpen = ref(false)
+const pixCode = ref('00020126580014br.gov.bcb.pix0136a629532e-7393-4d1d-8c2b-e1c34d63e7565204000053039865802BR5924ROSIVAL GENETICS LA6609950A PAULO62070503***63041D3D')
+
 const openPaymentModal = (order) => {
     selectedPaymentOrder.value = order
     paymentModalOpen.value = true
@@ -843,10 +1034,31 @@ const closePaymentModal = () => {
     selectedPaymentOrder.value = null
 }
 
+const openPixModal = () => {
+    pixModalOpen.value = true
+}
+
+const closePixModal = () => {
+    pixModalOpen.value = false
+}
+
+const copyPixCode = () => {
+    navigator.clipboard.writeText(pixCode.value).then(() => {
+        // Você pode adicionar uma notificação aqui
+        console.log('Código PIX copiado!')
+    })
+}
+
 const selectPaymentMethod = (method) => {
     console.log(`Método de pagamento selecionado: ${method}`)
-    // Aqui você pode abrir os modais específicos para cada método de pagamento
-    closePaymentModal()
+
+    if (method === 'pix') {
+        closePaymentModal()
+        openPixModal()
+    } else {
+        // Aqui você pode abrir os modais específicos para outros métodos de pagamento
+        closePaymentModal()
+    }
 }
 </script>
 
