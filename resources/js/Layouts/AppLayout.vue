@@ -301,6 +301,12 @@ const logout = () => {
                                 Proprietários
                             </NavLink>
                         </div>
+                        <div class="">
+                            <NavLink :href="route('admin.samples.create')"
+                                :active="route().current('admin.samples.*')">
+                                Cadastrar amostras
+                            </NavLink>
+                        </div>
                     </nav>
                 </aside>
 
