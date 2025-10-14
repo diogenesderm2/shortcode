@@ -357,7 +357,16 @@
                                         </div>
                                     </div>
                                     <div class="flex gap-2">
-                                        <button class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                        <button 
+                                            class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                                            @click="openPaymentModal({
+                                                number: 118473,
+                                                cliente: 'Rosival Martins',
+                                                total: 96.00,
+                                                pagamento: 'PIX',
+                                                emitidoEm: '29/09/2025'
+                                            })"
+                                        >
                                             Pagar Agora
                                         </button>
                                         <button
@@ -684,16 +693,103 @@
                 </div>
             </div>
         </div>
-          <OrderPaidDetailsModal
-        v-if="paidDetailsOpen && selectedOrder"
-        :order="selectedOrder"
-        @close="paidDetailsOpen = false"
-    />
-        <OrderUnpaidDetailsModal
-      v-if="unpaidDetailsOpen && selectedUnpaidOrder"
-      :order="selectedUnpaidOrder"
-      @close="unpaidDetailsOpen = false"
-    />
+          <!-- Modal de Seleção de Pagamento -->
+        <div v-if="paymentModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+                <!-- Header do Modal -->
+                <div class="flex items-center justify-between p-6 border-b">
+                    <h3 class="text-lg font-semibold text-gray-900">Escolha a forma de pagamento</h3>
+                    <button @click="closePaymentModal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Conteúdo do Modal -->
+                <div class="p-6">
+                    <!-- Informações do Pedido -->
+                    <div v-if="selectedPaymentOrder" class="mb-6 text-center">
+                        <p class="text-sm text-gray-600 mb-1">
+                            Pedido #{{ selectedPaymentOrder.number }} - Cliente: {{ selectedPaymentOrder.cliente }}
+                        </p>
+                        <p class="text-sm text-gray-500 mb-3">Emitido: {{ selectedPaymentOrder.emitidoEm }}</p>
+                        <p class="text-xs text-gray-400 mb-2">Valor a pagar</p>
+                        <p class="text-2xl font-bold text-red-500">R$ {{ Number(selectedPaymentOrder.total).toFixed(2).replace('.', ',') }}</p>
+                    </div>
+
+                    <!-- Opções de Pagamento -->
+                    <div class="space-y-3">
+                        <!-- PIX -->
+                        <button 
+                            @click="selectPaymentMethod('pix')"
+                            class="w-full flex items-center p-4 border-2 border-red-200 rounded-lg hover:border-red-300 hover:bg-red-50 transition-colors group"
+                        >
+                            <div class="flex items-center justify-center w-8 h-8 bg-red-100 rounded mr-4">
+                                <i class="fab fa-pix text-red-600"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-medium text-gray-900">Pagar com PIX</p>
+                                <p class="text-sm text-gray-500">Pagamento instantâneo</p>
+                            </div>
+                        </button>
+
+                        <!-- Cartão de Crédito -->
+                        <button 
+                            @click="selectPaymentMethod('cartao')"
+                            class="w-full flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-gray-300 hover:bg-gray-50 transition-colors"
+                        >
+                            <div class="flex items-center justify-center w-8 h-8 bg-gray-100 rounded mr-4">
+                                <i class="fas fa-credit-card text-gray-600"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-medium text-gray-900">Cartão de Crédito</p>
+                                <p class="text-sm text-gray-500">Até 12x sem juros</p>
+                            </div>
+                        </button>
+
+                        <!-- Boleto Bancário -->
+                        <button 
+                            @click="selectPaymentMethod('boleto')"
+                            class="w-full flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-gray-300 hover:bg-gray-50 transition-colors"
+                        >
+                            <div class="flex items-center justify-center w-8 h-8 bg-gray-100 rounded mr-4">
+                                <i class="fas fa-barcode text-gray-600"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-medium text-gray-900">Boleto Bancário</p>
+                                <p class="text-sm text-gray-500">Vencimento em 3 dias úteis</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Footer do Modal -->
+                <div class="px-6 py-4 border-t bg-gray-50 rounded-b-lg">
+                    <button 
+                        @click="closePaymentModal"
+                        class="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modais existentes -->
+        <OrderPaidDetailsModal 
+            v-if="paidDetailsOpen && selectedOrder"
+            :open="paidDetailsOpen" 
+            :order="selectedOrder" 
+            @close="paidDetailsOpen = false" 
+        />
+
+        <OrderUnpaidDetailsModal 
+            v-if="unpaidDetailsOpen && selectedUnpaidOrder"
+            :open="unpaidDetailsOpen" 
+            :order="selectedUnpaidOrder" 
+            @close="unpaidDetailsOpen = false" 
+        />
     </AppLayout>
 </template>
 
@@ -731,6 +827,26 @@ const selectedUnpaidOrder = ref(null)
 const openUnpaidDetails = (order) => {
   selectedUnpaidOrder.value = order
   unpaidDetailsOpen.value = true
+}
+
+// Modal de pagamento
+const paymentModalOpen = ref(false)
+const selectedPaymentOrder = ref(null)
+
+const openPaymentModal = (order) => {
+    selectedPaymentOrder.value = order
+    paymentModalOpen.value = true
+}
+
+const closePaymentModal = () => {
+    paymentModalOpen.value = false
+    selectedPaymentOrder.value = null
+}
+
+const selectPaymentMethod = (method) => {
+    console.log(`Método de pagamento selecionado: ${method}`)
+    // Aqui você pode abrir os modais específicos para cada método de pagamento
+    closePaymentModal()
 }
 </script>
 
