@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\Animal;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class AnimalRequest extends FormRequest
 {
@@ -21,12 +22,24 @@ class AnimalRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'name' => 'required|string|max:255',
-            'rg' => 'required|string|unique:animals,rg',
             'birth_date' => 'required|date',
             'sex' => 'required|in:macho,femea',
             'owner_id' => 'required|exists:owners,id',
         ];
+
+        // Se for uma atualização, permitir o mesmo RG para o animal atual
+        if ($this->isMethod('put') || $this->isMethod('patch')) {
+            $rules['rg'] = [
+                'required',
+                'string',
+                Rule::unique('animals')->ignore($this->animal)
+            ];
+        } else {
+            $rules['rg'] = 'required|string|unique:animals,rg';
+        }
+
+        return $rules;
     }
 }
