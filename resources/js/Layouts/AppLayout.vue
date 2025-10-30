@@ -302,6 +302,12 @@ const logout = () => {
                             </NavLink>
                         </div>
                         <div class="">
+                            <NavLink :href="route('admin.animals.index')"
+                                :active="route().current('admin.animals.*')">
+                                Animais
+                            </NavLink>
+                        </div>
+                        <div class="">
                             <NavLink :href="route('admin.samples.create')"
                                 :active="route().current('admin.samples.*')">
                                 Cadastrar amostras
