@@ -313,6 +313,12 @@ const logout = () => {
                                 Cadastrar amostras
                             </NavLink>
                         </div>
+                        <div class="">
+                            <NavLink :href="route('admin.reports.index')"
+                                :active="route().current('admin.reports.*')">
+                                Relatorios
+                            </NavLink>
+                        </div>
                     </nav>
                 </aside>
 
