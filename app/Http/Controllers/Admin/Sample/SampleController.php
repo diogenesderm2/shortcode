@@ -65,13 +65,28 @@ class SampleController extends Controller
      */
     public function checkAnimalByRg(Request $request)
     {
-        $animal = Animal::where('rg', $request->rg)
+        $type = $request->input('type'); // child | father | mother
+        $desiredSex = null;
+
+        if ($type === 'father') {
+            $desiredSex = 'macho';
+        } elseif ($type === 'mother') {
+            $desiredSex = 'femea';
+        }
+
+        $animalByRg = Animal::where('rg', $request->rg)
             ->where('owner_id', $request->owner_id)
             ->first();
 
+        $sexMismatch = false;
+        if ($animalByRg && $desiredSex) {
+            $sexMismatch = $animalByRg->sex !== $desiredSex;
+        }
+
         return response()->json([
-            'exists' => !!$animal,
-            'animal' => $animal
+            'exists' => !!$animalByRg,
+            'animal' => $animalByRg && !$sexMismatch ? $animalByRg : null,
+            'sex_mismatch' => $sexMismatch,
         ]);
     }
 }

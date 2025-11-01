@@ -131,6 +131,11 @@ watch(() => props.show, (newValue) => {
     if (newValue) {
         form.rg = props.rg;
         form.owner_id = props.owner?.id;
+        if (props.animalType === 'father') {
+            form.sex = 'macho';
+        } else if (props.animalType === 'mother') {
+            form.sex = 'femea';
+        }
     }
 });
 

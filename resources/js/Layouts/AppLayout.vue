@@ -25,6 +25,7 @@ const switchToTeam = (team) => {
 const logout = () => {
     router.post(route('logout'));
 };
+const showTechnicalMenu = ref(false);
 </script>
 
 <template>
@@ -319,6 +320,39 @@ const logout = () => {
                                 Relatorios
                             </NavLink>
                         </div>
+
+                        <!-- Área Técnica (menu colapsável) -->
+                        <div class="mt-4">
+                            <button
+                                @click="showTechnicalMenu = !showTechnicalMenu"
+                                class="flex items-center justify-between w-full px-3 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                            >
+                                <span class="flex items-center space-x-2">
+                                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M11.049 2.927c.3-1.09 1.902-1.09 2.202 0l.262.95a1 1 0 00.95.69h1.004c1.163 0 1.64 1.487.707 2.183l-.806.62a1 1 0 00-.364 1.118l.307.999c.33 1.071-.86 1.948-1.81 1.38l-.88-.52a1 1 0 00-1.152.1l-.78.61c-.91.712-2.245-.105-2.016-1.195l.214-1.01a1 1 0 00-.334-1.009l-.75-.64c-.86-.735-.37-2.127.766-2.127h.994a1 1 0 00.958-.69l.262-.95z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v8m-4-4h8"/>
+                                    </svg>
+                                    <span>Área Técnica</span>
+                                </span>
+                                <svg class="w-4 h-4 text-gray-600 transform transition-transform"
+                                    :class="showTechnicalMenu ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+
+                            <div v-show="showTechnicalMenu" class="mt-2 pl-3 space-y-1">
+                                <Link href="#" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Criar Formulário</Link>
+                                <Link href="#" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Ver Formulários</Link>
+                                <Link href="#" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Listar formulários</Link>
+                                <Link href="#" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Formulários Impressos</Link>
+                                <Link href="#" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Upload de resultado</Link>
+                                <Link href="#" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Amostras atrasadas</Link>
+                                <Link href="#" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Amostras atrasadas pagas</Link>
+                            </div>
+                        </div>
+                        <!-- fim Área Técnica -->
                     </nav>
                 </aside>
 
