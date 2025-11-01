@@ -28,9 +28,9 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">RG</label>
+                        <label class="block text-sm font-medium text-gray-700">Registro</label>
                         <input 
-                            v-model="form.rg" 
+                            v-model="form.register" 
                             type="text" 
                             required
                             readonly
@@ -39,11 +39,20 @@
                     </div>
 
                     <div>
+                        <label class="block text-sm font-medium text-gray-700">Protocolo</label>
+                        <input 
+                            v-model="form.protocol" 
+                            type="text" 
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            placeholder="Digite o protocolo (opcional)"
+                        >
+                    </div>
+
+                    <div>
                         <label class="block text-sm font-medium text-gray-700">Data de Nascimento</label>
                         <input 
-                            v-model="form.birth_date" 
+                            v-model="form.birth" 
                             type="date" 
-                            required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         >
                     </div>
@@ -51,13 +60,51 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Sexo</label>
                         <select 
-                            v-model="form.sex" 
+                            v-model="form.genre" 
                             required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         >
                             <option value="">Selecione o sexo</option>
-                            <option value="macho">Macho</option>
-                            <option value="femea">Fêmea</option>
+                            <option value="1">Macho</option>
+                            <option value="2">Fêmea</option>
+                            <option value="0">Indefinido</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Tipo de Animal</label>
+                        <select 
+                            v-model="form.animal_type" 
+                            required
+                            @change="loadBreeds"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        >
+                            <option value="">Selecione o tipo</option>
+                            <option v-for="type in animalTypes" :key="type.id" :value="type.id">
+                                {{ type.name }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Raça</label>
+                        <select 
+                            v-model="form.breed_id" 
+                            required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        >
+                            <option value="">Selecione a raça</option>
+                            <option v-for="breed in availableBreeds" :key="breed.id" :value="breed.id">
+                                {{ breed.name }}
+                            </option>
+                        </select>
+                    </div>
+                            <option value="">Selecione a espécie</option>
+                            <option value="bovino">Bovino</option>
+                            <option value="equino">Equino</option>
+                            <option value="suino">Suíno</option>
+                            <option value="caprino">Caprino</option>
+                            <option value="ovino">Ovino</option>
                         </select>
                     </div>
 
@@ -92,10 +139,6 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
-    owner: {
-        type: Object,
-        default: null
-    },
     animalType: {
         type: String,
         default: ''
@@ -109,13 +152,18 @@ const props = defineProps({
 const emit = defineEmits(['close', 'animal-created']);
 
 const processing = ref(false);
+const animalTypes = ref([]);
+const breeds = ref([]);
+const availableBreeds = ref([]);
 
 const form = reactive({
     name: '',
-    rg: '',
-    birth_date: '',
-    sex: '',
-    owner_id: null
+    register: '',
+    protocol: '',
+    birth: '',
+    genre: '',
+    animal_type: '',
+    breed_id: ''
 });
 
 const animalTypeLabel = computed(() => {
@@ -127,14 +175,40 @@ const animalTypeLabel = computed(() => {
     }
 });
 
+// Carregar tipos de animais e raças
+const loadAnimalTypes = async () => {
+    try {
+        const response = await axios.get(route('admin.animal-types.index'));
+        animalTypes.value = response.data;
+    } catch (error) {
+        console.error('Erro ao carregar tipos de animais:', error);
+    }
+};
+
+const loadBreeds = async () => {
+    if (!form.animal_type) {
+        availableBreeds.value = [];
+        return;
+    }
+    
+    try {
+        const response = await axios.get(route('admin.breeds.by-type', form.animal_type));
+        availableBreeds.value = response.data;
+    } catch (error) {
+        console.error('Erro ao carregar raças:', error);
+        availableBreeds.value = [];
+    }
+};
+
 watch(() => props.show, (newValue) => {
     if (newValue) {
-        form.rg = props.rg;
-        form.owner_id = props.owner?.id;
+        form.register = props.rg;
+        loadAnimalTypes();
+        
         if (props.animalType === 'father') {
-            form.sex = 'macho';
+            form.genre = '1'; // Macho
         } else if (props.animalType === 'mother') {
-            form.sex = 'femea';
+            form.genre = '2'; // Fêmea
         }
     }
 });
@@ -144,6 +218,7 @@ const closeModal = () => {
     Object.keys(form).forEach(key => {
         form[key] = '';
     });
+    availableBreeds.value = [];
     emit('close');
 };
 

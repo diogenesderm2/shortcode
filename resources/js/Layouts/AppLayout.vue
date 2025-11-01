@@ -297,8 +297,8 @@ const showTechnicalMenu = ref(false);
                     <nav class="space-y-2">
                         <!-- Navigation Links -->
                         <div class="">
-                            <NavLink :href="route('admin.owner.index')"
-                                :active="route().current('admin.owner.*')">
+                            <NavLink :href="route('admin.owners.index')"
+                                :active="route().current('admin.owners.*')">>
                                 Proprietários
                             </NavLink>
                         </div>
@@ -310,8 +310,14 @@ const showTechnicalMenu = ref(false);
                         </div>
                         <div class="">
                             <NavLink :href="route('admin.samples.create')"
-                                :active="route().current('admin.samples.*')">
+                                :active="route().current('admin.samples.create')">
                                 Cadastrar amostras
+                            </NavLink>
+                        </div>
+                        <div class="">
+                            <NavLink :href="route('admin.samples.add-to-form')"
+                                :active="route().current('admin.samples.add-to-form')">
+                                Adicionar ao Formulário
                             </NavLink>
                         </div>
                         <div class="">
@@ -343,7 +349,7 @@ const showTechnicalMenu = ref(false);
                             </button>
 
                             <div v-show="showTechnicalMenu" class="mt-2 pl-3 space-y-1">
-                                <Link href="#" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Criar Formulário</Link>
+                                <Link :href="route('admin.samples.add-to-form')" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Criar Formulário</Link>
                                 <Link href="#" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Ver Formulários</Link>
                                 <Link href="#" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Listar formulários</Link>
                                 <Link href="#" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Formulários Impressos</Link>

@@ -35,7 +35,7 @@
                                     </div>
                                 </div>
                                 <div class="owner-back-button ">
-                                    <Link :href="route('admin.owner.index')"
+                                    <Link :href="route('admin.owners.index')"
                                         class="mt-4 md:mt-0 flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
                                     <i class="fas fa-arrow-left mr-2"></i>
                                     Voltar para a lista

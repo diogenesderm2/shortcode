@@ -2,7 +2,8 @@
 
 namespace Database\Factories\Admin\Animal;
 
-use App\Models\Admin\Owner\Owner;
+use App\Models\Admin\Animal\AnimalType;
+use App\Models\Admin\Animal\Breed;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,11 +19,14 @@ class AnimalFactory extends Factory
     public function definition(): array
     {
         return [
+            'old_id' => $this->faker->optional()->randomNumber(6),
+            'animal_type' => AnimalType::inRandomOrder()->first()?->id ?? 1,
+            'breed_id' => Breed::inRandomOrder()->first()?->id ?? 1,
+            'protocol' => $this->faker->optional()->numerify('PROT####'),
             'name' => $this->faker->firstName(),
-            'rg' => $this->faker->unique()->numerify('RG######'),
-            'birth_date' => $this->faker->date(),
-            'sex' => $this->faker->randomElement(['macho', 'femea']),
-            'owner_id' => Owner::factory(),
+            'register' => $this->faker->unique()->numerify('RG######'),
+            'genre' => $this->faker->randomElement([0, 1, 2]),
+            'birth' => $this->faker->date(),
         ];
     }
 }

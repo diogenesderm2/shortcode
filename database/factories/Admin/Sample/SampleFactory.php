@@ -18,16 +18,42 @@ class SampleFactory extends Factory
      */
     public function definition(): array
     {
+        // IDs válidos baseados nos seeders
+        $validExamIds = [1, 2, 5, 6, 7, 8, 15];
+        $validBillingIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+        $validSampleTypeIds = [1, 2, 3, 4, 5];
+
         return [
-            'sample_code' => $this->faker->unique()->numerify('DNA####'),
+            'old_id' => $this->faker->optional()->randomNumber(6),
+            'exam_id' => $this->faker->randomElement($validExamIds),
+            'billing_type' => $this->faker->randomElement($validBillingIds),
+            'animal_id' => Animal::factory(),
             'owner_id' => Owner::factory(),
-            'father_id' => Animal::factory(),
-            'mother_id' => Animal::factory(),
-            'child_id' => Animal::factory(),
-            'sample_type' => $this->faker->randomElement(['sangue', 'pelo', 'saliva']),
-            'collection_date' => $this->faker->date(),
-            'observations' => $this->faker->optional()->sentence(),
-            'status' => $this->faker->randomElement(['pendente', 'processando', 'concluido']),
+            'sample_type_id' => $this->faker->randomElement($validSampleTypeIds),
+            'responsible_collect' => $this->faker->optional()->name(),
+            'responsible_collect_id' => null,
+            'user_registered' => null,
+            'user_updated' => null,
+            'user_released' => null,
+            'user_representative' => null,
+            'is_technique' => 0,
+            'is_default' => 0,
+            'is_released' => 0,
+            'priority' => 0,
+            'show_client' => 1,
+            'send_again' => 0,
+            'external_registry' => $this->faker->optional()->numerify('EXT####'),
+            'file_name' => null,
+            'value' => $this->faker->randomFloat(2, 50, 500),
+            'representative_percentage' => null,
+            'is_marked' => false,
+            'uploaded_at' => null,
+            'released_at' => null,
+            'collected_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
+            'added_spreadsheet_at' => null,
+            'external_sample_date' => null,
+            'canceled_at' => null,
+            'is_sent' => 0,
         ];
     }
 }

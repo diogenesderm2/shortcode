@@ -4,42 +4,78 @@ namespace App\Models\Admin\Animal;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Admin\Owner\Owner;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Admin\Sample\Sample;
 
 class Animal extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'old_id',
+        'animal_type',
+        'breed_id',
+        'protocol',
         'name',
-        'rg',
-        'birth_date',
-        'sex',
-        'owner_id',
+        'register',
+        'genre',
+        'birth',
     ];
 
     protected $casts = [
-        'birth_date' => 'date',
+        'birth' => 'date',
     ];
 
-    public function owner()
+    public function animalType()
     {
-        return $this->belongsTo(Owner::class);
+        return $this->belongsTo(AnimalType::class, 'animal_type');
     }
 
-    public function samplesAsFather()
+    public function breed()
     {
-        return $this->hasMany(Sample::class, 'father_id');
+        return $this->belongsTo(Breed::class, 'breed_id');
     }
 
-    public function samplesAsMother()
+    public function samples()
     {
-        return $this->hasMany(Sample::class, 'mother_id');
+        return $this->hasMany(Sample::class, 'animal_id');
     }
 
-    public function samplesAsChild()
+    // Accessor para o sexo em formato legível
+    public function getGenreTextAttribute()
     {
-        return $this->hasMany(Sample::class, 'child_id');
+        return match($this->genre) {
+            1 => 'Macho',
+            2 => 'Fêmea',
+            default => 'Indefinido'
+        };
+    }
+
+    // Accessor para compatibilidade com código antigo
+    public function getSexAttribute()
+    {
+        return match($this->genre) {
+            1 => 'macho',
+            2 => 'femea',
+            default => 'indefinido'
+        };
+    }
+
+    // Accessor para o RG (compatibilidade)
+    public function getRgAttribute()
+    {
+        return $this->register;
+    }
+
+    // Accessor para birth_date (compatibilidade)
+    public function getBirthDateAttribute()
+    {
+        return $this->birth;
+    }
+
+    // Accessor para species (compatibilidade)
+    public function getSpeciesAttribute()
+    {
+        return $this->animalType?->name ? strtolower($this->animalType->name) : 'bovino';
     }
 }

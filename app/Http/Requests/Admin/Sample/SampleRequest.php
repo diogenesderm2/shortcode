@@ -22,14 +22,15 @@ class SampleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'sample_code' => 'required|string|unique:samples,sample_code',
+            'exam_id' => 'required|exists:exam_types,id',
+            'billing_type' => 'required|exists:billing_types,id',
+            'animal_id' => 'required|exists:animals,id',
             'owner_id' => 'required|exists:owners,id',
-            'father_id' => 'nullable|exists:animals,id',
-            'mother_id' => 'nullable|exists:animals,id',
-            'child_id' => 'required|exists:animals,id',
-            'sample_type' => 'required|in:sangue,pelo,saliva',
-            'collection_date' => 'required|date',
-            'observations' => 'nullable|string',
+            'sample_type_id' => 'required|exists:sample_types,id',
+            'responsible_collect' => 'nullable|string|max:255',
+            'value' => 'nullable|numeric|min:0',
+            'collected_at' => 'nullable|date',
+            'external_registry' => 'nullable|string|max:255',
         ];
     }
 }

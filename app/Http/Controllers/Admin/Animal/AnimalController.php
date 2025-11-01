@@ -50,10 +50,8 @@ class AnimalController extends Controller
         $animal->load('owner');
         
         // Get samples related to this animal
-        $samples = Sample::where('child_id', $animal->id)
-            ->orWhere('father_id', $animal->id)
-            ->orWhere('mother_id', $animal->id)
-            ->with(['child', 'father', 'mother'])
+        $samples = Sample::where('animal_id', $animal->id)
+            ->with(['owner', 'animal'])
             ->get();
 
         return Inertia::render('Admin/Animal/Edit', [
@@ -82,10 +80,8 @@ class AnimalController extends Controller
         $animal->load('owner');
         
         // Get samples related to this animal
-        $samples = Sample::where('child_id', $animal->id)
-            ->orWhere('father_id', $animal->id)
-            ->orWhere('mother_id', $animal->id)
-            ->with(['child', 'father', 'mother'])
+        $samples = Sample::where('animal_id', $animal->id)
+            ->with(['owner', 'animal'])
             ->get();
 
         return Inertia::render('Admin/Animal/Show', [
