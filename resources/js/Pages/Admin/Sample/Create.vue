@@ -324,13 +324,22 @@ const checkAnimal = async (type) => {
     try {
         const response = await axios.post(route('admin.samples.check-animal'), {
             rg: rg,
-            owner_id: selectedOwner.value.id
+            owner_id: selectedOwner.value.id,
+            type: type
         });
 
-        if (response.data.exists) {
+        if (response.data.exists && !response.data.sex_mismatch && response.data.animal) {
             animals[type] = response.data.animal;
             sampleForm[`${type}_id`] = response.data.animal.id;
-            console.log(`Animal ${type} encontrado:`, response.data.animal); // Debug
+            console.log(`Animal ${type} encontrado:`, response.data.animal);
+        } else if (response.data.exists && response.data.sex_mismatch) {
+            animals[type] = null;
+            sampleForm[`${type}_id`] = null;
+            alert(type === 'father' 
+                ? 'O RG informado pertence a um animal que não é Macho. Selecione um Macho para o Pai.'
+                : type === 'mother'
+                    ? 'O RG informado pertence a um animal que não é Fêmea. Selecione uma Fêmea para a Mãe.'
+                    : 'Sexo incompatível para o tipo selecionado.');
         } else {
             // Animal doesn't exist, show modal to create
             currentAnimalType.value = type;
