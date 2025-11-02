@@ -291,11 +291,29 @@ const showTechnicalMenu = ref(false);
                     <nav class="space-y-2">
                         <!-- Navigation Links -->
                         <div class="">
+                            <NavLink :href="route('dashboard')"
+                                :active="route().current('dashboard')">
+                                <span class="inline-flex items-center">
+                                    <i class="fas fa-chart-bar mr-2 text-gray-600"></i>
+                                    Dashboard
+                                </span>
+                            </NavLink>
+                        </div>
+                        <div class="">
                             <NavLink :href="route('admin.owners.index')"
                                 :active="route().current('admin.owners.*')">
                                 <span class="inline-flex items-center">
                                     <i class="fas fa-users mr-2 text-gray-600"></i>
                                     Proprietários
+                                </span>
+                            </NavLink>
+                        </div>
+                        <div class="">
+                            <NavLink :href="route('admin.users.index')"
+                                :active="route().current('admin.users.*')">
+                                <span class="inline-flex items-center">
+                                    <i class="fas fa-user-cog mr-2 text-gray-600"></i>
+                                    Usuários
                                 </span>
                             </NavLink>
                         </div>

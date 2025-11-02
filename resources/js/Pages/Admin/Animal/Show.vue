@@ -53,14 +53,6 @@ const setNewSampleOpen = (value) => {
 const setActiveTab = (tab) => {
     activeTab.value = tab;
 };
-
-const showGeneticResults = () => {
-    showGeneticModal.value = true;
-};
-
-const closeGeneticModal = () => {
-    showGeneticModal.value = false;
-};
 </script>
 
 <template>

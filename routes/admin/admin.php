@@ -4,12 +4,16 @@ use App\Http\Controllers\Admin\Cagetories\CategoriesController;
 use App\Http\Controllers\Admin\Owner\OwnerController;
 use App\Http\Controllers\Admin\Sample\SampleController;
 use App\Http\Controllers\Admin\Animal\AnimalController;
+use App\Http\Controllers\Admin\User\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Posts\PostController;
 use App\Http\Controllers\Admin\Reports\ReportController;
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
+        // User management routes (temporarily without permissions for testing)
+        Route::resource('users', UserController::class);
+        
         Route::resource('owners', OwnerController::class);
         Route::get('owners/search/{id}', [OwnerController::class, 'searchById'])->name('owners.search');
         Route::resource('categories', CategoriesController::class);

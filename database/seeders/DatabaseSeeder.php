@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            RolesAndPermissionsSeeder::class,
             UserSeeder::class,
             OwnerTableSeeder::class,
             SampleTypeSeeder::class,
@@ -20,8 +21,8 @@ class DatabaseSeeder extends Seeder
             BillingTypeSeeder::class,
             TestTypeSeeder::class,
             AnimalSeeder::class,
-            SampleSeeder::class,
-            GeneticDataSeeder::class,
+            //SampleSeeder::class,
+            //GeneticDataSeeder::class,
         ]);
     }
 }
