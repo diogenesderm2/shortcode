@@ -42,7 +42,7 @@ const showTechnicalMenu = ref(false);
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <!-- Logo -->
-                                <ApplicationMark class="block h-9 w-auto mt-3" />
+                            <ApplicationMark class="block h-9 w-auto mt-3" />
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -291,8 +291,7 @@ const showTechnicalMenu = ref(false);
                     <nav class="space-y-2">
                         <!-- Navigation Links -->
                         <div class="">
-                            <NavLink :href="route('dashboard')"
-                                :active="route().current('dashboard')">
+                            <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                 <span class="inline-flex items-center">
                                     <i class="fas fa-chart-bar mr-2 text-gray-600"></i>
                                     Dashboard
@@ -300,38 +299,19 @@ const showTechnicalMenu = ref(false);
                             </NavLink>
                         </div>
                         <div class="">
-                            <NavLink :href="route('admin.owners.index')"
-                                :active="route().current('admin.owners.*')">
+                            <NavLink :href="route('admin.owners.index')" :active="route().current('admin.owners.*')">
                                 <span class="inline-flex items-center">
                                     <i class="fas fa-users mr-2 text-gray-600"></i>
                                     Proprietários
                                 </span>
                             </NavLink>
                         </div>
+                        
                         <div class="">
-                            <NavLink :href="route('admin.users.index')"
-                                :active="route().current('admin.users.*')">
-                                <span class="inline-flex items-center">
-                                    <i class="fas fa-user-cog mr-2 text-gray-600"></i>
-                                    Usuários
-                                </span>
-                            </NavLink>
-                        </div>
-                        <div class="">
-                            <NavLink :href="route('admin.animals.index')"
-                                :active="route().current('admin.animals.*')">
+                            <NavLink :href="route('admin.animals.index')" :active="route().current('admin.animals.*')">
                                 <span class="inline-flex items-center">
                                     <i class="fas fa-paw mr-2 text-gray-600"></i>
                                     Animais
-                                </span>
-                            </NavLink>
-                        </div>
-                        <div class="">
-                            <NavLink :href="route('upload.resultado')"
-                                :active="route().current('upload.resultado')">
-                                <span class="inline-flex items-center">
-                                    <i class="fas fa-dna mr-2 text-gray-600"></i>
-                                    Upload DNA
                                 </span>
                             </NavLink>
                         </div>
@@ -344,18 +324,8 @@ const showTechnicalMenu = ref(false);
                                 </span>
                             </NavLink>
                         </div>
-                        <!-- Removido: Adicionar ao Formulário -->
-                        <!--
                         <div class="">
-                            <NavLink :href="route('admin.samples.add-to-form')"
-                                :active="route().current('admin.samples.add-to-form')">
-                                Adicionar ao Formulário
-                            </NavLink>
-                        </div>
-                        -->
-                        <div class="">
-                            <NavLink :href="route('admin.reports.index')"
-                                :active="route().current('admin.reports.*')">
+                            <NavLink :href="route('admin.reports.index')" :active="route().current('admin.reports.*')">
                                 <span class="inline-flex items-center">
                                     <i class="fas fa-chart-bar mr-2 text-gray-600"></i>
                                     Relatorios
@@ -363,33 +333,71 @@ const showTechnicalMenu = ref(false);
                             </NavLink>
                         </div>
 
+                        <!-- Revisão de Resultados -->
+                        <div class="" v-if="$page.props.auth.user?.permissions?.includes('review results')">
+                            <NavLink :href="route('admin.review.index')" :active="route().current('admin.review.*')">
+                                <span class="inline-flex items-center">
+                                    <i class="fas fa-clipboard-check mr-2 text-gray-600"></i>
+                                    Revisão de Resultados
+                                </span>
+                            </NavLink>
+                        </div>
+
                         <!-- Área Técnica (menu colapsável) -->
                         <div class="mt-4">
-                            <button
-                                @click="showTechnicalMenu = !showTechnicalMenu"
-                                class="flex items-center justify-between w-full px-3 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-                            >
+                            <button @click="showTechnicalMenu = !showTechnicalMenu"
+                                class="flex items-center justify-between w-full px-3 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
                                 <span class="flex items-center space-x-2">
                                     <i class="fas fa-tools text-gray-600"></i>
                                     <span>Área Técnica</span>
                                 </span>
                                 <svg class="w-4 h-4 text-gray-600 transform transition-transform"
-                                    :class="showTechnicalMenu ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    :class="showTechnicalMenu ? 'rotate-180' : ''" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
 
                             <div v-show="showTechnicalMenu" class="mt-2 pl-3 space-y-1">
-                                <Link :href="route('admin.samples.add-to-form')" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Criar Formulário</Link>
-                                <Link href="#" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Ver Formulários</Link>
-                                <Link href="#" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Listar formulários</Link>
-                                <Link href="#" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Formulários Impressos</Link>
-                                <Link href="#" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Upload de resultado</Link>
-                                <Link href="#" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Amostras atrasadas</Link>
-                                <Link href="#" class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Amostras atrasadas pagas</Link>
+                                <Link :href="route('admin.samples.add-to-form')"
+                                    class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Criar
+                                Formulário
+                                </Link>
+                                <Link href="#"
+                                    class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Ver
+                                Formulários</Link>
+                                <Link href="#"
+                                    class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Listar
+                                formulários</Link>
+                                <Link href="#"
+                                    class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">
+                                Formulários Impressos</Link>
+
+                                <NavLink :href="route('upload.resultado')"
+                                    :active="route().current('upload.resultado')">
+                                    <span class="inline-flex items-center">
+                                        Upload DNA
+                                    </span>
+                                </NavLink>
+
+                                <Link href="#"
+                                    class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Amostras
+                                atrasadas</Link>
+                                <Link href="#"
+                                    class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Amostras
+                                atrasadas pagas</Link>
                             </div>
                         </div>
                         <!-- fim Área Técnica -->
+                         <div class="">
+                            <NavLink :href="route('admin.users.index')" :active="route().current('admin.users.*')">
+                                <span class="inline-flex items-center">
+                                    <i class="fas fa-user-cog mr-2 text-gray-600"></i>
+                                    Usuários
+                                </span>
+                            </NavLink>
+                        </div>
                     </nav>
                 </aside>
 

@@ -9,41 +9,129 @@ use Spatie\Permission\Models\Permission;
 
 class SetupAdminPermissions extends Command
 {
-    protected $signature = 'admin:setup-permissions {email?}';
-    protected $description = 'Setup admin permissions for a user';
+    protected $signature = 'permissions:manage {action} {--email=} {--role=} {--permission=}';
+    protected $description = 'Gerenciar permissões e roles do sistema';
 
     public function handle()
     {
-        $email = $this->argument('email') ?? 'admin@admin.com';
+        $action = $this->argument('action');
+
+        switch ($action) {
+            case 'list-roles':
+                $this->listRoles();
+                break;
+            case 'list-permissions':
+                $this->listPermissions();
+                break;
+            case 'assign-role':
+                $this->assignRole();
+                break;
+            case 'user-permissions':
+                $this->showUserPermissions();
+                break;
+            case 'list-users':
+                $this->listUsers();
+                break;
+            default:
+                $this->error('Ação inválida. Use: list-roles, list-permissions, assign-role, user-permissions, list-users');
+                return 1;
+        }
+
+        return 0;
+    }
+
+    private function listRoles()
+    {
+        $this->info('=== ROLES DO SISTEMA ===');
+        $roles = Role::with('permissions')->get();
         
-        // Encontrar o usuário
+        foreach ($roles as $role) {
+            $this->line("📋 {$role->name} ({$role->permissions->count()} permissões)");
+        }
+    }
+
+    private function listPermissions()
+    {
+        $this->info('=== PERMISSÕES DO SISTEMA ===');
+        $permissions = Permission::all()->groupBy(function($permission) {
+            return explode(' ', $permission->name)[1] ?? 'outros';
+        });
+
+        foreach ($permissions as $group => $perms) {
+            $this->line("\n📁 " . strtoupper($group));
+            foreach ($perms as $permission) {
+                $this->line("  - {$permission->name}");
+            }
+        }
+    }
+
+    private function assignRole()
+    {
+        $email = $this->option('email');
+        $roleName = $this->option('role');
+
+        if (!$email || !$roleName) {
+            $this->error('Use: --email=usuario@email.com --role=nome_do_role');
+            return;
+        }
+
         $user = User::where('email', $email)->first();
-        
         if (!$user) {
             $this->error("Usuário com email {$email} não encontrado!");
-            return 1;
+            return;
         }
 
-        // Verificar se o role admin existe
-        $adminRole = Role::where('name', 'admin')->first();
-        
-        if (!$adminRole) {
-            $this->error("Role 'admin' não encontrado! Execute o seeder primeiro.");
-            return 1;
+        $role = Role::where('name', $roleName)->first();
+        if (!$role) {
+            $this->error("Role {$roleName} não encontrado!");
+            $this->info('Roles disponíveis: ' . Role::pluck('name')->implode(', '));
+            return;
         }
 
-        // Atribuir role admin ao usuário
-        $user->assignRole('admin');
+        $user->assignRole($roleName);
+        $this->info("Role '{$roleName}' atribuído ao usuário {$user->name} ({$user->email})");
+    }
+
+    private function showUserPermissions()
+    {
+        $email = $this->option('email') ?? 'admin@admin.com';
         
-        $this->info("Role 'admin' atribuído ao usuário {$user->name} ({$user->email})");
+        $user = User::where('email', $email)->first();
+        if (!$user) {
+            $this->error("Usuário com email {$email} não encontrado!");
+            return;
+        }
+
+        $this->info("=== PERMISSÕES DO USUÁRIO: {$user->name} ===");
         
-        // Listar permissões do usuário
+        // Mostrar roles
+        $roles = $user->getRoleNames();
+        $this->line("👤 Roles: " . $roles->implode(', '));
+        
+        // Mostrar permissões
         $permissions = $user->getAllPermissions();
-        $this->info("Permissões do usuário:");
-        foreach ($permissions as $permission) {
-            $this->line("- {$permission->name}");
-        }
+        $this->line("🔐 Total de permissões: {$permissions->count()}");
         
-        return 0;
+        $groupedPermissions = $permissions->groupBy(function($permission) {
+            return explode(' ', $permission->name)[1] ?? 'outros';
+        });
+
+        foreach ($groupedPermissions as $group => $perms) {
+            $this->line("\n📁 " . strtoupper($group));
+            foreach ($perms as $permission) {
+                $this->line("  ✓ {$permission->name}");
+            }
+        }
+    }
+
+    private function listUsers()
+    {
+        $this->info('=== USUÁRIOS DO SISTEMA ===');
+        $users = User::with('roles')->get();
+        
+        foreach ($users as $user) {
+            $roles = $user->getRoleNames()->implode(', ');
+            $this->line("👤 {$user->name} ({$user->email}) - Roles: {$roles}");
+        }
     }
 }

@@ -43,7 +43,13 @@ class HandleInertiaRequests extends Middleware
             ],
               'auth' => [
                 'user' => fn () => $request->user()
-                    ? $request->user()->only(['id', 'name', 'email']) // escolha os campos que quer expor
+                    ? array_merge(
+                        $request->user()->only(['id', 'name', 'email']),
+                        [
+                            'permissions' => $request->user()->getAllPermissions()->pluck('name')->toArray(),
+                            'roles' => $request->user()->getRoleNames()->toArray(),
+                        ]
+                    )
                     : null,
             ],
         ];
