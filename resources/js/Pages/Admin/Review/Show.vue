@@ -39,7 +39,14 @@
                                     <div>
                                         <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
                                             Animal</h4>
-                                        <p class="text-lg font-medium text-gray-900">{{ result.sample.animal.name }}</p>
+                                        <p class="text-lg font-medium text-gray-900">
+                                            <Link 
+                                                :href="route('admin.animals.show', result.sample.animal.id)"
+                                                class="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-200"
+                                            >
+                                                {{ result.sample.animal.name }}
+                                            </Link>
+                                        </p>
                                         <p class="text-sm text-gray-500">Registro: {{ result.sample.animal.register ||
                                             'N/A' }}
                                         </p>

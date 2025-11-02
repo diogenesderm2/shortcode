@@ -7,6 +7,7 @@ use App\Models\GeneticResult;
 use App\Models\Admin\Sample\Sample;
 use App\Models\Admin\Animal\Animal;
 use App\Models\Admin\Owner\Owner;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -18,68 +19,87 @@ class ReviewController extends Controller
      */
     public function index(Request $request)
     {
-        $query = GeneticResult::with([
-            'sample.animal.owner',
-            'marker',
-            'reviewer'
-        ]);
+        // Use join approach to avoid relationship issues
+        $query = Sample::select('samples.*')
+            ->join('genetic_results', 'samples.id', '=', 'genetic_results.sample_id')
+            ->with('animal.owner')
+            ->distinct();
 
-        // Filter by status
+        // Filter by status based on is_released field
         if ($request->has('status') && $request->status !== '') {
-            $query->where('status', $request->status);
+            switch ($request->status) {
+                case 'pending':
+                    $query->where('is_released', 0);
+                    break;
+                case 'approved':
+                    $query->where('is_released', 1);
+                    break;
+                // For compatibility, we can add other statuses if needed
+                default:
+                    $query->where('is_released', 0);
+            }
         } else {
-            // Default to pending and under review
-            $query->whereIn('status', [GeneticResult::STATUS_PENDING, GeneticResult::STATUS_UNDER_REVIEW]);
+            // Default to pending (not released)
+            $query->where('is_released', 0);
         }
 
         // Filter by animal
         if ($request->has('animal_id') && $request->animal_id !== '') {
-            $sampleIds = Sample::where('animal_id', $request->animal_id)->pluck('id');
-            $query->whereIn('sample_id', $sampleIds);
+            $query->where('animal_id', $request->animal_id);
         }
 
         // Filter by owner
         if ($request->has('owner_id') && $request->owner_id !== '') {
-            $sampleIds = Sample::whereHas('animal', function($q) use ($request) {
+            $query->whereHas('animal', function($q) use ($request) {
                 $q->where('owner_id', $request->owner_id);
-            })->pluck('id');
-            $query->whereIn('sample_id', $sampleIds);
+            });
         }
 
         // Search by marker name
         if ($request->has('search') && $request->search !== '') {
-            $query->whereHas('marker', function($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%');
-            });
+            $query->join('genetic_results as gr_search', 'samples.id', '=', 'gr_search.sample_id')
+                  ->join('genetic_markers as gm_search', 'gr_search.marker_id', '=', 'gm_search.id')
+                  ->where('gm_search.name', 'like', '%' . $request->search . '%');
         }
 
-        // Order by sample_id and created_at desc
-        $query->orderBy('sample_id', 'desc')->orderBy('created_at', 'desc');
+        // Order by id desc
+        $query->orderBy('id', 'desc');
 
-        $allResults = $query->get();
+        $allSamples = $query->get();
         
-        // Group results by sample
-        $groupedResults = $allResults->groupBy('sample_id')->map(function ($results, $sampleId) {
-            $firstResult = $results->first();
-            $sample = $firstResult->sample;
+        // Transform samples to match expected format
+        $groupedResults = $allSamples->map(function ($sample) {
+            // Determine status based on is_released field
+            $sampleStatus = $sample->is_released ? 'approved' : 'pending';
             
-            // Determine overall sample status based on individual result statuses
-            $statuses = $results->pluck('status')->unique();
-            $sampleStatus = $this->determineSampleStatus($statuses);
+            // Get genetic results count using direct query to avoid relationship issues
+            $resultsCount = \DB::table('genetic_results')->where('sample_id', $sample->id)->count();
+            
+            // Get genetic results using direct query
+            $results = \DB::table('genetic_results')
+                ->join('genetic_markers', 'genetic_results.marker_id', '=', 'genetic_markers.id')
+                ->leftJoin('users', 'genetic_results.reviewed_by', '=', 'users.id')
+                ->where('genetic_results.sample_id', $sample->id)
+                ->select(
+                    'genetic_results.*',
+                    'genetic_markers.name as marker_name',
+                    'users.name as reviewer_name'
+                )
+                ->get();
             
             return [
-                'sample_id' => $sampleId,
+                'sample_id' => $sample->id,
                 'sample' => $sample,
-                'results_count' => $results->count(),
+                'results_count' => $resultsCount,
                 'status' => $sampleStatus,
-                'reviewed_by' => $firstResult->reviewed_by ? $firstResult->reviewer : null,
-                'reviewed_at' => $firstResult->reviewed_at,
-                'created_at' => $firstResult->created_at,
+                'reviewed_by' => $sample->user_released ? User::find($sample->user_released) : null,
+                'reviewed_at' => $sample->released_at,
+                'created_at' => $sample->created_at,
                 'results' => $results,
-                // For bulk actions, we'll use the first result's ID as reference
-                'id' => $firstResult->id
+                // For bulk actions, we'll use the sample ID as reference
+                'id' => $sample->id
             ];
-        })->values();
+        });
 
         // Manual pagination
         $perPage = 20;
@@ -103,22 +123,17 @@ class ReviewController extends Controller
         $owners = Owner::select('id', 'name')->orderBy('name')->get();
         $animals = Animal::select('id', 'name', 'owner_id')->with('owner:id,name')->orderBy('name')->get();
 
-        // Statistics - now based on samples, not individual results
-        $allSamples = GeneticResult::with('sample')
-            ->select('sample_id')
+        // Statistics - based on samples is_released field
+        $allSamplesForStats = Sample::select('samples.*')
+            ->join('genetic_results', 'samples.id', '=', 'genetic_results.sample_id')
             ->distinct()
-            ->get()
-            ->map(function ($result) {
-                $sampleResults = GeneticResult::where('sample_id', $result->sample_id)->get();
-                $statuses = $sampleResults->pluck('status')->unique();
-                return $this->determineSampleStatus($statuses);
-            });
-
+            ->get();
+        
         $stats = [
-            'pending' => $allSamples->filter(fn($status) => $status === 'pending')->count(),
-            'under_review' => $allSamples->filter(fn($status) => $status === 'under_review')->count(),
-            'approved' => $allSamples->filter(fn($status) => $status === 'approved')->count(),
-            'rejected' => $allSamples->filter(fn($status) => $status === 'rejected')->count(),
+            'pending' => $allSamplesForStats->where('is_released', 0)->count(),
+            'under_review' => 0, // Not used with is_released logic
+            'approved' => $allSamplesForStats->where('is_released', 1)->count(),
+            'rejected' => 0, // Not used with is_released logic
         ];
 
         return Inertia::render('Admin/Review/Index', [
@@ -130,36 +145,7 @@ class ReviewController extends Controller
         ]);
     }
 
-    /**
-     * Determine sample status based on individual result statuses
-     */
-    private function determineSampleStatus($statuses)
-    {
-        $statusArray = $statuses->toArray();
-        
-        // If any result is rejected, sample is rejected
-        if (in_array('rejected', $statusArray)) {
-            return 'rejected';
-        }
-        
-        // If all results are approved, sample is approved
-        if (count($statusArray) === 1 && $statusArray[0] === 'approved') {
-            return 'approved';
-        }
-        
-        // If any result is under review, sample is under review
-        if (in_array('under_review', $statusArray)) {
-            return 'under_review';
-        }
-        
-        // If all results are approved (multiple statuses but all approved)
-        if (count(array_unique($statusArray)) === 1 && $statusArray[0] === 'approved') {
-            return 'approved';
-        }
-        
-        // Default to pending
-        return 'pending';
-    }
+
 
     /**
      * Show the form for reviewing a specific result
@@ -186,37 +172,70 @@ class ReviewController extends Controller
     }
 
     /**
-     * Update the review status
+     * Show all genetic results for a specific sample
      */
-    public function updateStatus(Request $request, GeneticResult $result)
+    public function showSample(Sample $sample)
     {
-        $request->validate([
-            'status' => 'required|in:under_review,approved,rejected',
-            'review_notes' => 'nullable|string|max:1000',
-            'quality_metrics' => 'nullable|array',
+        $sample->load([
+            'animal.owner'
         ]);
 
-        if (!$result->canBeReviewed() && $request->status !== 'under_review') {
-            return back()->withErrors(['status' => 'Este resultado não pode ser revisado no status atual.']);
+        // Get all genetic results for this sample
+        $results = GeneticResult::where('sample_id', $sample->id)
+            ->with(['marker', 'reviewer', 'sample.animal.owner'])
+            ->orderBy('marker_id')
+            ->get();
+
+        // If there are results, show the first one as the main result
+        $mainResult = $results->first();
+        $relatedResults = $results->skip(1)->values()->toArray();
+
+        if (!$mainResult) {
+            return redirect()->route('admin.review.index')
+                ->with('error', 'Nenhum resultado genético encontrado para esta amostra.');
         }
 
-        DB::transaction(function () use ($request, $result) {
-            $result->update([
-                'status' => $request->status,
-                'reviewed_by' => auth()->id(),
-                'reviewed_at' => now(),
-                'review_notes' => $request->review_notes,
-                'quality_metrics' => $request->quality_metrics,
-            ]);
-        });
+        return Inertia::render('Admin/Review/Show', [
+            'result' => $mainResult,
+            'relatedResults' => $relatedResults,
+        ]);
+    }
 
-        $statusLabel = match($request->status) {
-            'under_review' => 'colocado em revisão',
-            'approved' => 'aprovado',
-            'rejected' => 'rejeitado',
-        };
+    /**
+     * Update the review status
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,approved',
+            'review_notes' => 'nullable|string'
+        ]);
 
-        return back()->with('success', "Resultado {$statusLabel} com sucesso!");
+        try {
+            // Find the sample instead of genetic result
+            $sample = Sample::findOrFail($id);
+            
+            // Update sample is_released field
+            $sample->is_released = $request->status === 'approved' ? 1 : 0;
+            $sample->user_released = $request->status === 'approved' ? auth()->id() : null;
+            $sample->released_at = $request->status === 'approved' ? now() : null;
+            $sample->save();
+
+            // Update all genetic results for this sample
+            GeneticResult::where('sample_id', $sample->id)
+                ->update([
+                    'status' => $request->status,
+                    'reviewed_by' => auth()->id(),
+                    'reviewed_at' => now(),
+                    'review_notes' => $request->review_notes,
+                ]);
+
+            $statusLabel = $request->status === 'approved' ? 'aprovada' : 'marcada como pendente';
+            return back()->with('success', "Amostra {$statusLabel} com sucesso!");
+
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Erro ao atualizar status: ' . $e->getMessage()]);
+        }
     }
 
     /**
@@ -236,8 +255,96 @@ class ReviewController extends Controller
     }
 
     /**
+     * Bulk update status for multiple samples
+     */
+    public function bulkUpdate(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer',
+            'status' => 'required|in:pending,approved',
+            'review_notes' => 'nullable|string'
+        ]);
+
+        try {
+            // Update samples instead of genetic results
+            $samples = Sample::whereIn('id', $request->ids)->get();
+            
+            foreach ($samples as $sample) {
+                $sample->is_released = $request->status === 'approved' ? 1 : 0;
+                $sample->user_released = $request->status === 'approved' ? auth()->id() : null;
+                $sample->released_at = $request->status === 'approved' ? now() : null;
+                $sample->save();
+
+                // Optionally update all genetic results for this sample
+                if ($request->has('review_notes')) {
+                    GeneticResult::where('sample_id', $sample->id)
+                        ->update([
+                            'review_notes' => $request->review_notes,
+                            'reviewed_by' => auth()->id(),
+                            'reviewed_at' => now(),
+                        ]);
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => count($request->ids) . ' amostras atualizadas com sucesso!'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao atualizar status: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Bulk update status for multiple results
      */
+    /**
+     * Bulk update status for samples (approve/reject all results in selected samples)
+     */
+    public function bulkUpdateSamples(Request $request)
+    {
+        $request->validate([
+            'sample_ids' => 'required|array|min:1',
+            'sample_ids.*' => 'exists:samples,id',
+            'status' => 'required|in:approved,rejected',
+            'review_notes' => 'nullable|string|max:1000',
+        ]);
+
+        $samples = Sample::whereIn('id', $request->sample_ids)->get();
+        $totalResults = 0;
+
+        DB::transaction(function () use ($request, $samples, &$totalResults) {
+            foreach ($samples as $sample) {
+                // Update sample status
+                $sample->update([
+                    'is_released' => $request->status === 'approved' ? 1 : 0,
+                    'user_released' => $request->status === 'approved' ? auth()->id() : null,
+                    'released_at' => $request->status === 'approved' ? now() : null,
+                ]);
+
+                // Update all genetic results for this sample
+                $results = GeneticResult::where('sample_id', $sample->id)->get();
+                foreach ($results as $result) {
+                    $result->update([
+                        'status' => $request->status,
+                        'reviewed_by' => auth()->id(),
+                        'reviewed_at' => now(),
+                        'review_notes' => $request->review_notes,
+                    ]);
+                    $totalResults++;
+                }
+            }
+        });
+
+        $statusLabel = $request->status === 'approved' ? 'aprovados' : 'rejeitados';
+        return back()->with('success', "{$totalResults} resultados {$statusLabel} com sucesso!");
+    }
+
     public function bulkUpdateStatus(Request $request)
     {
         $request->validate([

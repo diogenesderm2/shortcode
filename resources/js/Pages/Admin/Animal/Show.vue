@@ -30,6 +30,12 @@ const handleCompare = () => {
     console.log('Comparar amostras');
     // Implementar lógica de comparação
 };
+
+const handleSampleReleased = (sampleId) => {
+    console.log('Amostra liberada:', sampleId);
+    // Aqui você pode adicionar lógica adicional se necessário
+    // Por exemplo, recarregar dados ou mostrar notificação
+};
 const setRecordsOpen = (value) => {
     recordsOpen.value = value;
     if (value) activeTab.value = 'records';
@@ -200,6 +206,7 @@ const setActiveTab = (tab) => {
                         <SampleTable 
                             :samples="samples" 
                             @compare="handleCompare"
+                            @sampleReleased="handleSampleReleased"
                         />
                     </div>
                 </div>

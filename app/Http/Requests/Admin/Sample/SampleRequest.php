@@ -31,6 +31,14 @@ class SampleRequest extends FormRequest
             'value' => 'nullable|numeric|min:0',
             'collected_at' => 'nullable|date',
             'external_registry' => 'nullable|string|max:255',
+            
+            // Campos do Test
+            'test_type_id' => 'required|exists:test_types,id',
+            'father_id' => 'nullable|exists:animals,id',
+            'mother_id' => 'nullable|exists:animals,id',
+            'child_id' => 'nullable|exists:animals,id',
+            'is_technique' => 'nullable|boolean',
+            'comments' => 'nullable|string',
         ];
     }
 }

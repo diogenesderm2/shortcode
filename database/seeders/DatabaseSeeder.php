@@ -21,8 +21,8 @@ class DatabaseSeeder extends Seeder
             BillingTypeSeeder::class,
             TestTypeSeeder::class,
             AnimalSeeder::class,
-            //SampleSeeder::class,
-            //GeneticDataSeeder::class,
+            SampleSeeder::class,
+            GeneticDataSeeder::class,
         ]);
     }
 }

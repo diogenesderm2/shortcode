@@ -18,6 +18,21 @@ class CheckGeneticData extends Command
     {
         $this->info('Verificando dados genéticos...');
         
+        // Test Sample geneticResults relationship
+        try {
+            $sample = Sample::first();
+            if ($sample) {
+                $this->info("Sample found: {$sample->id}");
+                $results = $sample->geneticResults;
+                $this->info("GeneticResults count: {$results->count()}");
+                $this->info('Relationship working correctly!');
+            } else {
+                $this->info('No samples found');
+            }
+        } catch (\Exception $e) {
+            $this->error('Error testing relationship: ' . $e->getMessage());
+        }
+        
         // Verificar se há marcadores genéticos
         $markersCount = GeneticMarker::count();
         $this->info("Marcadores genéticos encontrados: {$markersCount}");

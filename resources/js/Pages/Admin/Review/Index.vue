@@ -8,8 +8,16 @@
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <!-- Flash Messages -->
+                <div v-if="$page.props.flash?.success" class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
+                    {{ $page.props.flash.success }}
+                </div>
+                <div v-if="$page.props.errors?.error" class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+                    {{ $page.props.errors.error }}
+                </div>
+
                 <!-- Statistics Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
@@ -29,22 +37,6 @@
                     <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500">Em Revisão</p>
-                                <p class="text-2xl font-semibold text-gray-900">{{ stats.under_review }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
                                 <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                                     <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -54,22 +46,6 @@
                             <div class="ml-4">
                                 <p class="text-sm font-medium text-gray-500">Aprovados</p>
                                 <p class="text-2xl font-semibold text-gray-900">{{ stats.approved }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500">Rejeitados</p>
-                                <p class="text-2xl font-semibold text-gray-900">{{ stats.rejected }}</p>
                             </div>
                         </div>
                     </div>
@@ -85,9 +61,7 @@
                                 <select v-model="form.status" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">Todos</option>
                                     <option value="pending">Pendente</option>
-                                    <option value="under_review">Em Revisão</option>
                                     <option value="approved">Aprovado</option>
-                                    <option value="rejected">Rejeitado</option>
                                 </select>
                             </div>
 
@@ -144,14 +118,11 @@
                                 </button>
                             </div>
                             <div class="flex items-center space-x-2">
-                                <button @click="bulkAction('under_review')" class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
-                                    Colocar em Revisão
+                                <button @click="bulkAction('pending')" class="px-3 py-1 bg-yellow-600 text-white text-sm rounded hover:bg-yellow-700">
+                                    Marcar como Pendente
                                 </button>
                                 <button @click="bulkAction('approved')" class="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700">
                                     Aprovar
-                                </button>
-                                <button @click="bulkAction('rejected')" class="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700">
-                                    Rejeitar
                                 </button>
                             </div>
                         </div>
@@ -223,7 +194,12 @@
                                             {{ sample.sample.animal.owner.name }}
                                         </div>
                                         <div class="text-sm text-gray-500">
-                                            {{ sample.sample.animal.name }}
+                                            <Link 
+                                                :href="route('admin.animals.show', sample.sample.animal.id)"
+                                                class="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-200"
+                                            >
+                                                {{ sample.sample.animal.name }}
+                                            </Link>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -242,17 +218,14 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div class="flex space-x-2">
-                                            <Link :href="route('admin.review.show', sample.id)" class="text-indigo-600 hover:text-indigo-900">
+                                            <Link :href="route('admin.review.show-sample', sample.id)" class="text-indigo-600 hover:text-indigo-900">
                                                 Ver
                                             </Link>
-                                            <button v-if="sample.status === 'pending'" @click="quickAction(sample.id, 'under_review')" class="text-blue-600 hover:text-blue-900">
-                                                Revisar
+                                            <button v-if="sample.status === 'approved'" @click="quickAction(sample.id, 'pending')" class="text-yellow-600 hover:text-yellow-900">
+                                                Marcar Pendente
                                             </button>
-                                            <button v-if="['pending', 'under_review'].includes(sample.status)" @click="quickAction(sample.id, 'approved')" class="text-green-600 hover:text-green-900">
+                                            <button v-if="sample.status === 'pending'" @click="quickAction(sample.id, 'approved')" class="text-green-600 hover:text-green-900">
                                                 Aprovar
-                                            </button>
-                                            <button v-if="['pending', 'under_review'].includes(sample.status)" @click="quickAction(sample.id, 'rejected')" class="text-red-600 hover:text-red-900">
-                                                Rejeitar
                                             </button>
                                         </div>
                                     </td>
@@ -342,7 +315,14 @@
                                 </div>
                                 <div>
                                     <span class="text-sm font-medium text-gray-500">Animal:</span>
-                                    <p class="text-sm text-gray-900">{{ selectedSample?.sample?.animal?.name }}</p>
+                                    <p class="text-sm text-gray-900">
+                                        <Link 
+                                            :href="route('admin.animals.show', selectedSample?.sample?.animal?.id)"
+                                            class="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-200"
+                                        >
+                                            {{ selectedSample?.sample?.animal?.name }}
+                                        </Link>
+                                    </p>
                                 </div>
                                 <div>
                                     <span class="text-sm font-medium text-gray-500">Status da Amostra:</span>
@@ -467,7 +447,7 @@ import { ref, computed, onMounted } from 'vue'
 import { router, Link } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Pagination from '@/Components/Pagination.vue'
-import { ClockIcon } from '@heroicons/vue/24/outline'
+import { ClockIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
     results: Object,
@@ -554,7 +534,7 @@ const closeBulkModal = () => {
 
 const confirmBulkAction = () => {
     router.post(route('admin.review.bulk-update'), {
-        result_ids: selectedResults.value,
+        sample_ids: selectedResults.value,
         status: bulkActionType.value,
         review_notes: bulkNotes.value,
     }, {
@@ -565,10 +545,15 @@ const confirmBulkAction = () => {
     })
 }
 
-const quickAction = (resultId, action) => {
-    router.post(route('admin.review.update-status', resultId), {
-        status: action,
-    })
+const quickAction = (sampleId, action) => {
+    const actionLabel = action === 'approved' ? 'aprovar' : 'marcar como pendente';
+    const confirmMessage = `Tem certeza que deseja ${actionLabel} esta amostra?`;
+    
+    if (confirm(confirmMessage)) {
+        router.post(route('admin.review.update-status', sampleId), {
+            status: action,
+        });
+    }
 }
 
 const getStatusLabel = (status) => {
@@ -593,18 +578,16 @@ const getStatusClass = (status) => {
 
 const getBulkActionTitle = (action) => {
     const titles = {
-        under_review: 'Colocar em Revisão',
-        approved: 'Aprovar Resultados',
-        rejected: 'Rejeitar Resultados',
+        pending: 'Marcar como Pendente',
+        approved: 'Aprovar Amostras',
     }
     return titles[action] || action
 }
 
 const getBulkActionDescription = (action) => {
     const descriptions = {
-        under_review: 'colocar em revisão',
+        pending: 'marcar como pendente',
         approved: 'aprovar',
-        rejected: 'rejeitar',
     }
     return descriptions[action] || action
 }

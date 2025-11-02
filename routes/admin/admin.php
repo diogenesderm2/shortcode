@@ -62,6 +62,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('samples/add-to-form', [SampleController::class, 'addToForm'])->name('samples.add-to-form')->middleware('permission:view samples');
         Route::post('samples/search-by-code', [SampleController::class, 'searchByCode'])->name('samples.search-by-code')->middleware('permission:view samples');
         Route::post('samples/generate-form', [SampleController::class, 'generateForm'])->name('samples.generate-form')->middleware('permission:create samples');
+        Route::post('samples/{sample}/release', [SampleController::class, 'release'])->name('samples.release')->middleware('permission:release genetic results');
         
         // === TIPOS DE ANIMAIS E RAÇAS ===
         Route::get('animal-types', [SampleController::class, 'getAnimalTypes'])->name('animal-types.index')->middleware('permission:view animals');
@@ -80,8 +81,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         // === REVISÃO DE RESULTADOS ===
         Route::get('review', [\App\Http\Controllers\Admin\Review\ReviewController::class, 'index'])->name('review.index')->middleware('permission:review results');
         Route::get('review/{result}', [\App\Http\Controllers\Admin\Review\ReviewController::class, 'show'])->name('review.show')->middleware('permission:review results');
+        Route::get('review/sample/{sample}/view', [\App\Http\Controllers\Admin\Review\ReviewController::class, 'showSample'])->name('review.show-sample')->middleware('permission:review results');
         Route::post('review/{result}/status', [\App\Http\Controllers\Admin\Review\ReviewController::class, 'updateStatus'])->name('review.update-status')->middleware('permission:approve results|reject results');
-        Route::post('review/bulk-update', [\App\Http\Controllers\Admin\Review\ReviewController::class, 'bulkUpdateStatus'])->name('review.bulk-update')->middleware('permission:approve results|reject results');
+        Route::post('review/bulk-update', [\App\Http\Controllers\Admin\Review\ReviewController::class, 'bulkUpdateSamples'])->name('review.bulk-update')->middleware('permission:approve results|reject results');
+        Route::post('review/bulk-update-results', [\App\Http\Controllers\Admin\Review\ReviewController::class, 'bulkUpdateStatus'])->name('review.bulk-update-results')->middleware('permission:approve results|reject results');
         Route::get('review/sample/{sample}', [\App\Http\Controllers\Admin\Review\ReviewController::class, 'getBySample'])->name('review.by-sample')->middleware('permission:review results');
         Route::get('review/sample/{sample}/results', [\App\Http\Controllers\Admin\Review\ReviewController::class, 'getSampleResults'])->name('review.sample-results')->middleware('permission:review results');
 

@@ -3,6 +3,9 @@ import { computed, ref } from 'vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import GeneticResultsModal from '@/Components/GeneticResultsModal.vue';
+import Modal from '@/Components/Modal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import { router } from '@inertiajs/vue3';
 
 // Props
 const props = defineProps({
@@ -16,8 +19,13 @@ const props = defineProps({
 const showGeneticModal = ref(false);
 const selectedAnimal = ref(null);
 
+// Refs para controlar o modal de liberação
+const showReleaseModal = ref(false);
+const selectedSample = ref(null);
+const isReleasing = ref(false);
+
 // Emits
-const emit = defineEmits(['compare']);
+const emit = defineEmits(['compare', 'sampleReleased']);
 
 // Métodos
 const onCompare = () => {
@@ -52,6 +60,59 @@ const showGeneticResults = (sample) => {
 const closeGeneticModal = () => {
     showGeneticModal.value = false;
     selectedAnimal.value = null;
+};
+
+// Funções para liberação de amostra
+const openReleaseModal = (sample) => {
+    selectedSample.value = sample;
+    showReleaseModal.value = true;
+};
+
+const closeReleaseModal = () => {
+    showReleaseModal.value = false;
+    selectedSample.value = null;
+    isReleasing.value = false;
+};
+
+const confirmRelease = async () => {
+    if (!selectedSample.value) return;
+    
+    isReleasing.value = true;
+    
+    try {
+        const response = await fetch(route('admin.samples.release', selectedSample.value.id), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+            },
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Atualizar a amostra localmente
+            const sampleIndex = props.samples.findIndex(s => s.id === selectedSample.value.id);
+            if (sampleIndex !== -1) {
+                props.samples[sampleIndex].is_released = true;
+                props.samples[sampleIndex].released_at = new Date().toISOString();
+            }
+            
+            // Emitir evento para o componente pai
+            emit('sampleReleased', selectedSample.value.id);
+            
+            // Mostrar mensagem de sucesso
+            alert(data.message);
+        } else {
+            alert(data.message || 'Erro ao liberar amostra');
+        }
+    } catch (error) {
+        console.error('Erro ao liberar amostra:', error);
+        alert('Erro ao liberar amostra. Tente novamente.');
+    } finally {
+        closeReleaseModal();
+    }
 };
 </script>
 
@@ -143,12 +204,25 @@ const closeGeneticModal = () => {
                         </div>
                         <div class="space-y-2">
                             <p class="text-xs font-medium text-gray-500">Liberado</p>
-                            <span :class="[
-                                'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium',
-                                getBadgeClass(sample.is_released, 'bg-green-100 text-green-800', 'bg-gray-100 text-gray-600')
-                            ]">
-                                {{ sample.is_released ? "Sim" : "Não" }}
-                            </span>
+                            <div v-if="sample.is_released">
+                                <span :class="[
+                                    'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium',
+                                    'bg-green-100 text-green-800'
+                                ]">
+                                    Sim
+                                </span>
+                            </div>
+                            <div v-else>
+                                <button
+                                    @click="openReleaseModal(sample)"
+                                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 hover:bg-red-200 transition-colors cursor-pointer border border-red-200 hover:border-red-300"
+                                >
+                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                    </svg>
+                                    Não - Clique para liberar
+                                </button>
+                            </div>
                         </div>
                         <div class="space-y-2">
                             <p class="text-xs font-medium text-gray-500">Prioridade</p>
@@ -243,5 +317,45 @@ const closeGeneticModal = () => {
             :animal="selectedAnimal"
             @close="closeGeneticModal"
         />
+
+        <!-- Modal de Confirmação de Liberação -->
+        <Modal :show="showReleaseModal" @close="closeReleaseModal">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="flex items-center justify-center w-12 h-12 rounded-full bg-yellow-100 text-yellow-600 mr-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900">Confirmar Liberação</h3>
+                        <p class="text-sm text-gray-500">Esta ação não pode ser desfeita</p>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <p class="text-gray-700">
+                        Deseja realmente liberar a amostra <strong>{{ selectedSample?.id }}</strong>?
+                    </p>
+                    <div v-if="selectedSample" class="mt-3 p-3 bg-gray-50 rounded-lg">
+                        <div class="text-sm">
+                            <p><strong>Proprietário:</strong> {{ selectedSample.owner?.name || 'N/A' }}</p>
+                            <p><strong>Animal:</strong> {{ selectedSample.animal?.name || 'N/A' }}</p>
+                            <p><strong>Tipo de Exame:</strong> {{ selectedSample.exam_type?.name || 'N/A' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <SecondaryButton @click="closeReleaseModal" :disabled="isReleasing">
+                        Cancelar
+                    </SecondaryButton>
+                    <DangerButton @click="confirmRelease" :disabled="isReleasing">
+                        <span v-if="isReleasing">Liberando...</span>
+                        <span v-else>Sim, Liberar Amostra</span>
+                    </DangerButton>
+                </div>
+            </div>
+        </Modal>
     </div>
 </template>

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Admin\Owner\Owner;
 use App\Models\Admin\Animal\Animal;
 use App\Models\User;
+use App\Models\GeneticResult;
 
 class Sample extends Model
 {
@@ -101,5 +102,21 @@ class Sample extends Model
     public function billingType()
     {
         return $this->belongsTo(\App\Models\Admin\BillingType::class, 'billing_type');
+    }
+
+    /**
+     * Get the genetic results for the sample.
+     */
+    public function geneticResults()
+    {
+        return $this->hasMany(\App\Models\GeneticResult::class, 'sample_id');
+    }
+
+    /**
+     * Get the tests for the sample.
+     */
+    public function tests()
+    {
+        return $this->hasMany(\App\Models\Admin\Test::class, 'sample_id');
     }
 }

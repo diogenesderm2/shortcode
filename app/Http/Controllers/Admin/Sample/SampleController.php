@@ -10,6 +10,7 @@ use App\Models\Admin\ExamType;
 use App\Models\Admin\SampleType;
 use App\Models\Admin\BillingType;
 use App\Models\Admin\TestType;
+use App\Models\Admin\Test;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Requests\Admin\Sample\SampleRequest;
@@ -42,9 +43,65 @@ class SampleController extends Controller
      */
     public function store(SampleRequest $request)
     {
-        $sample = Sample::create($request->validated());
+        try {
+            // Criar a amostra
+            $sampleData = $request->validated();
+            
+            // Separar campos que pertencem ao Test
+            $testData = [
+                'test_type_id' => $sampleData['test_type_id'] ?? null,
+                'father_id' => $sampleData['father_id'] ?? null,
+                'mother_id' => $sampleData['mother_id'] ?? null,
+                'child_id' => $sampleData['child_id'] ?? null,
+                'comments' => $sampleData['comments'] ?? null,
+            ];
+            
+            // Remover campos do test dos dados da amostra
+            unset($sampleData['test_type_id'], $sampleData['father_id'], $sampleData['mother_id'], 
+                  $sampleData['child_id'], $sampleData['comments']);
+            
+            // Mapear is_technique para a tabela samples (já existe na tabela)
+            if (isset($sampleData['is_technique'])) {
+                $sampleData['is_technique'] = $sampleData['is_technique'] ? 1 : 0;
+            }
+            
+            // Definir a nova amostra como padrão
+            $sampleData['is_default'] = 1;
+            
+            // Adicionar usuário que registrou
+            $sampleData['user_registered'] = auth()->id();
+            
+            $sample = Sample::create($sampleData);
 
-        return redirect()->route('admin.samples.create')->with('message', 'Amostra cadastrada com sucesso');
+            // Atualizar todas as outras amostras do mesmo tipo de exame para is_default = 0
+            Sample::where('exam_id', $sampleData['exam_id'])
+                  ->where('id', '!=', $sample->id)
+                  ->update(['is_default' => 0]);
+
+            // Criar o teste associado à amostra
+            if ($testData['test_type_id']) {
+                Test::create([
+                    'sample_id' => $sample->id,
+                    'dad_id' => $testData['father_id'],
+                    'mom_id' => $testData['mother_id'],
+                    'type_id' => $testData['test_type_id'],
+                    'user_registered' => auth()->id(),
+                    'responsible_collect' => $sampleData['responsible_collect'] ?? null,
+                    'is_technique' => isset($sampleData['is_technique']) ? (bool)$sampleData['is_technique'] : false,
+                    'is_default' => true, // O teste também será marcado como padrão
+                    'is_retest' => false,
+                    'comments' => $testData['comments'],
+                    'is_read' => false,
+                ]);
+            }
+
+            return redirect()->route('admin.samples.create')->with('message', 'Amostra e teste cadastrados com sucesso');
+            
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error' => 'Erro ao cadastrar amostra: ' . $e->getMessage()]);
+        }
     }
 
     /**
@@ -351,5 +408,32 @@ class SampleController extends Controller
             ->select('id', 'name')
             ->get();
         return response()->json($breeds);
+    }
+
+    /**
+     * Release a sample
+     */
+    public function release(Request $request, Sample $sample)
+    {
+        // Verificar se a amostra já está liberada
+        if ($sample->is_released) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Esta amostra já está liberada.'
+            ], 400);
+        }
+
+        // Atualizar a amostra
+        $sample->update([
+            'is_released' => true,
+            'released_at' => now(),
+            'user_released' => auth()->id()
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Amostra liberada com sucesso!',
+            'sample' => $sample->fresh()
+        ]);
     }
 }
