@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Registro - Planilha de Exames</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 8px;
+            line-height: 1.2;
+            background: white;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 210mm;
+            margin: 0 auto;
+            border: 2px solid black;
+        }
+        
+        /* Cabeçalho */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 5px;
+            border-bottom: 2px solid black;
+            background: white;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            width: 120px;
+        }
+        
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: #e0e0e0;
+            border: 1px solid #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .title-section {
+            flex: 1;
+            text-align: center;
+            padding: 0 20px;
+        }
+        
+        .main-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .run-info {
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .quality-section {
+            width: 120px;
+            text-align: right;
+            font-size: 8px;
+            line-height: 1.1;
+        }
+        
+        .quality-title {
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        
+        /* Grade principal */
+        .main-grid {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .main-grid td, .main-grid th {
+            border: 1px solid black;
+            text-align: center;
+            vertical-align: middle;
+            padding: 2px;
+            font-size: 7px;
+            height: 20px;
+        }
+        
+        .main-grid th {
+            background: #f0f0f0;
+            font-weight: bold;
+        }
+        
+        .row-header {
+            background: #f0f0f0;
+            font-weight: bold;
+            width: 25px;
+        }
+        
+        .col-header {
+            background: #f0f0f0;
+            font-weight: bold;
+            width: 25px;
+        }
+        
+        .cell-content {
+            font-size: 6px;
+            line-height: 1;
+        }
+        
+        .urgent-label {
+            color: red;
+            font-size: 5px;
+            display: block;
+        }
+        
+        .code-number {
+            font-weight: bold;
+            font-size: 7px;
+        }
+        
+        /* Seção inferior */
+        .bottom-section {
+            display: flex;
+            border-top: 2px solid black;
+        }
+        
+        .left-section {
+            width: 35%;
+            border-right: 2px solid black;
+            padding: 5px;
+        }
+        
+        .middle-section {
+            width: 35%;
+            border-right: 2px solid black;
+            padding: 5px;
+        }
+        
+        .right-section {
+            width: 30%;
+            padding: 5px;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 5px;
+            font-size: 9px;
+        }
+        
+        .form-row {
+            margin-bottom: 3px;
+            font-size: 7px;
+        }
+        
+        .form-label {
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        
+        .form-field {
+            border-bottom: 1px solid black;
+            display: inline-block;
+            min-width: 50px;
+            height: 12px;
+        }
+        
+        .observations-box {
+            border: 1px solid black;
+            height: 60px;
+            width: 100%;
+            margin-top: 5px;
+        }
+        
+        .equipment-section {
+            margin-top: 10px;
+        }
+        
+        .equipment-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2px;
+            font-size: 7px;
+        }
+        
+        .resp-field {
+            border: 1px solid black;
+            height: 15px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Cabeçalho -->
+        <div class="header">
+            <div class="logo-section">
+                <div class="logo">LOGO<br>Raça</div>
+                <div>
+                    <div style="font-size: 8px; font-weight: bold;">Laboratório</div>
+                    <div style="font-size: 6px;">Raça</div>
+                </div>
+            </div>
+            
+            <div class="title-section">
+                <div class="main-title">FORMULÁRIO DE REGISTRO</div>
+                <div class="subtitle">PLANILHA DE EXAMES</div>
+                <div class="run-info">N° DA CORRIDA: 33783&nbsp;&nbsp;&nbsp;&nbsp;DATA: 01/11/2025</div>
+            </div>
+            
+            <div class="quality-section">
+                <div class="quality-title">GARANTIA DA QUALIDADE</div>
+                <div>Código: FR 026&nbsp;&nbsp;Página 1 de 2</div>
+                <div>Revisão: 13/09/2022 Versão: 2.4</div>
+            </div>
+        </div>
+        
+        <!-- Grade Principal -->
+        <table class="main-grid">
+            <tr>
+                <th class="row-header"></th>
+                <th class="col-header">1</th>
+                <th class="col-header">2</th>
+                <th class="col-header">3</th>
+                <th class="col-header">4</th>
+                <th class="col-header">5</th>
+                <th class="col-header">6</th>
+                <th class="col-header">7</th>
+                <th class="col-header">8</th>
+                <th class="col-header">9</th>
+                <th class="col-header">10</th>
+                <th class="col-header">11</th>
+                <th class="col-header">12</th>
+            </tr>
+            <tr>
+                <td class="row-header">A</td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009055</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009058</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009061</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009064</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009067</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009070</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009073</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009076</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009079</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009082</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009085</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009088</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="row-header">B</td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009057</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009060</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009063</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009066</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009069</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009072</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009075</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009078</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009081</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009084</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009087</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009090</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="row-header">C</td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009059</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009062</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009065</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009068</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009071</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009074</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009077</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009080</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009083</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009086</span>
+                </td>
+                <td class="cell-content">
+                    <span class="code-number">C11</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009092</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="row-header">D</td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009078</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009091</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009169</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009192</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009207</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009247</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009391</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009109</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009118</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009127</span>
+                </td>
+                <td class="cell-content"></td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009276</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="row-header">E</td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009079</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009092</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009174</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009194</span>
+                </td>
+                <td class="cell-content">
+                    <span style="font-size: 6px;">E5</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009253</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009102</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009110</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009119</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009128</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009134</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009277</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="row-header">F</td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009080</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009375</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009176</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009196</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009225</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009460</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009103</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009111</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009121</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009129</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009140</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009279</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="row-header">G</td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009081</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009156</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009178</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009198</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009227</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009271</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009104</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009112</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009122</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009130</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009142</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009280</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="row-header">H</td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009085</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009157</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009179</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009201</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009231</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009273</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009105</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009113</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009123</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009131</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009143</span>
+                </td>
+                <td class="cell-content">
+                    <span class="urgent-label">URGENTE 14/05/2020</span>
+                    <span class="code-number">1009210</span>
+                </td>
+            </tr>
+        </table>
+        
+        <!-- Seção Inferior -->
+        <div class="bottom-section">
+            <!-- Triagem -->
+            <div class="left-section">
+                <div class="section-title">TRIAGEM</div>
+                <div class="form-row">
+                    <span class="form-label">Data:</span>
+                    <span class="form-field">___/___/___</span>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Horário:</span>
+                    <span class="form-field">_______</span>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Observações:</span>
+                </div>
+                <div class="observations-box"></div>
+            </div>
+            
+            <!-- Extração pelo -->
+            <div class="middle-section">
+                <div class="section-title">EXTRAÇÃO PELO</div>
+                <div class="form-row">
+                    <span class="form-label">Data:</span>
+                    <span class="form-field">___/___/___</span>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Horário:</span>
+                    <span class="form-field">_______</span>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Preparo do Tampão de Extração</span>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Data de preparo:</span>
+                    <span class="form-field">_______</span>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Validade:</span>
+                    <span class="form-field">_______</span>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Reagentes utilizados no preparo:</span>
+                </div>
+                <div class="form-row">
+                    Tampão 10X: &nbsp;&nbsp;&nbsp; Lote: _____ validade: ___/___/___
+                </div>
+                <div class="form-row">
+                    Tween 20X: &nbsp;&nbsp;&nbsp; Lote: _____ validade: ___/___/___
+                </div>
+                <div class="form-row">
+                    Água Ultrapura: &nbsp; Lote: _____ validade: ___/___/___
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Proteinase K 10 mg/mL:</span>
+                </div>
+                <div class="form-row">
+                    Lote: _______ &nbsp;&nbsp;&nbsp; validade: _______
+                </div>
+                <div class="equipment-section">
+                    <div class="form-row">
+                        <span class="form-label">Equipamentos Utilizados:</span>
+                    </div>
+                    <div class="equipment-row">
+                        <span>Termobloco:</span>
+                        <span>Centrífuga:</span>
+                    </div>
+                    <div class="equipment-row">
+                        <span>Micropipetas:</span>
+                        <span></span>
+                    </div>
+                </div>
+                <div class="resp-field"></div>
+                <div style="font-size: 6px; text-align: center; margin-top: 2px;">Resp.:</div>
+            </div>
+            
+            <!-- Extração: Sangue/Sêmen -->
+            <div class="right-section">
+                <div class="section-title">EXTRAÇÃO: &nbsp;&nbsp;&nbsp; SANGUE( ) SÊMEN( )</div>
+                <div class="form-row">
+                    <span class="form-label">Data:</span>
+                    <span class="form-field">___/___/___</span>
+                    <span class="form-label">Horário:</span>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Tampão PBS</span>
+                    <span style="margin-left: 20px;">Lote:</span>
+                    <span style="margin-left: 20px;">Validade:</span>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Tampão de Extração</span>
+                    <span style="margin-left: 10px;">Lote</span>
+                    <span style="margin-left: 20px;">Validade:</span>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Tampão Lise Celular (TLC)</span>
+                    <span style="margin-left: 5px;">Lote</span>
+                    <span style="margin-left: 20px;">Validade:</span>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Tampão Lise Nuclear (TLN)</span>
+                    <span style="margin-left: 5px;">Lote</span>
+                    <span style="margin-left: 20px;">Validade:</span>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Proteína K 10 mg/ml</span>
+                    <span style="margin-left: 20px;">Lote</span>
+                    <span style="margin-left: 20px;">Validade:</span>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Mercaptoetanol ( ) ou Ditiotreitol 40 mM ( )</span>
+                </div>
+                <div class="form-row">
+                    <span style="margin-left: 20px;">Lote</span>
+                    <span style="margin-left: 40px;">Validade</span>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">NaCl 5M</span>
+                    <span style="margin-left: 40px;">Lote</span>
+                    <span style="margin-left: 20px;">Validade:</span>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Isopropanol</span>
+                    <span style="margin-left: 30px;">Lote</span>
+                    <span style="margin-left: 20px;">Validade:</span>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Etanol 70%</span>
+                    <span style="margin-left: 30px;">Lote:</span>
+                    <span style="margin-left: 20px;">Validade:</span>
+                </div>
+                <div class="form-row">
+                    <span class="form-label">Água Ultrapura</span>
+                    <span style="margin-left: 20px;">Lote:</span>
+                    <span style="margin-left: 20px;">Validade:</span>
+                </div>
+                <div class="equipment-section">
+                    <div class="form-row">
+                        <span class="form-label">Equipamentos Utilizados:</span>
+                    </div>
+                    <div class="equipment-row">
+                        <span>Termobloco:</span>
+                        <span>Centrífuga:</span>
+                    </div>
+                    <div class="equipment-row">
+                        <span>Micropipetas:</span>
+                        <span></span>
+                    </div>
+                </div>
+                <div class="resp-field"></div>
+                <div style="font-size: 6px; text-align: center; margin-top: 2px;">Resp.:</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

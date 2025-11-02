@@ -42,13 +42,7 @@ const showTechnicalMenu = ref(false);
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <!-- Logo -->
-                            <div class="shrink-0 flex items-center">
-                                <Link :href="route('dashboard')">
-                                <ApplicationMark class="block h-9 w-auto" />
-                                </Link>
-                            </div>
-
-
+                                <ApplicationMark class="block h-9 w-auto mt-3" />
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -298,32 +292,56 @@ const showTechnicalMenu = ref(false);
                         <!-- Navigation Links -->
                         <div class="">
                             <NavLink :href="route('admin.owners.index')"
-                                :active="route().current('admin.owners.*')">>
-                                Proprietários
+                                :active="route().current('admin.owners.*')">
+                                <span class="inline-flex items-center">
+                                    <i class="fas fa-users mr-2 text-gray-600"></i>
+                                    Proprietários
+                                </span>
                             </NavLink>
                         </div>
                         <div class="">
                             <NavLink :href="route('admin.animals.index')"
                                 :active="route().current('admin.animals.*')">
-                                Animais
+                                <span class="inline-flex items-center">
+                                    <i class="fas fa-paw mr-2 text-gray-600"></i>
+                                    Animais
+                                </span>
+                            </NavLink>
+                        </div>
+                        <div class="">
+                            <NavLink :href="route('upload.resultado')"
+                                :active="route().current('upload.resultado')">
+                                <span class="inline-flex items-center">
+                                    <i class="fas fa-dna mr-2 text-gray-600"></i>
+                                    Upload DNA
+                                </span>
                             </NavLink>
                         </div>
                         <div class="">
                             <NavLink :href="route('admin.samples.create')"
                                 :active="route().current('admin.samples.create')">
-                                Cadastrar amostras
+                                <span class="inline-flex items-center">
+                                    <i class="fas fa-flask mr-2 text-gray-600"></i>
+                                    Cadastrar amostras
+                                </span>
                             </NavLink>
                         </div>
+                        <!-- Removido: Adicionar ao Formulário -->
+                        <!--
                         <div class="">
                             <NavLink :href="route('admin.samples.add-to-form')"
                                 :active="route().current('admin.samples.add-to-form')">
                                 Adicionar ao Formulário
                             </NavLink>
                         </div>
+                        -->
                         <div class="">
                             <NavLink :href="route('admin.reports.index')"
                                 :active="route().current('admin.reports.*')">
-                                Relatorios
+                                <span class="inline-flex items-center">
+                                    <i class="fas fa-chart-bar mr-2 text-gray-600"></i>
+                                    Relatorios
+                                </span>
                             </NavLink>
                         </div>
 
@@ -334,12 +352,7 @@ const showTechnicalMenu = ref(false);
                                 class="flex items-center justify-between w-full px-3 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
                             >
                                 <span class="flex items-center space-x-2">
-                                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M11.049 2.927c.3-1.09 1.902-1.09 2.202 0l.262.95a1 1 0 00.95.69h1.004c1.163 0 1.64 1.487.707 2.183l-.806.62a1 1 0 00-.364 1.118l.307.999c.33 1.071-.86 1.948-1.81 1.38l-.88-.52a1 1 0 00-1.152.1l-.78.61c-.91.712-2.245-.105-2.016-1.195l.214-1.01a1 1 0 00-.334-1.009l-.75-.64c-.86-.735-.37-2.127.766-2.127h.994a1 1 0 00.958-.69l.262-.95z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 8v8m-4-4h8"/>
-                                    </svg>
+                                    <i class="fas fa-tools text-gray-600"></i>
                                     <span>Área Técnica</span>
                                 </span>
                                 <svg class="w-4 h-4 text-gray-600 transform transition-transform"

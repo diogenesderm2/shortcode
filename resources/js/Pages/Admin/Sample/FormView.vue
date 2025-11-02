@@ -1,458 +1,289 @@
 <template>
     <AppLayout title="Formulário de Amostras">
         <template #header>
-            <div class="flex items-center justify-between no-print">
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                    Formulário Nº {{ formNumber }}
-                </h2>
-                <div class="flex space-x-3">
-                    <button
-                        @click="goBackToForm"
-                        class="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
-                    >
-                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                        </svg>
-                        Voltar ao Formulário
-                    </button>
-                    <button
-                        @click="exportForm"
-                        class="px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors"
-                    >
-                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                        Exportar PDF
-                    </button>
-                    <button
-                        @click="printForm"
-                        class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-                    >
-                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
-                        </svg>
-                        Imprimir
-                    </button>
-                </div>
-            </div>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Formulário de Amostras
+            </h2>
         </template>
 
-        <div class="py-12 no-print">
+        <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white shadow-xl sm:rounded-lg overflow-hidden">
-                    <div class="p-6 text-center">
-                        <p class="text-gray-600 mb-4">Visualização do formulário para impressão</p>
-                        <p class="text-sm text-gray-500 mb-6">Este formulário será impresso em duas páginas (frente e verso)</p>
-                        
-                        <!-- Botões de Ação -->
-                        <div class="flex justify-center space-x-4">
-                            <button
-                                @click="goBackToSamples"
-                                class="px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors shadow-md"
-                            >
-                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                                </svg>
-                                Voltar para Inserir Amostras
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                    <!-- Action Buttons -->
+                    <div class="p-6 border-b border-gray-200 no-print">
+                        <div class="flex justify-between items-center">
+                            <button @click="goBackToSamples"
+                                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                                ← Voltar
                             </button>
-                            <button
-                                @click="exportForm"
-                                class="px-6 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors shadow-md"
-                            >
-                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
-                                Exportar PDF
-                            </button>
-                            <button
-                                @click="printForm"
-                                class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors shadow-md"
-                            >
-                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
-                                </svg>
-                                Imprimir Formulário
-                            </button>
+                            <div class="space-x-2">
+                                <button @click="printForm"
+                                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                    🖨️ Imprimir
+                                </button>
+                                <button @click="exportForm"
+                                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                    📄 Exportar PDF
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- PÁGINA 1 - FRENTE -->
-        <div id="printable-form" class="form-page page-1">
-            <!-- Cabeçalho -->
-            <div class="form-header">
-                <div class="logo-section">
-                    <div class="logo-placeholder">
-                        <span class="logo-text">Laboratório<br>Raça</span>
-                    </div>
-                </div>
-                <div class="title-section">
-                    <h1>FORMULÁRIO DE REGISTRO</h1>
-                    <h2>PLANILHA DE EXAMES</h2>
-                    <div class="form-details">
-                        <div>Nº DA CORRIDA: {{ formNumber }}</div>
-                        <div>DATA: {{ formatDateShort(generatedAt) }}</div>
-                    </div>
-                </div>
-                <div class="info-section">
-                    <div class="info-box">
-                        <div class="info-label">GARANTIA DA QUALIDADE</div>
-                        <div class="info-content">
-                            <div>Código: FR 026 Página 1 de 2</div>
-                            <div>Revisão: 13/09/2022 Versão: 2.4</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    <!-- Form Content -->
+                    <div id="printable-form" class="lab-form">
+                        <!-- Header -->
+                        <div class="form-header">
+                            <div class="logo-section" style="width: 180px;">
+                                <img src="/logo-form.png" alt="Laboratório Raça DNA Animal" class="logo-image" />
+                            </div>
 
-            <!-- Grade de Amostras -->
-            <div class="samples-grid">
-                <table class="grid-table">
-                    <thead>
-                        <tr>
-                            <th class="grid-corner"></th>
-                            <th v-for="col in 12" :key="col" class="grid-header">{{ col }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(row, rowIndex) in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']" :key="row">
-                            <td class="grid-row-header">{{ row }}</td>
-                            <td v-for="col in 12" :key="col" class="grid-cell">
-                                <div class="sample-cell">
-                                    <div class="sample-number">{{ getSampleForPosition(rowIndex, col - 1) }}</div>
-                                    <div class="sample-details">
-                                        <template v-if="getSampleDetails(rowIndex, col - 1)">
-                                            <div class="sample-line">URGENTE</div>
-                                            <div class="sample-line">{{ formatDateShort(getSampleDetails(rowIndex, col - 1).created_at) }}</div>
-                                            <div class="sample-line">{{ getSampleDetails(rowIndex, col - 1).species?.toUpperCase() || 'BOVINO' }}</div>
-                                            <div class="sample-line">&nbsp;</div>
-                                        </template>
-                                        <template v-else>
-                                            <div class="sample-line">&nbsp;</div>
-                                            <div class="sample-line">&nbsp;</div>
-                                            <div class="sample-line">&nbsp;</div>
-                                            <div class="sample-line">&nbsp;</div>
-                                        </template>
-                                    </div>
+                            <div class="form-titles">
+                                <h1 class="form-title">FORMULÁRIO DE REGISTRO</h1>
+                                <h2 class="form-subtitle">PLANILHA DE EXAMES</h2>
+                                <div class="form-meta">
+                                    N° DA CORRIDA: {{ formNumber }} &nbsp;&nbsp;&nbsp; DATA: {{ formatDate(generatedAt)
+                                    }}
                                 </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                            </div>
 
-            <!-- Seções de Processo -->
-            <div class="process-sections">
-                <div class="section-row">
-                    <div class="section-title">TRIAGEM</div>
-                    <div class="section-title">EXTRAÇÃO PELO</div>
-                    <div class="section-title">EXTRAÇÃO:</div>
-                    <div class="section-title">SANGUE ( ) SÊMEN ( )</div>
-                </div>
-                
-                <div class="section-content">
-                    <div class="section-column">
-                        <div class="field-row">
-                            <span class="field-label">Data:</span>
-                            <span class="field-line">___/___/___</span>
+                            <div class="quality-box">
+                                <strong>GARANTIA DA QUALIDADE</strong><br />
+                                Código: FR 026 &nbsp; Página 1 de 2<br />
+                                Revisão: 13/09/2022 Versão: 2.4
+                            </div>
                         </div>
-                        <div class="field-row">
-                            <span class="field-label">Horário:</span>
-                            <span class="field-line">_______</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Observações:</span>
-                            <span class="field-line">_______</span>
-                        </div>
-                    </div>
-                    
-                    <div class="section-column">
-                        <div class="field-row">
-                            <span class="field-label">Data:</span>
-                            <span class="field-line">___/___/___</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Horário:</span>
-                            <span class="field-line">_______</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Preparo do Tampão de Extração</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Data de preparo:</span>
-                            <span class="field-line">_______</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Validade:</span>
-                            <span class="field-line">_______</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Reagentes utilizados no preparo:</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Tampão 10X:</span>
-                            <span class="field-line">Lote: _____ validade: ___/___/___</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Tween 20X:</span>
-                            <span class="field-line">Lote: _____ validade: ___/___/___</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Água Ultrapura:</span>
-                            <span class="field-line">Lote: _____ validade: ___/___/___</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Proteinase K 10 mg/mL:</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-line">Lote: _____________ validade: _______</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Equipamentos Utilizados:</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Termobloco:</span>
-                            <span class="field-line">_______ Centrífuga: _______</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Micropipetas:</span>
-                            <span class="field-line">_______</span>
-                        </div>
-                    </div>
-                    
-                    <div class="section-column">
-                        <div class="field-row">
-                            <span class="field-label">Data:</span>
-                            <span class="field-line">___/___/___</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Horário:</span>
-                            <span class="field-line">_______</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Tampão PBS</span>
-                            <span class="field-line">Lote: _____ Validade: _____</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Tampão de Extração</span>
-                            <span class="field-line">Lote: _____ Validade: _____</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Tampão Lise Celular (TLC)</span>
-                            <span class="field-line">Lote: _____ Validade: _____</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Tampão Lise Nuclear (TLN)</span>
-                            <span class="field-line">Lote: _____ Validade: _____</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Proteína K 10 mg/ml</span>
-                            <span class="field-line">Lote: _____ Validade: _____</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Mercaptoetanol ( ) ou Ditiotreitol 40 mM ( )</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-line">Lote: _____________ Validade: _______</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">NaCl 5M</span>
-                            <span class="field-line">Lote: _____ Validade: _____</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Isopropanol</span>
-                            <span class="field-line">Lote: _____ Validade: _____</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Etanol 70%</span>
-                            <span class="field-line">Lote: _____ Validade: _____</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Água Ultrapura</span>
-                            <span class="field-line">Lote: _____ Validade: _____</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Equipamentos Utilizados:</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Termobloco:</span>
-                            <span class="field-line">_______ Centrífuga: _______</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Micropipetas:</span>
-                            <span class="field-line">_______</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Rodapé da Página 1 -->
-            <div class="page-footer">
-                <div class="footer-left">
-                    <span>Resp.: _______________</span>
-                </div>
-                <div class="footer-center">
-                    <span>Resp.: _______________</span>
-                </div>
-                <div class="footer-right">
-                    <span>Resp.: _______________</span>
-                </div>
-            </div>
-        </div>
+                        <!-- Sample Grid Table -->
+                        <table class="sample-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30px;"></th>
+                                    <th v-for="col in 12" :key="col">{{ col }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(rowLetter, rowIndex) in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']"
+                                    :key="rowLetter">
+                                    <th>{{ rowLetter }}</th>
+                                    <td v-for="col in 12" :key="col" class="sample-cell">
+                                        <span class="sample-label">{{ getSampleLabel(rowIndex, col - 1) }}</span>
+                                        <span class="sample-id">{{ getSampleForPosition(rowIndex, col - 1) }}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-        <!-- PÁGINA 2 - VERSO -->
-        <div class="form-page page-2">
-            <!-- Cabeçalho da Página 2 -->
-            <div class="form-header">
-                <div class="logo-section">
-                    <div class="logo-placeholder">
-                        <span class="logo-text">Laboratório<br>Raça</span>
-                    </div>
-                </div>
-                <div class="title-section">
-                    <h1>FORMULÁRIO DE REGISTRO</h1>
-                    <h2>PLANILHA DE EXAMES - SNP</h2>
-                </div>
-                <div class="info-section">
-                    <div class="info-box">
-                        <div class="info-label">GARANTIA DE QUALIDADE</div>
-                        <div class="info-content">
-                            <div>Código: 7001</div>
-                            <div>Página 2 de 2</div>
-                            <div>Revisão: 07/02/2024 - Versão: 1.1</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                        <!-- Bottom Section -->
+                        <table class="section-table">
+                            <tbody>
+                                <tr>
+                                    <td style="width: 33%;">
+                                        <div class="section-header">TRIAGEM</div>
+                                        <table class="info-table">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Data:</td>
+                                                    <td><span class="underline-field">&nbsp;</span>/<span
+                                                            class="underline-field">&nbsp;</span>/<span
+                                                            class="underline-field">&nbsp;</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Horário:</td>
+                                                    <td><span class="underline-field">&nbsp;</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">Observações:</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2" class="observation-box"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td style="width: 33%;">
+                                        <div class="section-header">EXTRAÇÃO PELO</div>
+                                        <table class="info-table">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Data:</td>
+                                                    <td><span class="underline-field">&nbsp;</span>/<span
+                                                            class="underline-field">&nbsp;</span>/<span
+                                                            class="underline-field">&nbsp;</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Horário:</td>
+                                                    <td><span class="underline-field">&nbsp;</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2"><strong>Preparo do Tampão de Extração</strong></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Data de preparo:</td>
+                                                    <td><span class="underline-field">&nbsp;</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Validade:</td>
+                                                    <td><span class="underline-field">&nbsp;</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2"><strong>Reagentes utilizados no preparo:</strong>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Tampão 10X:</td>
+                                                    <td>Lote: <span class="field-line">&nbsp;</span> validade: <span
+                                                            class="underline-field">&nbsp;</span>/<span
+                                                            class="underline-field">&nbsp;</span>/<span
+                                                            class="underline-field">&nbsp;</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Tween 20X:</td>
+                                                    <td>Lote: <span class="field-line">&nbsp;</span> validade: <span
+                                                            class="underline-field">&nbsp;</span>/<span
+                                                            class="underline-field">&nbsp;</span>/<span
+                                                            class="underline-field">&nbsp;</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Água Ultrapura:</td>
+                                                    <td>Lote: <span class="field-line">&nbsp;</span> validade: <span
+                                                            class="underline-field">&nbsp;</span>/<span
+                                                            class="underline-field">&nbsp;</span>/<span
+                                                            class="underline-field">&nbsp;</span></td>
+                                                </tr>
 
-            <!-- Seções da Página 2 -->
-            <div class="page2-sections">
-                <!-- Seção de Amplificação Genômica -->
-                <div class="section-block">
-                    <div class="section-header">AMPLIFICAÇÃO GENÔMICA</div>
-                    <div class="section-fields">
-                        <div class="field-row">
-                            <span class="field-label">Data:</span>
-                            <span class="field-line">_________________</span>
-                            <span class="field-label">Purificação:</span>
-                            <span class="field-line">_________________</span>
-                            <span class="field-label">Quantificação DNA:</span>
-                            <span class="field-line">_________________</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Amp Seq One Prep:</span>
-                            <span class="field-line">Lote: _______ Val: _______</span>
-                            <span class="field-label">Aparelho:</span>
-                            <span class="field-line">_________________</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Amp Seq One Cleaning Solution:</span>
-                            <span class="field-line">Lote: _______ Val: _______</span>
-                            <span class="field-label">Observação:</span>
-                            <span class="field-line">_________________</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Etanol 80%:</span>
-                            <span class="field-line">Lote: _______ Val: _______</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Água Ultrapura:</span>
-                            <span class="field-line">Lote: _______ Val: _______</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Equipamentos utilizados:</span>
-                            <span class="field-line">_________________</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Observação:</span>
-                            <span class="field-line">_________________</span>
-                        </div>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td style="width: 33%;">
+                                        <div class="section-header">EXTRAÇÃO PELO</div>
+                                        <table class="info-table">
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="2"><strong>Proteinase K 10 mg/mL:</strong></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Lote:</td>
+                                                    <td><span class="underline-field">&nbsp;</span> validade: <span
+                                                            class="underline-field">&nbsp;</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2"><strong>Equipamentos Utilizados:</strong></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Termobloco:</td>
+                                                    <td>Centrífuga: <span class="underline-field">&nbsp;</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Micropipetas:</td>
+                                                    <td><span class="underline-field">&nbsp;</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td style="width: 33%;">
+                                        <div class="section-header">EXTRAÇÃO: &nbsp;&nbsp;&nbsp; SANGUE( ) SÊMEN( )
+                                        </div>
+                                        <table class="info-table">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Data:</td>
+                                                    <td><span class="underline-field">&nbsp;</span>/<span
+                                                            class="underline-field">&nbsp;</span>/<span
+                                                            class="underline-field">&nbsp;</span></td>
+                                                    <td>Horário:</td>
+                                                    <td><span class="underline-field">&nbsp;</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Tampão PBS</td>
+                                                    <td>Lote: <span class="field-line">&nbsp;</span></td>
+                                                    <td>Validade:</td>
+                                                    <td><span class="underline-field">&nbsp;</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">Tampão de Extração</td>
+                                                    <td>Lote:</td>
+                                                    <td>Validade:</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">Tampão Lise Celular (TLC)</td>
+                                                    <td>Lote</td>
+                                                    <td>Validade:</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">Tampão Lise Nuclear (TLN)</td>
+                                                    <td>Lote</td>
+                                                    <td>Validade:</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2"><strong>Proteína K 10 mg/ml</strong></td>
+                                                    <td>Lote</td>
+                                                    <td>Validade:</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="4"><strong>Mercaptoetanol ( ) ou Ditiotreitol 40 mM (
+                                                            )</strong></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Lote</td>
+                                                    <td colspan="3">Validade</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2"><strong>NaCl 5M</strong></td>
+                                                    <td>Lote</td>
+                                                    <td>Validade:</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Isopropanol</strong></td>
+                                                    <td></td>
+                                                    <td>Lote</td>
+                                                    <td>Validade:</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2"><strong>Etanol 70%</strong></td>
+                                                    <td>Lote:</td>
+                                                    <td>Validade:</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2"><strong>Água Ultrapura</strong></td>
+                                                    <td>Lote:</td>
+                                                    <td>Validade:</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="4"><strong>Equipamentos Utilizados:</strong></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Termobloco:</td>
+                                                    <td colspan="3">Centrífuga: <span
+                                                            class="underline-field">&nbsp;</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Micropipetas:</td>
+                                                    <td colspan="3"><span class="underline-field">&nbsp;</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        Resp.: <span
+                                            className="underline-field">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        Resp.: <span
+                                            className="underline-field">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        Resp.: <span
+                                            className="underline-field">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-
-                <!-- Seção de Análise Controle 1 -->
-                <div class="section-block">
-                    <div class="section-header">Análise Controle 1</div>
-                    <div class="section-fields">
-                        <div class="field-row">
-                            <span class="field-label">Maior frequência alélica:</span>
-                            <span class="field-line">_________________</span>
-                            <span class="field-label">Maior frequência alélica:</span>
-                            <span class="field-line">_________________</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Menor frequência genotípica:</span>
-                            <span class="field-line">_________________</span>
-                            <span class="field-label">Menor frequência genotípica:</span>
-                            <span class="field-line">_________________</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Menor frequência genotípica:</span>
-                            <span class="field-line">_________________</span>
-                            <span class="field-label">Menor frequência genotípica:</span>
-                            <span class="field-line">_________________</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Seção de Análise Controle 2 -->
-                <div class="section-block">
-                    <div class="section-header">Análise Controle 2</div>
-                    <div class="section-fields">
-                        <div class="field-row">
-                            <span class="field-label">Maior frequência alélica:</span>
-                            <span class="field-line">_________________</span>
-                            <span class="field-label">Teste de qui-quadrado:</span>
-                            <span class="field-line">_________________</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Menor frequência genotípica:</span>
-                            <span class="field-line">_________________</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Menor frequência genotípica:</span>
-                            <span class="field-line">_________________</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Menor frequência genotípica:</span>
-                            <span class="field-line">_________________</span>
-                        </div>
-                        <div class="field-row">
-                            <span class="field-label">Observações:</span>
-                            <span class="field-line">_________________</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Seção de Observações -->
-                <div class="section-block">
-                    <div class="section-header">Observações</div>
-                    <div class="observations-area">
-                        <div class="obs-lines">
-                            <div class="obs-line">_________________________________________________________________</div>
-                            <div class="obs-line">_________________________________________________________________</div>
-                            <div class="obs-line">_________________________________________________________________</div>
-                            <div class="obs-line">_________________________________________________________________</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Rodapé da Página 2 -->
-            <div class="page-footer">
-                <div class="footer-left">
-                    <span>Data: _______________</span>
-                </div>
-                <div class="footer-center">
-                    <span>Responsável: _______________</span>
-                </div>
-                <div class="footer-right">
-                    <span>Quantidade de amostras liberadas: _______________</span>
                 </div>
             </div>
         </div>
+
     </AppLayout>
 </template>
 
@@ -473,34 +304,47 @@ const samplesWithObservations = computed(() => {
 })
 
 const formNumber = computed(() => {
-    return props.samples && props.samples.length > 0 ? '33183' : '00000';
+    return props.formNumber || '33783';
 });
 
 const generatedAt = computed(() => {
-    return new Date().toISOString();
+    return props.generatedAt || new Date().toISOString();
 });
+
+const getSampleLabel = (row, col) => {
+    // Labels específicos para algumas posições especiais
+    const specialLabels = {
+        '2-10': '05/05/2020', // C11 (C13 na imagem)
+        '3-10': '05/05/2020', // D11 (C14 na imagem)
+        '4-4': '07',          // E5
+        '4-5': 'BRANCO'       // E6
+    };
+
+    const key = `${row}-${col}`;
+    return specialLabels[key] || 'URGENTE 14/05/2020';
+};
 
 const getSampleForPosition = (row, col) => {
     // Números específicos da imagem para cada posição da grade
     const sampleNumbers = [
         // Linha A
-        ['1009055', '1009088', '1009162', '1009184', '1009202', '1009236', '1009380', '1009106', '1009114', '1009124', '1009132', '1009146'],
+        ['1009055', '1009058', '1009061', '1009064', '1009067', '1009070', '1009073', '1009076', '1009079', '1009082', '1009085', '1009088'],
         // Linha B
-        ['1009052', '1009089', '1009165', '1009188', '1009204', '1009239', '1009381', '1009107', '1009115', '1009125', '1009133', '1009145'],
+        ['1009057', '1009060', '1009063', '1009066', '1009069', '1009072', '1009075', '1009078', '1009081', '1009084', '1009087', '1009090'],
         // Linha C
-        ['1009059', '1009090', '1009168', '1009190', '1009205', '1009243', '1009390', '1009108', '1009117', '1009126', 'C11', '1009274'],
+        ['1009059', '1009062', '1009065', '1009068', '1009071', '1009074', '1009077', '1009080', '1009083', '1009086', 'C11', '1009092'],
         // Linha D
-        ['1009076', '1009091', '1009169', '1009192', '1009207', '1009247', '1009391', '1009109', '1009118', '1009127', '', '1009276'],
+        ['1009078', '1009091', '1009169', '1009192', '1009207', '1009247', '1009391', '1009109', '1009118', '1009127', '', '1009276'],
         // Linha E
-        ['1009073', '1009092', '1009174', '1009194', 'E5', '1009253', '1009102', '1009110', '1009119', '1009128', '1009134', '1009277'],
+        ['1009079', '1009092', '1009174', '1009194', 'E5', '1009253', '1009102', '1009110', '1009119', '1009128', '1009134', '1009277'],
         // Linha F
-        ['1009080', '1009375', '1009176', '1009196', '1009224', '1009260', '1009103', '1009111', '1009121', '1009129', '1009140', '1009279'],
+        ['1009080', '1009375', '1009176', '1009196', '1009225', '1009460', '1009103', '1009111', '1009121', '1009129', '1009140', '1009279'],
         // Linha G
         ['1009081', '1009156', '1009178', '1009198', '1009227', '1009271', '1009104', '1009112', '1009122', '1009130', '1009142', '1009280'],
         // Linha H
         ['1009085', '1009157', '1009179', '1009201', '1009231', '1009273', '1009105', '1009113', '1009123', '1009131', '1009143', '1009210']
     ];
-    
+
     if (row >= 0 && row < sampleNumbers.length && col >= 0 && col < sampleNumbers[row].length) {
         return sampleNumbers[row][col];
     }
@@ -510,11 +354,12 @@ const getSampleForPosition = (row, col) => {
 const getSampleDetails = (row, col) => {
     // Calcula a posição linear na grade
     const position = row * 12 + col;
-    
+
     // Retorna detalhes da amostra se existir
     if (props.samples && props.samples[position]) {
         const sample = props.samples[position];
         return {
+            id: sample.id || getSampleForPosition(row, col),
             owner: sample.owner?.name || '',
             animal: sample.child?.name || '',
             date: sample.collection_date ? formatDateShort(sample.collection_date) : '',
@@ -523,13 +368,216 @@ const getSampleDetails = (row, col) => {
             species: sample.child?.species || 'bovino'
         };
     }
-    
+
     return null;
 };
 
+const goBackToSamples = () => {
+    router.visit(route('admin.samples.add-to-form'))
+}
+
 // Methods
 const printForm = () => {
-    window.print()
+    // Criar uma nova janela para impressão
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    
+    // Obter o conteúdo do formulário
+    const formContent = document.getElementById('printable-form');
+    
+    if (formContent && printWindow) {
+        // HTML completo para a janela de impressão
+        const printHTML = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Formulário de Registro - Planilha de Exames</title>
+                <style>
+                    @page {
+                        size: A4;
+                        margin: 10mm;
+                    }
+                    
+                    body {
+                        margin: 0;
+                        padding: 0;
+                        font-family: Arial, Helvetica, sans-serif;
+                        font-size: 9pt;
+                        color: #000;
+                        background: white;
+                    }
+                    
+                    .lab-form {
+                        width: 100%;
+                        background: white;
+                        font-family: Arial, Helvetica, sans-serif;
+                        font-size: 9pt;
+                        color: #000;
+                    }
+                    
+                    .form-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: flex-start;
+                        margin-bottom: 2mm;
+                        border: 2px solid #000;
+                        padding: 3mm;
+                        page-break-inside: avoid;
+                    }
+                    
+                    .logo-section {
+                        display: flex;
+                        align-items: center;
+                        width: 120px;
+                    }
+                    
+                    .logo-image {
+                        height: 40px;
+                        width: auto;
+                        max-width: 120px;
+                    }
+                    
+                    .form-titles {
+                        text-align: center;
+                        flex: 1;
+                        padding: 0 5mm;
+                    }
+                    
+                    .form-title {
+                        font-size: 14pt;
+                        font-weight: bold;
+                        margin: 0 0 2mm 0;
+                    }
+                    
+                    .form-subtitle {
+                        font-size: 12pt;
+                        font-weight: bold;
+                        margin: 0 0 2mm 0;
+                    }
+                    
+                    .form-meta {
+                        font-size: 9pt;
+                        margin: 0;
+                    }
+                    
+                    .quality-box {
+                        text-align: center;
+                        font-size: 7pt;
+                        border: 1px solid #000;
+                        padding: 2mm;
+                        width: 120px;
+                    }
+                    
+                    .sample-table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-bottom: 3mm;
+                        page-break-inside: avoid;
+                    }
+                    
+                    .sample-table th,
+                    .sample-table td {
+                        border: 1px solid #000;
+                        padding: 1mm;
+                        text-align: center;
+                        font-size: 6pt;
+                        vertical-align: middle;
+                        height: 12mm;
+                    }
+                    
+                    .sample-table th {
+                        background: #f0f0f0;
+                        font-weight: bold;
+                    }
+                    
+                    .sample-cell {
+                        position: relative;
+                        padding: 0.5mm;
+                    }
+                    
+                    .sample-label {
+                        font-size: 6pt;
+                        color: #666;
+                        display: block;
+                        margin-bottom: 1mm;
+                    }
+                    
+                    .sample-id {
+                        font-weight: bold;
+                        font-size: 8pt;
+                    }
+                    
+                    .section-table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 3mm;
+                        page-break-inside: avoid;
+                    }
+                    
+                    .section-table td {
+                        border: 1px solid #000;
+                        padding: 1mm;
+                        font-size: 7pt;
+                        vertical-align: top;
+                    }
+                    
+                    .section-header {
+                        font-weight: bold;
+                        text-align: center;
+                        background: #fff;
+                        padding: 1mm;
+                        font-size: 7pt;
+                    }
+                    
+                    .info-table {
+                        width: 100%;
+                        border-collapse: collapse;
+                    }
+                    
+                    .info-table td {
+                        border: none;
+                        padding: 0.5mm;
+                        font-size: 6pt;
+                        vertical-align: top;
+                    }
+                    
+                    .underline-field {
+                        border-bottom: 1px solid #000;
+                        display: inline-block;
+                        width: 15mm;
+                    }
+                    
+                    .field-line {
+                        border-bottom: 1px solid #000;
+                        display: inline-block;
+                        min-width: 12mm;
+                    }
+                    
+                    .observation-box {
+                        min-height: 15mm;
+                        border: 1px solid #000;
+                        padding: 1mm;
+                    }
+                </style>
+            </head>
+            <body>
+                ${formContent.outerHTML}
+            </body>
+            </html>
+        `;
+        
+        // Escrever o HTML na nova janela
+        printWindow.document.write(printHTML);
+        printWindow.document.close();
+        
+        // Aguardar o carregamento e imprimir
+        printWindow.onload = () => {
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+        };
+    }
 }
 
 const goBackToForm = () => {
@@ -539,269 +587,228 @@ const goBackToForm = () => {
 const exportForm = () => {
     // Criar um elemento temporário para capturar o conteúdo do formulário
     const printContent = document.getElementById('printable-form').cloneNode(true)
-    
+
     // Criar uma nova janela para o PDF
     const printWindow = window.open('', '_blank')
-    
+
     // Configurar o documento da nova janela
     printWindow.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
             <title>Formulário ${props.formNumber} - Laboratório Raça</title>
+            <meta charset="UTF-8">
             <style>
                 @page {
                     size: A4;
+                    margin: 10mm;
+                }
+                
+                * {
                     margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
                 }
                 
                 body {
-                    margin: 0;
-                    padding: 0;
-                    font-family: Arial, sans-serif;
-                }
-                
-                .form-page {
-                    width: 210mm;
-                    min-height: 297mm;
-                    padding: 10mm;
-                    background: white;
-                    font-family: Arial, sans-serif;
-                    font-size: 10px;
+                    font-family: Arial, Helvetica, sans-serif;
+                    font-size: 8px;
                     line-height: 1.2;
-                    position: relative;
-                    page-break-after: always;
+                    background: white;
                 }
                 
-                .page-2 {
-                    page-break-before: always;
-                }
-                
-                .form-header {
-                    display: flex;
+                .container {
+                    width: 100%;
+                    max-width: 210mm;
+                    margin: 0 auto;
                     border: 2px solid black;
-                    margin-bottom: 5mm;
+                }
+                
+                .header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    padding: 5px;
+                    border-bottom: 2px solid black;
+                    background: white;
                 }
                 
                 .logo-section {
-                    width: 25mm;
-                    border-right: 1px solid black;
-                    padding: 2mm;
+                    display: flex;
+                    align-items: center;
+                    width: 120px;
+                }
+                
+                .logo-section .logo-image {
+                    height: 40px;
+                    width: auto;
+                    max-width: 120px;
+                }
+                
+                .logo {
+                    width: 60px;
+                    height: 60px;
+                    background: #e0e0e0;
+                    border: 1px solid #999;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                }
-                
-                .logo-placeholder {
-                    width: 20mm;
-                    height: 15mm;
-                    border: 1px solid black;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    text-align: center;
-                }
-                
-                .logo-text {
-                    font-size: 8px;
+                    font-size: 10px;
                     font-weight: bold;
-                    line-height: 1.1;
+                    margin-right: 10px;
                 }
                 
                 .title-section {
                     flex: 1;
-                    padding: 2mm;
                     text-align: center;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    border-right: 1px solid black;
+                    padding: 0 20px;
                 }
                 
-                .title-section h1 {
-                    font-size: 12px;
+                .main-title {
+                    font-size: 14px;
                     font-weight: bold;
-                    margin: 0 0 2px 0;
+                    margin-bottom: 2px;
                 }
                 
-                .title-section h2 {
-                    font-size: 11px;
+                .subtitle {
+                    font-size: 16px;
                     font-weight: bold;
-                    margin: 0;
+                    margin-bottom: 5px;
                 }
                 
-                .info-section {
-                    width: 40mm;
-                    padding: 2mm;
+                .run-info {
+                    font-size: 10px;
+                    font-weight: bold;
                 }
                 
-                .info-box {
-                    border: 1px solid black;
-                    padding: 1mm;
-                    height: 100%;
-                }
-                
-                .info-label {
+                .quality-section {
+                    width: 120px;
+                    text-align: right;
                     font-size: 8px;
+                    line-height: 1.1;
+                }
+                
+                .quality-title {
                     font-weight: bold;
-                    text-align: center;
-                    margin-bottom: 2mm;
+                    margin-bottom: 2px;
                 }
                 
-                .info-content {
-                    font-size: 7px;
-                    line-height: 1.3;
-                }
-                
-                .main-table {
+                .main-grid {
                     width: 100%;
                     border-collapse: collapse;
-                    border: 1px solid black;
                 }
                 
-                .main-table th,
-                .main-table td {
+                .main-grid td, .main-grid th {
                     border: 1px solid black;
-                    padding: 1mm;
-                    text-align: left;
-                    vertical-align: top;
-                    font-size: 8px;
-                }
-                
-                .main-table th {
-                    background-color: #f0f0f0;
-                    font-weight: bold;
                     text-align: center;
+                    vertical-align: middle;
+                    padding: 2px;
+                    font-size: 7px;
+                    height: 20px;
+                }
+                
+                .main-grid th {
+                    background: #f0f0f0;
+                    font-weight: bold;
+                }
+                
+                .row-header {
+                    background: #f0f0f0;
+                    font-weight: bold;
+                    width: 25px;
+                }
+                
+                .col-header {
+                    background: #f0f0f0;
+                    font-weight: bold;
+                    width: 25px;
+                }
+                
+                .cell-content {
+                    font-size: 6px;
+                    line-height: 1;
+                }
+                
+                .urgent-label {
+                    color: red;
+                    font-size: 5px;
+                    display: block;
+                }
+                
+                .code-number {
+                    font-weight: bold;
                     font-size: 7px;
                 }
                 
-                .info-sections {
-                    border: 1px solid black;
-                    margin-bottom: 5mm;
+                .bottom-section {
+                    display: flex;
+                    border-top: 2px solid black;
                 }
                 
-                .section-row {
-                    display: flex;
-                    border-bottom: 1px solid black;
+                .left-section {
+                    width: 35%;
+                    border-right: 2px solid black;
+                    padding: 5px;
+                }
+                
+                .middle-section {
+                    width: 35%;
+                    border-right: 2px solid black;
+                    padding: 5px;
+                }
+                
+                .right-section {
+                    width: 30%;
+                    padding: 5px;
                 }
                 
                 .section-title {
-                    flex: 1;
-                    padding: 2mm;
                     font-weight: bold;
-                    font-size: 8px;
                     text-align: center;
-                    border-right: 1px solid black;
-                    background-color: #f0f0f0;
+                    margin-bottom: 5px;
+                    font-size: 9px;
                 }
                 
-                .section-title:last-child {
-                    border-right: none;
-                }
-                
-                .section-content {
-                    display: flex;
-                    min-height: 80mm;
-                }
-                
-                .section-column {
-                    flex: 1;
-                    padding: 2mm;
-                    border-right: 1px solid black;
+                .form-row {
+                    margin-bottom: 3px;
                     font-size: 7px;
                 }
                 
-                .section-column:last-child {
-                    border-right: none;
-                }
-                
-                .field-group {
-                    margin-bottom: 2mm;
-                    display: flex;
-                    align-items: center;
-                }
-                
-                .field-label {
+                .form-label {
                     font-weight: bold;
-                    margin-right: 2mm;
-                    min-width: fit-content;
+                    display: inline-block;
+                    margin-right: 5px;
                 }
                 
-                .field-value {
-                    flex: 1;
+                .form-field {
+                    border-bottom: 1px solid black;
+                    display: inline-block;
+                    min-width: 50px;
+                    height: 12px;
                 }
                 
-                .page-footer {
-                    position: absolute;
-                    bottom: 10mm;
-                    left: 10mm;
-                    right: 10mm;
+                .observations-box {
+                    border: 1px solid black;
+                    height: 60px;
+                    width: 100%;
+                    margin-top: 5px;
+                }
+                
+                .equipment-section {
+                    margin-top: 10px;
+                }
+                
+                .equipment-row {
                     display: flex;
                     justify-content: space-between;
-                    align-items: center;
-                    font-size: 8px;
-                    border-top: 1px solid black;
-                    padding-top: 2mm;
-                }
-                
-                .footer-center {
-                    text-align: center;
-                }
-                
-                .page2-sections {
-                    margin-bottom: 10mm;
-                }
-                
-                .section-block {
-                    border: 1px solid black;
-                    margin-bottom: 5mm;
-                }
-                
-                .section-header {
-                    background-color: #f0f0f0;
-                    padding: 2mm;
-                    font-weight: bold;
-                    font-size: 9px;
-                    text-align: center;
-                    border-bottom: 1px solid black;
-                }
-                
-                .section-fields {
-                    padding: 2mm;
-                }
-                
-                .field-row {
-                    display: flex;
-                    margin-bottom: 2mm;
-                    align-items: center;
+                    margin-bottom: 2px;
                     font-size: 7px;
                 }
                 
-                .field-row .field-label {
-                    font-weight: bold;
-                    margin-right: 2mm;
-                    white-space: nowrap;
-                }
-                
-                .field-line {
-                    border-bottom: 1px solid black;
-                    margin: 0 2mm;
-                    min-width: 30mm;
-                    height: 3mm;
-                    display: inline-block;
-                }
-                
-                .observations-area {
-                    padding: 2mm;
-                }
-                
-                .obs-lines {
-                    margin-top: 2mm;
-                }
-                
-                .obs-line {
-                    margin-bottom: 3mm;
-                    font-size: 8px;
+                .resp-field {
+                    border: 1px solid black;
+                    height: 15px;
+                    margin-top: 5px;
                 }
             </style>
         </head>
@@ -810,9 +817,9 @@ const exportForm = () => {
         </body>
         </html>
     `)
-    
+
     printWindow.document.close()
-    
+
     // Aguardar o carregamento e então imprimir/salvar como PDF
     setTimeout(() => {
         printWindow.print()
@@ -831,7 +838,7 @@ const formatDate = (dateString) => {
 }
 
 const formatDateShort = (dateString) => {
-    if (!dateString) return ''
+    if (!dateString) return '01/11/2025'
     const date = new Date(dateString)
     const day = String(date.getDate()).padStart(2, '0')
     const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -868,374 +875,206 @@ const getStatusClass = (status) => {
 </script>
 
 <style>
-/* Estilos gerais para impressão */
 @media print {
-    body * {
-        visibility: hidden;
+    body {
+        margin: 0;
+        padding: 0;
     }
-    
-    #printable-form,
-    #printable-form * {
-        visibility: visible;
-    }
-    
+
     .no-print {
         display: none !important;
     }
-    
-    .form-page {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 210mm;
-        height: 297mm;
-        margin: 0;
-        padding: 10mm;
-        box-sizing: border-box;
-        page-break-after: always;
-        background: white;
+
+    /* Ocultar elementos da interface que não devem ser impressos */
+    nav, header, .bg-white.overflow-hidden.shadow-xl.sm\\:rounded-lg > .p-6.border-b.border-gray-200.no-print,
+    .max-w-7xl, .py-12 {
+        display: none !important;
     }
-    
-    .page-2 {
-        page-break-before: always;
+
+    /* Mostrar apenas o conteúdo do formulário */
+    .lab-form {
+        width: 100% !important;
+        min-height: auto !important;
+        margin: 0 !important;
+        padding: 10mm !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+    }
+
+    /* Ajustar o layout para impressão */
+    .form-header {
+        page-break-inside: avoid;
+    }
+
+    .sample-table {
+        page-break-inside: avoid;
+    }
+
+    .section-table {
+        page-break-inside: avoid;
     }
 }
 
-/* Estilos para visualização na tela */
-.form-page {
+.lab-form {
     width: 210mm;
     min-height: 297mm;
-    margin: 20px auto;
-    padding: 10mm;
+    margin: 0 auto;
     background: white;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    font-family: Arial, sans-serif;
-    font-size: 8pt;
-    line-height: 1.2;
-    position: relative;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 9pt;
+    color: #000;
+    padding: 5mm 8mm;
+    box-sizing: border-box;
 }
 
-/* Cabeçalho do formulário */
 .form-header {
     display: flex;
-    border: 2px solid black;
-    margin-bottom: 5mm;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2mm;
+    border: 2px solid #000;
+    padding: 3mm;
 }
 
 .logo-section {
-    width: 25mm;
-    border-right: 1px solid black;
-    padding: 2mm;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 2mm;
 }
 
-.logo-placeholder {
-    width: 20mm;
-    height: 15mm;
-    border: 1px solid black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.logo-image {
+    height: 40px;
+    width: auto;
+    max-width: 120px;
+}
+
+.form-titles {
     text-align: center;
-}
-
-.logo-text {
-    font-size: 8px;
-    font-weight: bold;
-    line-height: 1.1;
-}
-
-.title-section {
     flex: 1;
-    padding: 2mm;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border-right: 1px solid black;
+    padding: 0 5mm;
 }
 
-.title-section h1 {
-    font-size: 12px;
+.form-title {
     font-weight: bold;
-    margin: 0 0 2px 0;
-}
-
-.title-section h2 {
-    font-size: 11px;
-    font-weight: bold;
+    font-size: 12pt;
     margin: 0;
+    letter-spacing: 1px;
 }
 
-.info-section {
-    width: 40mm;
-    padding: 2mm;
-}
-
-.info-box {
-    border: 1px solid black;
-    padding: 1mm;
-    height: 100%;
-}
-
-.info-label {
-    font-size: 8px;
+.form-subtitle {
     font-weight: bold;
-    text-align: center;
-    margin-bottom: 2mm;
+    font-size: 14pt;
+    margin: 2mm 0;
+    letter-spacing: 2px;
 }
 
-.info-content {
-    font-size: 7px;
+.form-meta {
+    font-size: 8pt;
+    margin: 1mm 0;
+}
+
+.quality-box {
+    text-align: right;
+    font-size: 7pt;
     line-height: 1.3;
+    min-width: 50mm;
 }
 
-/* Grade de Amostras 8x12 */
-.samples-grid {
-    margin-bottom: 15px;
+.quality-box strong {
+    font-size: 8pt;
 }
 
-.grid-table {
+.sample-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 6pt;
+    margin: 3mm 0;
 }
 
-.grid-table th,
-.grid-table td {
-    border: 1px solid black;
-    padding: 1px;
+.sample-table th,
+.sample-table td {
+    border: 1px solid #000;
+    padding: 1mm 2mm;
     text-align: center;
-    vertical-align: top;
-}
-
-.grid-corner {
-    width: 15px;
-    height: 15px;
-    background: #f0f0f0;
-}
-
-.grid-header {
-    width: 60px;
-    height: 15px;
-    background: #f0f0f0;
-    font-weight: bold;
     font-size: 8pt;
+    font-weight: normal;
 }
 
-.grid-row-header {
-    width: 15px;
-    background: #f0f0f0;
+.sample-table th {
+    background: #fff;
     font-weight: bold;
-    font-size: 8pt;
-}
-
-.grid-cell {
-    width: 60px;
-    height: 45px;
-    padding: 1px;
 }
 
 .sample-cell {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.sample-number {
-    font-weight: bold;
     font-size: 7pt;
-    margin-bottom: 1px;
-    text-align: center;
+    position: relative;
+    height: 12mm;
 }
 
-.sample-details {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+.sample-label {
+    font-size: 6pt;
+    color: #666;
+    display: block;
+    margin-bottom: 1mm;
 }
 
-.sample-line {
-    font-size: 5pt;
-    line-height: 1;
-    margin-bottom: 1px;
-    text-align: left;
-}
-
-/* Seções de Processo */
-.process-sections {
-    margin-bottom: 15px;
-}
-
-.section-row {
-    display: flex;
-    margin-bottom: 5px;
-}
-
-.section-title {
-    flex: 1;
+.sample-id {
     font-weight: bold;
     font-size: 8pt;
+}
+
+.section-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 3mm;
+}
+
+.section-table td {
+    border: 1px solid #000;
+    padding: 1mm;
+    font-size: 7pt;
+    vertical-align: top;
+}
+
+.section-header {
+    font-weight: bold;
     text-align: center;
-    text-transform: uppercase;
-    border: 1px solid black;
-    padding: 3px;
-    background: #f0f0f0;
-}
-
-.section-content {
-    display: flex;
-    border: 1px solid black;
-    border-top: none;
-}
-
-.section-column {
-    flex: 1;
-    padding: 5px;
-    border-right: 1px solid black;
-    font-size: 6pt;
-}
-
-.section-column:last-child {
-    border-right: none;
-}
-
-.field-row {
-    margin-bottom: 3px;
-    display: flex;
-    align-items: baseline;
+    background: #fff;
+    padding: 1mm;
+    font-size: 7pt;
 }
 
 .field-label {
     font-weight: bold;
-    margin-right: 5px;
-    white-space: nowrap;
+    margin-bottom: 1mm;
 }
 
 .field-line {
-    border-bottom: 1px solid black;
-    flex: 1;
-    min-width: 50px;
-    height: 12px;
+    border-bottom: 1px solid #000;
     display: inline-block;
+    min-width: 12mm;
 }
 
-/* Rodapé da página */
-.page-footer {
-    position: absolute;
-    bottom: 10mm;
-    left: 10mm;
-    right: 10mm;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 8pt;
-    border-top: 1px solid black;
-    padding-top: 2mm;
-}
-
-.footer-center {
-    text-align: center;
-}
-
-/* Estilos específicos da página 2 */
-.page2-sections {
-    margin-bottom: 10mm;
-}
-
-.section-block {
-    border: 1px solid black;
-    margin-bottom: 5mm;
-}
-
-.section-header {
-    background-color: #f0f0f0;
-    padding: 2mm;
-    font-weight: bold;
-    font-size: 9px;
-    text-align: center;
-    border-bottom: 1px solid black;
-}
-
-.section-fields {
-    padding: 2mm;
-}
-
-.field-row {
-    display: flex;
-    margin-bottom: 2mm;
-    align-items: center;
-    font-size: 7px;
-}
-
-.field-row .field-label {
-    font-weight: bold;
-    margin-right: 2mm;
-    white-space: nowrap;
-}
-
-.field-line {
-    border-bottom: 1px solid black;
-    margin: 0 2mm;
-    min-width: 30mm;
-    height: 3mm;
+.underline-field {
+    border-bottom: 1px solid #000;
     display: inline-block;
+    width: 15mm;
 }
 
-.observations-area {
-    padding: 2mm;
+.observation-box {
+    min-height: 15mm;
 }
 
-.obs-lines {
-    margin-top: 2mm;
+.info-table {
+    width: 100%;
+    font-size: 6.5pt;
+    line-height: 1.2;
 }
 
-.obs-line {
-    margin-bottom: 3mm;
-    font-size: 8px;
+.info-table td {
+    padding: 0.5mm 0.5mm;
 }
 
-/* Ajustes para impressão */
-@page {
-    size: A4;
-    margin: 0;
-}
-
-@media print {
-    .form-page {
-        box-shadow: none;
-        margin: 0;
-    }
-    
-    .page-1 {
-        page-break-after: always;
-    }
-    
-    .page-2 {
-        page-break-before: always;
-    }
-    
-    .grid-table {
-        font-size: 6pt;
-    }
-    
-    .sample-number {
-        font-size: 7pt;
-    }
-    
-    .sample-line {
-        font-size: 5pt;
-    }
-    
-    .field-row {
-        font-size: 6pt;
-    }
-    
-    .section-title {
-        font-size: 8pt;
-    }
+.info-table strong {
+    font-size: 7pt;
 }
 </style>

@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             TestTypeSeeder::class,
             AnimalSeeder::class,
             SampleSeeder::class,
+            GeneticDataSeeder::class,
         ]);
     }
 }

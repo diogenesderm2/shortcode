@@ -1,157 +1,217 @@
+<script setup>
+import { ref } from 'vue';
+import { Head } from '@inertiajs/vue3';
+import AppLayout from '@/Layouts/AppLayout.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import SampleTable from '@/Components/SampleTable.vue';
+
+// Props
+const props = defineProps({
+    animal: {
+        type: Object,
+        required: true
+    },
+    samples: {
+        type: Array,
+        default: () => []
+    }
+});
+
+// Refs para controlar modais/estados
+const recordsOpen = ref(false);
+const updateOpen = ref(false);
+const compareOpen = ref(false);
+const newSampleOpen = ref(false);
+const activeTab = ref('samples');
+
+// Métodos
+const handleCompare = () => {
+    console.log('Comparar amostras');
+    // Implementar lógica de comparação
+};
+const setRecordsOpen = (value) => {
+    recordsOpen.value = value;
+    if (value) activeTab.value = 'records';
+};
+
+const setUpdateOpen = (value) => {
+    updateOpen.value = value;
+    if (value) activeTab.value = 'update';
+};
+
+const setCompareOpen = (value) => {
+    compareOpen.value = value;
+    if (value) activeTab.value = 'compare';
+};
+
+const setNewSampleOpen = (value) => {
+    newSampleOpen.value = value;
+    if (value) activeTab.value = 'new-sample';
+};
+
+const setActiveTab = (tab) => {
+    activeTab.value = tab;
+};
+
+const showGeneticResults = () => {
+    showGeneticModal.value = true;
+};
+
+const closeGeneticModal = () => {
+    showGeneticModal.value = false;
+};
+</script>
+
 <template>
-    <AppLayout title="Detalhes do Animal">
+    <Head title="Detalhes do Animal" />
+    
+    <AppLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Detalhes do Animal
+                Detalhes do Animal - {{ animal.name }}
             </h2>
         </template>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
-                        <!-- Detalhes do animal -->
-                        <div class="mb-8">
-                            <div class="flex justify-between items-start mb-6">
-                                <h3 class="text-2xl font-bold text-gray-900">{{ animal.name }}</h3>
-                                <Link 
-                                    :href="route('admin.animals.edit', animal.id)" 
-                                    class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring focus:ring-blue-300"
-                                >
-                                    Editar Animal
-                                </Link>
-                            </div>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <h4 class="font-medium text-gray-900 mb-3">Informações Básicas</h4>
-                                    <div class="space-y-2">
-                                        <div class="flex">
-                                            <span class="text-gray-600 w-32">RG:</span>
-                                            <span class="text-gray-900 font-medium">{{ animal.rg }}</span>
-                                        </div>
-                                        <div class="flex">
-                                            <span class="text-gray-600 w-32">Data de Nasc.:</span>
-                                            <span class="text-gray-900 font-medium">{{ formatDate(animal.birth_date) }}</span>
-                                        </div>
-                                        <div class="flex">
-                                            <span class="text-gray-600 w-32">Sexo:</span>
-                                            <span class="text-gray-900 font-medium">{{ animal.sex === 'macho' ? 'Macho' : 'Fêmea' }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <h4 class="font-medium text-gray-900 mb-3">Proprietário</h4>
-                                    <div class="space-y-2">
-                                        <div class="flex">
-                                            <span class="text-gray-600 w-32">Nome:</span>
-                                            <span class="text-gray-900 font-medium">{{ animal.owner?.name }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <div class="min-h-screen bg-gray-50">
+            <header class="bg-white/50 backdrop-blur-sm border-b border-gray-200 px-8 py-5 sticky top-0 z-10">
+                <div class="flex items-center justify-between max-w-7xl mx-auto">
+                    <PrimaryButton class="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all">
+                        Ensaios Emitidos
+                    </PrimaryButton>
+                    <SecondaryButton class="rounded-xl hover:border-blue-500 hover:text-blue-600 transition-all">
+                        Escolher Outro Animal
+                    </SecondaryButton>
                 </div>
+            </header>
 
-                <!-- Seção de Amostras -->
-                <div class="mt-8 bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Amostras Relacionadas</h3>
-                        
-                        <div v-if="samples.length === 0" class="text-gray-500 text-center py-4">
-                            Nenhuma amostra encontrada para este animal.
-                        </div>
-                        
-                        <div v-else class="space-y-6">
-                            <div v-for="sample in samples" :key="sample.id" class="bg-gray-50 p-4 rounded-lg">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <h4 class="font-medium text-gray-900">
-                                            Amostra: {{ sample.sample_code }}
-                                            <span class="ml-2 px-2 py-1 text-xs rounded-full" 
-                                                :class="{
-                                                    'bg-yellow-100 text-yellow-800': sample.status === 'pendente',
-                                                    'bg-blue-100 text-blue-800': sample.status === 'processando',
-                                                    'bg-green-100 text-green-800': sample.status === 'concluido'
-                                                }">
-                                                {{ formatStatus(sample.status) }}
-                                            </span>
-                                        </h4>
-                                        <p class="text-sm text-gray-600 mt-1">
-                                            Tipo: {{ formatSampleType(sample.sample_type) }} | 
-                                            Data de Coleta: {{ formatDate(sample.collection_date) }}
-                                        </p>
-                                    </div>
+            <main class="container mx-auto px-8 py-8 max-w-7xl">
+                <!-- Navegação de Tabs -->
+                <div class="bg-white/50 backdrop-blur-sm border border-gray-200 p-1.5 rounded-2xl shadow-sm mb-6">
+                    <div class="flex flex-wrap gap-2">
+                        <button 
+                            @click="setRecordsOpen(true)"
+                            :class="[
+                                'px-4 py-2 rounded-xl transition-all',
+                                activeTab === 'records' 
+                                    ? 'bg-blue-600 text-white shadow-md' 
+                                    : 'hover:bg-gray-100'
+                            ]"
+                        >
+                            Registros
+                        </button>
+                        <button 
+                            @click="setUpdateOpen(true)"
+                            :class="[
+                                'px-4 py-2 rounded-xl transition-all',
+                                activeTab === 'update' 
+                                    ? 'bg-blue-600 text-white shadow-md' 
+                                    : 'hover:bg-gray-100'
+                            ]"
+                        >
+                            Alterar
+                        </button>
+                        <button 
+                            @click="setCompareOpen(true)"
+                            :class="[
+                                'px-4 py-2 rounded-xl transition-all',
+                                activeTab === 'compare' 
+                                    ? 'bg-blue-600 text-white shadow-md' 
+                                    : 'hover:bg-gray-100'
+                            ]"
+                        >
+                            Comparar
+                        </button>
+                        <button 
+                            @click="setActiveTab('children')"
+                            :class="[
+                                'px-4 py-2 rounded-xl transition-all',
+                                activeTab === 'children' 
+                                    ? 'bg-blue-600 text-white shadow-md' 
+                                    : 'hover:bg-gray-100'
+                            ]"
+                        >
+                            Filhos (0)
+                        </button>
+                        <button 
+                            @click="setNewSampleOpen(true)"
+                            :class="[
+                                'px-4 py-2 rounded-xl transition-all',
+                                activeTab === 'new-sample' 
+                                    ? 'bg-blue-600 text-white shadow-md' 
+                                    : 'hover:bg-gray-100'
+                            ]"
+                        >
+                            Nova Amostra
+                        </button>
+                        <button 
+                            @click="setActiveTab('samples')"
+                            :class="[
+                                'px-4 py-2 rounded-xl transition-all',
+                                activeTab === 'samples' 
+                                    ? 'bg-blue-600 text-white shadow-md' 
+                                    : 'hover:bg-gray-100'
+                            ]"
+                        >
+                            Amostras
+                        </button>
+                    </div>
+                </div>
+                
+                <div v-show="activeTab === 'samples'" class="space-y-6">
+                    <!-- Grid com Informações do Animal e Observações lado a lado -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Card de Informações do Animal -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 h-fit">
+                            <h3 class="text-lg font-semibold mb-4">Informações do Animal</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Nome</label>
+                                    <p class="mt-1 text-sm text-gray-900">{{ animal.name }}</p>
                                 </div>
-                                
-                                <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div v-if="sample.child" class="bg-white p-3 rounded-md shadow-sm">
-                                        <h5 class="font-medium text-gray-800">Animal Filho</h5>
-                                        <p class="text-sm text-gray-600">{{ sample.child.name }} ({{ sample.child.rg }})</p>
-                                        <p class="text-sm text-gray-600">{{ sample.child.sex === 'macho' ? 'Macho' : 'Fêmea' }}</p>
-                                    </div>
-                                    
-                                    <div v-if="sample.father" class="bg-white p-3 rounded-md shadow-sm">
-                                        <h5 class="font-medium text-gray-800">Animal Pai</h5>
-                                        <p class="text-sm text-gray-600">{{ sample.father.name }} ({{ sample.father.rg }})</p>
-                                        <p class="text-sm text-gray-600">{{ sample.father.sex === 'macho' ? 'Macho' : 'Fêmea' }}</p>
-                                    </div>
-                                    
-                                    <div v-if="sample.mother" class="bg-white p-3 rounded-md shadow-sm">
-                                        <h5 class="font-medium text-gray-800">Animal Mãe</h5>
-                                        <p class="text-sm text-gray-600">{{ sample.mother.name }} ({{ sample.mother.rg }})</p>
-                                        <p class="text-sm text-gray-600">{{ sample.mother.sex === 'macho' ? 'Macho' : 'Fêmea' }}</p>
-                                    </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Registro</label>
+                                    <p class="mt-1 text-sm text-gray-900">{{ animal.register || 'N/A' }}</p>
                                 </div>
-                                
-                                <div v-if="sample.observations" class="mt-4 bg-white p-3 rounded-md shadow-sm">
-                                    <h5 class="font-medium text-gray-800">Observações</h5>
-                                    <p class="text-sm text-gray-600">{{ sample.observations }}</p>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Sexo</label>
+                                    <p class="mt-1 text-sm text-gray-900">
+                                        {{ animal.genre === 1 ? 'Macho' : animal.genre === 2 ? 'Fêmea' : 'Indefinido' }}
+                                    </p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Data de Nascimento</label>
+                                    <p class="mt-1 text-sm text-gray-900">{{ animal.birth || 'N/A' }}</p>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Card de Observações com mesma altura -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 h-fit">
+                            <div class="flex items-center justify-between mb-5">
+                                <h3 class="text-lg font-bold text-gray-900">Observações</h3>
+                                <PrimaryButton class="text-sm bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl shadow-sm hover:shadow-md transition-all">
+                                    Adicionar
+                                </PrimaryButton>
+                            </div>
+                            <div class="flex items-center justify-center py-8">
+                                <p class="text-gray-500 text-sm text-center">
+                                    Nenhuma observação foi encontrada.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card de Amostras ocupando 100% da largura -->
+                    <div class="bg-white rounded-lg shadow-sm p-6 w-full">
+                        <h3 class="text-lg font-semibold mb-4">Amostras do Animal</h3>
+                        <SampleTable 
+                            :samples="samples" 
+                            @compare="handleCompare"
+                        />
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     </AppLayout>
 </template>
-
-<script setup>
-import { Link } from '@inertiajs/vue3';
-import AppLayout from '@/Layouts/AppLayout.vue';
-
-const props = defineProps({
-    animal: Object,
-    samples: Array,
-});
-
-// Formatação de data
-const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR');
-};
-
-// Formatação do tipo de amostra
-const formatSampleType = (type) => {
-    const types = {
-        'sangue': 'Sangue',
-        'pelo': 'Pelo',
-        'saliva': 'Saliva'
-    };
-    return types[type] || type;
-};
-
-// Formatação do status
-const formatStatus = (status) => {
-    const statuses = {
-        'pendente': 'Pendente',
-        'processando': 'Em Processamento',
-        'concluido': 'Concluído'
-    };
-    return statuses[status] || status;
-};
-</script>

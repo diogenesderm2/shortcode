@@ -98,16 +98,81 @@ class AnimalController extends Controller
      */
     public function show(Animal $animal)
     {
-        $animal->load('owner');
-        
-        // Get samples related to this animal
+        $animal->load(['owner', 'breed', 'animalType']);
+
         $samples = Sample::where('animal_id', $animal->id)
-            ->with(['owner', 'animal'])
+            ->with(['owner', 'animal', 'examType', 'billingType'])
+            ->orderByDesc('uploaded_at')
             ->get();
 
         return Inertia::render('Admin/Animal/Show', [
             'animal' => $animal,
             'samples' => $samples
+        ]);
+    }
+
+    /**
+     * Get genetic results for an animal
+     */
+    public function getGeneticResults(Animal $animal)
+    {
+        // Buscar todas as amostras do animal
+        $sampleIds = Sample::where('animal_id', $animal->id)->pluck('id');
+
+        if ($sampleIds->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nenhuma amostra encontrada para este animal.',
+                'data' => []
+            ]);
+        }
+
+        // Buscar resultados genéticos das amostras
+        $geneticResults = \App\Models\GeneticResult::whereIn('sample_id', $sampleIds)
+            ->with(['marker', 'sample'])
+            ->orderBy('marker_id')
+            ->get();
+
+        if ($geneticResults->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nenhum resultado genético encontrado para este animal.',
+                'data' => []
+            ]);
+        }
+
+        // Transform results to match modal expectations
+        $transformedResults = $geneticResults->map(function ($result) {
+            return [
+                'id' => $result->id,
+                'allele1' => $result->allele_1,
+                'allele2' => $result->allele_2,
+                'genotype' => $result->genotype,
+                'marker' => [
+                    'id' => $result->marker->id,
+                    'name' => $result->marker->name,
+                    'chromosome' => $result->marker->chromosome,
+                    'position' => $result->marker->position,
+                    'ref_allele' => $result->marker->ref_allele,
+                    'alt_allele' => $result->marker->alt_allele,
+                ],
+                'sample' => [
+                    'id' => $result->sample->id,
+                    'code' => $result->sample->id,
+                ]
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Resultados genéticos encontrados com sucesso!',
+            'results' => $transformedResults,
+            'total' => $transformedResults->count(),
+            'animal' => [
+                'id' => $animal->id,
+                'name' => $animal->name,
+                'register' => $animal->register,
+            ]
         ]);
     }
 }

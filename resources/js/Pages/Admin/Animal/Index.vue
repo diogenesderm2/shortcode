@@ -111,12 +111,19 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex space-x-2 justify-end">
+                                            <!-- Dentro da coluna de Ações, trocando o destino do botão -->
                                             <Link 
-                                                :href="route('admin.animals.edit', animal.id)" 
+                                                :href="route('admin.animals.show', animal.id)" 
                                                 class="inline-flex items-center px-3 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring focus:ring-blue-300 disabled:opacity-25 transition"
                                             >
-                                                Editar
+                                                Visualizar
                                             </Link>
+                                            <button 
+                                                @click="showGeneticResults(animal)"
+                                                class="inline-flex items-center px-3 py-2 bg-purple-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700 active:bg-purple-900 focus:outline-none focus:border-purple-900 focus:ring focus:ring-purple-300 disabled:opacity-25 transition"
+                                            >
+                                                🧬 Genética
+                                            </button>
                                             <button 
                                                 @click="confirmDelete(animal)"
                                                 class="inline-flex items-center px-3 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring focus:ring-red-300 disabled:opacity-25 transition"
@@ -166,6 +173,13 @@
             @close="closeCreateModal"
             @animal-created="handleAnimalCreated"
         />
+
+        <!-- Modal para resultados genéticos -->
+        <GeneticResultsModal 
+            :show="showGeneticModal"
+            :animal="selectedAnimal"
+            @close="closeGeneticModal"
+        />
     </AppLayout>
 </template>
 
@@ -174,6 +188,7 @@ import { ref, reactive, onMounted } from 'vue';
 import { router, Link } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import NewAnimalModal from '@/Components/NewAnimalModal.vue';
+import GeneticResultsModal from '@/Components/GeneticResultsModal.vue';
 
 const props = defineProps({
     animals: Object,
@@ -189,6 +204,8 @@ const filters = reactive({
 
 // Modal state
 const showCreateModal = ref(false);
+const showGeneticModal = ref(false);
+const selectedAnimal = ref(null);
 
 // Modal functions
 const openCreateModal = () => {
@@ -245,5 +262,16 @@ const confirmDelete = (animal) => {
             }
         });
     }
+};
+
+// Genetic results function
+const showGeneticResults = (animal) => {
+    selectedAnimal.value = animal;
+    showGeneticModal.value = true;
+};
+
+const closeGeneticModal = () => {
+    showGeneticModal.value = false;
+    selectedAnimal.value = null;
 };
 </script>

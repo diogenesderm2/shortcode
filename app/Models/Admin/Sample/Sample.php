@@ -92,4 +92,14 @@ class Sample extends Model
     {
         return $this->belongsTo(User::class, 'user_representative');
     }
+
+    public function examType()
+    {
+        return $this->belongsTo(\App\Models\Admin\ExamType::class, 'exam_id');
+    }
+
+    public function billingType()
+    {
+        return $this->belongsTo(\App\Models\Admin\BillingType::class, 'billing_type');
+    }
 }

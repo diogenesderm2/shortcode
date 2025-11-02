@@ -14,6 +14,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('owners/search/{id}', [OwnerController::class, 'searchById'])->name('owners.search');
         Route::resource('categories', CategoriesController::class);
         Route::resource('animals', AnimalController::class);
+        Route::get('animals/{animal}/genetic-results', [AnimalController::class, 'getGeneticResults'])->name('animals.genetic-results');
 
         // Sample routes
         Route::get('samples/create', [SampleController::class, 'create'])->name('samples.create');

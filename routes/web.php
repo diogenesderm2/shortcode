@@ -22,6 +22,10 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+    
+    Route::get('/upload-resultado', function () {
+        return Inertia::render('UploadResultado');
+    })->name('upload.resultado');
 });
 
 use Santander\Token\Token;
