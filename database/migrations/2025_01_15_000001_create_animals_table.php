@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('owner_phones', function (Blueprint $table) {
+        Schema::create('animals', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('rg')->unique();
+            $table->date('birth_date');
+            $table->enum('sex', ['macho', 'femea']);
             $table->foreignId('owner_id')->constrained('owners')->onDelete('cascade');
-            $table->string('number', 20);
-            $table->enum('type', ['WhatsApp', 'Celular', 'Fixo'])->default('WhatsApp');
-
             $table->timestamps();
         });
     }
@@ -26,7 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('owner_phones');
-
+        Schema::dropIfExists('animals');
     }
 };
