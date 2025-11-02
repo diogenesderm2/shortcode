@@ -52,6 +52,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'collect samples',
             'receive samples',
             'process samples',
+            'release samples',
             'export samples',
             
             // === EXAMES/TESTES ===
@@ -136,6 +137,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'edit samples',
             'delete samples',
             'receive samples',
+            'release samples',
             'export samples',
             'view tests',
             'create tests',
@@ -165,6 +167,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'collect samples',
             'receive samples',
             'process samples',
+            'release samples',
             'view tests',
             'create tests',
             'edit tests',
@@ -188,6 +191,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'view owners',
             'view animals',
             'view samples',
+            'release samples',
             'view tests',
             'view genetic results',
             'validate genetic results',

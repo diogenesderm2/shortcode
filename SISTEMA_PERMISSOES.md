@@ -45,6 +45,7 @@
 - `collect samples` - Coletar amostras
 - `receive samples` - Receber amostras
 - `process samples` - Processar amostras
+- `release samples` - Liberar amostras
 - `export samples` - Exportar dados de amostras
 
 #### Exames/Testes

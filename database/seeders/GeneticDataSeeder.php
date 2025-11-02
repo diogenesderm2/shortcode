@@ -16,53 +16,82 @@ class GeneticDataSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->command->info('Criando marcadores genéticos de teste...');
+        $this->command->info('Criando marcadores genéticos a partir do arquivo TSV...');
         
-        // Criar alguns marcadores genéticos de teste
-        $markers = [
-            [
-                'name' => 'BM1824',
-                'chromosome' => '1',
-                'position' => 132241,
-                'ref_allele' => 'A',
-                'alt_allele' => 'G'
-            ],
-            [
-                'name' => 'BM2113',
-                'chromosome' => '2',
-                'position' => 45678,
-                'ref_allele' => 'C',
-                'alt_allele' => 'T'
-            ],
-            [
-                'name' => 'TGLA227',
-                'chromosome' => '18',
-                'position' => 65432,
-                'ref_allele' => 'G',
-                'alt_allele' => 'A'
-            ],
-            [
-                'name' => 'TGLA126',
-                'chromosome' => '20',
-                'position' => 98765,
-                'ref_allele' => 'T',
-                'alt_allele' => 'C'
-            ],
-            [
-                'name' => 'INRA023',
-                'chromosome' => '3',
-                'position' => 123456,
-                'ref_allele' => 'A',
-                'alt_allele' => 'T'
-            ]
-        ];
+        // Caminho para o arquivo TSV
+        $tsvFile = public_path('EXEMPLO_TESTE_PAI_E_MAE.tsv');
+        
+        if (!file_exists($tsvFile)) {
+            $this->command->error("Arquivo TSV não encontrado: {$tsvFile}");
+            return;
+        }
 
+        // Ler o arquivo TSV
+        $handle = fopen($tsvFile, 'r');
+        if (!$handle) {
+            $this->command->error("Não foi possível abrir o arquivo TSV");
+            return;
+        }
+
+        $markers = [];
+        $lineNumber = 0;
+        
+        while (($line = fgetcsv($handle, 0, "\t")) !== false) {
+            $lineNumber++;
+            
+            // Pular a primeira linha (cabeçalho)
+            if ($lineNumber === 1) {
+                continue;
+            }
+            
+            // Verificar se a linha tem pelo menos 5 colunas (TARGET, CHROM, POS, REF, ALT)
+            if (count($line) < 5) {
+                continue;
+            }
+            
+            $markerName = trim($line[0]); // TARGET
+            $chromosome = trim($line[1]); // CHROM
+            $position = trim($line[2]);   // POS
+            $refAllele = trim($line[3]);  // REF
+            $altAllele = trim($line[4]);  // ALT
+            
+            // Validar dados básicos
+            if (empty($markerName) || empty($chromosome) || empty($position)) {
+                continue;
+            }
+            
+            // Processar alelos alternativos (podem ser múltiplos separados por vírgula)
+            $altAlleles = explode(',', $altAllele);
+            $primaryAltAllele = trim($altAlleles[0]);
+            
+            $markers[] = [
+                'name' => $markerName,
+                'chromosome' => $chromosome,
+                'position' => (int)$position,
+                'ref_allele' => $refAllele,
+                'alt_allele' => $primaryAltAllele,
+                'description' => "Marcador genético do cromossomo {$chromosome} na posição {$position}"
+            ];
+        }
+        
+        fclose($handle);
+        
+        $this->command->info("Processados " . count($markers) . " marcadores do arquivo TSV");
+        
+        // Criar marcadores no banco de dados
+        $createdCount = 0;
         foreach ($markers as $markerData) {
-            GeneticMarker::firstOrCreate(
+            $marker = GeneticMarker::firstOrCreate(
                 ['name' => $markerData['name']],
                 $markerData
             );
+            
+            if ($marker->wasRecentlyCreated) {
+                $createdCount++;
+            }
         }
+        
+        $this->command->info("Criados {$createdCount} novos marcadores genéticos no banco de dados");
 
         $this->command->info('Criando resultados genéticos de teste...');
         
@@ -89,8 +118,9 @@ class GeneticDataSeeder extends Seeder
                 $sample = $animal->samples->first();
             }
 
-            // Criar resultados genéticos para cada marcador
-            foreach ($createdMarkers as $marker) {
+            // Criar resultados genéticos para cada marcador (apenas uma amostra dos primeiros 20 marcadores para não sobrecarregar)
+            $sampleMarkers = $createdMarkers->take(20);
+            foreach ($sampleMarkers as $marker) {
                 // Gerar alelos aleatórios baseados nos alelos de referência
                 $possibleAlleles = [$marker->ref_allele, $marker->alt_allele];
                 $allele1 = $possibleAlleles[array_rand($possibleAlleles)];
@@ -104,7 +134,7 @@ class GeneticDataSeeder extends Seeder
                     [
                         'allele_1' => $allele1,
                         'allele_2' => $allele2,
-                        'genotype' => $allele1 . $allele2
+                        'genotype' => $allele1 . '/' . $allele2
                     ]
                 );
             }
@@ -112,6 +142,7 @@ class GeneticDataSeeder extends Seeder
             $this->command->info("Criados resultados genéticos para animal {$animal->name}");
         }
 
-        $this->command->info('Dados genéticos de teste criados com sucesso!');
+        $this->command->info('Dados genéticos criados com sucesso!');
+        $this->command->info("Total de marcadores no banco: " . GeneticMarker::count());
     }
 }

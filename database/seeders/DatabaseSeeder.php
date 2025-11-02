@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             AnimalSeeder::class,
             SampleSeeder::class,
             GeneticDataSeeder::class,
+            TestSeeder::class, // Adicionar seeder de testes
         ]);
     }
 }

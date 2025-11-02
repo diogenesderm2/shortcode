@@ -50,6 +50,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::put('animals/{animal}', [AnimalController::class, 'update'])->name('animals.update')->middleware('permission:edit animals');
         Route::delete('animals/{animal}', [AnimalController::class, 'destroy'])->name('animals.destroy')->middleware('permission:delete animals');
         Route::get('animals/{animal}/genetic-results', [AnimalController::class, 'getGeneticResults'])->name('animals.genetic-results')->middleware('permission:view genetic results');
+        Route::get('animals/{animal}/tests', [AnimalController::class, 'getTests'])->name('animals.tests')->middleware('permission:view animals');
+        Route::post('animals/{animal}/calculate-qualifications', [AnimalController::class, 'calculateQualifications'])->name('animals.calculate-qualifications')->middleware('permission:view animals');
+        Route::get('animals/{animal}/genetic-comparison', [AnimalController::class, 'getGeneticComparison'])->name('animals.genetic-comparison')->middleware('permission:view animals');
+        Route::post('animals/{animal}/calculate-qualifications', [AnimalController::class, 'calculateQualifications'])->name('animals.calculate-qualifications')->middleware('permission:view animals');
 
         // === AMOSTRAS ===
         Route::get('samples/create', [SampleController::class, 'create'])->name('samples.create')->middleware('permission:create samples');
@@ -62,7 +66,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('samples/add-to-form', [SampleController::class, 'addToForm'])->name('samples.add-to-form')->middleware('permission:view samples');
         Route::post('samples/search-by-code', [SampleController::class, 'searchByCode'])->name('samples.search-by-code')->middleware('permission:view samples');
         Route::post('samples/generate-form', [SampleController::class, 'generateForm'])->name('samples.generate-form')->middleware('permission:create samples');
-        Route::post('samples/{sample}/release', [SampleController::class, 'release'])->name('samples.release')->middleware('permission:release genetic results');
+        Route::post('samples/{sample}/release', [SampleController::class, 'release'])->name('samples.release')->middleware('permission:release samples');
         
         // === TIPOS DE ANIMAIS E RAÇAS ===
         Route::get('animal-types', [SampleController::class, 'getAnimalTypes'])->name('animal-types.index')->middleware('permission:view animals');

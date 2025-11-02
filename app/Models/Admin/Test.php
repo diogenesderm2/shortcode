@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Admin\Sample\Sample;
 use App\Models\Admin\Animal\Animal;
+use App\Models\Admin\GeneticQualification;
 use App\Models\User;
 
 class Test extends Model
@@ -76,5 +77,13 @@ class Test extends Model
     public function userRegistered()
     {
         return $this->belongsTo(User::class, 'user_registered');
+    }
+
+    /**
+     * Relacionamento com GeneticQualification
+     */
+    public function qualification()
+    {
+        return $this->hasOne(GeneticQualification::class);
     }
 }

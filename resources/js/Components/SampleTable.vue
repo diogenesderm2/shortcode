@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import GeneticResultsModal from '@/Components/GeneticResultsModal.vue';
+import GeneticComparisonModal from '@/Components/GeneticComparisonModal.vue';
 import Modal from '@/Components/Modal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import { router } from '@inertiajs/vue3';
@@ -25,7 +25,7 @@ const selectedSample = ref(null);
 const isReleasing = ref(false);
 
 // Emits
-const emit = defineEmits(['compare', 'sampleReleased']);
+const emit = defineEmits(['compare', 'sampleReleased', 'showTests']);
 
 // Métodos
 const onCompare = () => {
@@ -49,6 +49,21 @@ const formatCurrency = (value) => {
     }).format(value);
 };
 
+const getQualificationLabel = (status) => {
+    switch(status) {
+        case 'qualified':
+            return 'Qualificado';
+        case 'not_qualified':
+            return 'Não Qualificado';
+        case 'inconclusive':
+            return 'Inconclusivo';
+        case 'pending':
+            return 'Pendente';
+        default:
+            return 'Sem Análise';
+    }
+};
+
 // Funções para o modal de genética
 const showGeneticResults = (sample) => {
     if (sample.animal) {
@@ -62,6 +77,11 @@ const closeGeneticModal = () => {
     selectedAnimal.value = null;
 };
 
+// Função para mostrar testes
+const showTests = (sample) => {
+    emit('showTests', sample);
+};
+
 // Funções para liberação de amostra
 const openReleaseModal = (sample) => {
     selectedSample.value = sample;
@@ -73,6 +93,24 @@ const closeReleaseModal = () => {
     selectedSample.value = null;
     isReleasing.value = false;
 };
+
+// Funções para qualificação
+const getQualificationClass = (status) => {
+    switch (status) {
+        case 'approved':
+            return 'bg-green-100 text-green-800';
+        case 'rejected':
+            return 'bg-red-100 text-red-800';
+        case 'pending':
+            return 'bg-yellow-100 text-yellow-800';
+        case 'under_review':
+            return 'bg-blue-100 text-blue-800';
+        default:
+            return 'bg-gray-100 text-gray-600';
+    }
+};
+
+
 
 const confirmRelease = async () => {
     if (!selectedSample.value) return;
@@ -96,7 +134,7 @@ const confirmRelease = async () => {
             const sampleIndex = props.samples.findIndex(s => s.id === selectedSample.value.id);
             if (sampleIndex !== -1) {
                 props.samples[sampleIndex].is_released = true;
-                props.samples[sampleIndex].released_at = new Date().toISOString();
+                props.samples[sampleIndex].released_at = data.sample?.released_at || new Date().toISOString();
             }
             
             // Emitir evento para o componente pai
@@ -166,9 +204,43 @@ const confirmRelease = async () => {
                     </div>
                     <div class="space-y-1">
                         <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo Exame</p>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
-                            {{ sample.exam_type?.name || 'N/A' }}
-                        </span>
+                        <div class="flex flex-col gap-1">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                                {{ sample.exam_type?.name || 'N/A' }}
+                            </span>
+                            <!-- Tipo de Teste -->
+                            <div v-if="sample.tests && sample.tests.length > 0" class="mt-1">
+                                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Tipo de Teste</p>
+                                <div class="flex flex-wrap gap-1">
+                                    <span 
+                                        v-for="test in sample.tests" 
+                                        :key="test.id"
+                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                                    >
+                                        {{ test.test_type?.name || test.testType?.name || 'N/A' }}
+                                    </span>
+                                </div>
+                                
+                                <!-- Qualificações -->
+                                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1 mt-2">Qualificação</p>
+                                <div class="flex flex-wrap gap-1">
+                                    <span 
+                                        v-for="test in sample.tests" 
+                                        :key="`qual-${test.id}`"
+                                        :class="[
+                                            'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium',
+                                            getQualificationClass(test.qualification?.status)
+                                        ]"
+                                        :title="test.qualification?.notes"
+                                    >
+                                        {{ getQualificationLabel(test.qualification?.status) }}
+                                        <span v-if="test.qualification?.confidence_score" class="ml-1">
+                                            ({{ test.qualification.confidence_score }}%)
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="space-y-1">
                         <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Data de Entrada</p>
@@ -205,12 +277,17 @@ const confirmRelease = async () => {
                         <div class="space-y-2">
                             <p class="text-xs font-medium text-gray-500">Liberado</p>
                             <div v-if="sample.is_released">
-                                <span :class="[
-                                    'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium',
-                                    'bg-green-100 text-green-800'
-                                ]">
-                                    Sim
-                                </span>
+                                <div class="space-y-1">
+                                    <span :class="[
+                                        'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium',
+                                        'bg-green-100 text-green-800'
+                                    ]">
+                                        Sim
+                                    </span>
+                                    <p v-if="sample.released_at" class="text-xs text-gray-600">
+                                        {{ formatDate(sample.released_at) }}
+                                    </p>
+                                </div>
                             </div>
                             <div v-else>
                                 <button
@@ -262,7 +339,10 @@ const confirmRelease = async () => {
                         </svg>
                         🧬 Genética
                     </SecondaryButton>
-                    <SecondaryButton class="text-sm rounded-xl hover:border-blue-500 hover:text-blue-600 transition-all">
+                    <SecondaryButton 
+                        @click="showTests(sample)"
+                        class="text-sm rounded-xl hover:border-blue-500 hover:text-blue-600 transition-all"
+                    >
                         <!-- Beaker Icon -->
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
@@ -311,10 +391,10 @@ const confirmRelease = async () => {
             </div>
         </div>
 
-        <!-- Modal de Resultados Genéticos -->
-        <GeneticResultsModal 
+        <!-- Modal de Comparação Genética -->
+        <GeneticComparisonModal 
             :show="showGeneticModal"
-            :animal="selectedAnimal"
+            :animalId="selectedAnimal?.id"
             @close="closeGeneticModal"
         />
 

@@ -56,4 +56,18 @@ class SampleFactory extends Factory
             'is_sent' => 0,
         ];
     }
+
+    /**
+     * Indicate that the sample is released.
+     */
+    public function released()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'is_released' => 1,
+                'released_at' => $this->faker->dateTimeBetween('-6 months', 'now'),
+                'user_released' => 1, // Assuming user ID 1 exists
+            ];
+        });
+    }
 }

@@ -25,6 +25,22 @@ Route::middleware([
     Route::get('/upload-resultado', function () {
         return Inertia::render('UploadResultado');
     })->name('upload.resultado');
+    
+    // Debug route for permissions
+    Route::get('/debug/permissions', function () {
+        $user = auth()->user();
+        return response()->json([
+            'user' => $user ? [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'roles' => $user->getRoleNames()->toArray(),
+                'permissions' => $user->getAllPermissions()->pluck('name')->toArray(),
+                'can_review' => $user->can('review results'),
+            ] : null,
+            'review_permission_exists' => \Spatie\Permission\Models\Permission::where('name', 'review results')->exists(),
+        ]);
+    })->name('debug.permissions');
 });
 
 use Santander\Token\Token;
@@ -38,4 +54,24 @@ Route::get('santander', function () {
 
 Route::get('auth/google', [GoogleController::class, 'redirectToProvider'])->name('auth.google');
 Route::get('auth/google/callback', [GoogleController::class, 'handleProviderCallback']);
+
+// Rota de teste temporária para comparação genética
+Route::get('/test-genetic', function () {
+    $animal = \App\Models\Admin\Animal\Animal::whereHas('samples')->first();
+    if (!$animal) {
+        return response()->json(['error' => 'Nenhum animal com amostras encontrado']);
+    }
+    
+    $controller = new \App\Http\Controllers\Admin\Animal\AnimalController();
+    $response = $controller->getGeneticComparison($animal);
+    
+    return $response;
+});
+
+// Rota de teste para verificar os cálculos
+Route::get('/test-calculation', function () {
+    $controller = new \App\Http\Controllers\Admin\Animal\AnimalController();
+    return $controller->testGeneticCalculation();
+});
+
 require_once __DIR__ . '/admin/admin.php';

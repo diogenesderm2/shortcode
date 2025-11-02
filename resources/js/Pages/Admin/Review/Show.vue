@@ -33,23 +33,22 @@
                                         <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
                                             Proprietário
                                         </h4>
-                                        <p class="text-lg font-medium text-gray-900">{{ result.sample.animal.owner.name
-                                        }}</p>
+                                        <p class="text-lg font-medium text-gray-900">{{ result.sample.animal.owner?.name || 'Proprietário não informado' }}</p>
                                     </div>
                                     <div>
                                         <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
                                             Animal</h4>
                                         <p class="text-lg font-medium text-gray-900">
                                             <Link 
+                                                v-if="result.sample.animal"
                                                 :href="route('admin.animals.show', result.sample.animal.id)"
                                                 class="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-200"
                                             >
-                                                {{ result.sample.animal.name }}
+                                                {{ result.sample.animal.name || 'Animal não informado' }}
                                             </Link>
+                                            <span v-else class="text-gray-500">Animal não informado</span>
                                         </p>
-                                        <p class="text-sm text-gray-500">Registro: {{ result.sample.animal.register ||
-                                            'N/A' }}
-                                        </p>
+                                        <p class="text-sm text-gray-500">Registro: {{ result.sample.animal?.register || 'N/A' }}</p>
                                     </div>
                                     <div>
                                         <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">

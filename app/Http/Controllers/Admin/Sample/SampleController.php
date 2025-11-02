@@ -80,7 +80,7 @@ class SampleController extends Controller
 
             // Criar o teste associado à amostra
             if ($testData['test_type_id']) {
-                Test::create([
+                $test = Test::create([
                     'sample_id' => $sample->id,
                     'dad_id' => $testData['father_id'],
                     'mom_id' => $testData['mother_id'],
@@ -88,11 +88,18 @@ class SampleController extends Controller
                     'user_registered' => auth()->id(),
                     'responsible_collect' => $sampleData['responsible_collect'] ?? null,
                     'is_technique' => isset($sampleData['is_technique']) ? (bool)$sampleData['is_technique'] : false,
-                    'is_default' => true, // O teste também será marcado como padrão
+                    'is_default' => true, // O novo teste será marcado como padrão
                     'is_retest' => false,
                     'comments' => $testData['comments'],
                     'is_read' => false,
                 ]);
+
+                // Atualizar todos os outros testes de amostras do mesmo tipo de exame para is_default = 0
+                Test::whereHas('sample', function($query) use ($sampleData) {
+                        $query->where('exam_id', $sampleData['exam_id']);
+                    })
+                    ->where('id', '!=', $test->id)
+                    ->update(['is_default' => false]);
             }
 
             return redirect()->route('admin.samples.create')->with('message', 'Amostra e teste cadastrados com sucesso');
