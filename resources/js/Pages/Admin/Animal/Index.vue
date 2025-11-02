@@ -1,13 +1,29 @@
 <template>
     <AppLayout title="Animais">
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Animais
-            </h2>
+            <div class="flex justify-between items-center">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    Animais
+                </h2>
+                <button 
+                    @click="openCreateModal" 
+                    class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring focus:ring-blue-300 transition"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Novo Animal
+                </button>
+            </div>
         </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <!-- Mensagem de sucesso -->
+                <div v-if="$page.props.flash.message" class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
+                    {{ $page.props.flash.message }}
+                </div>
+
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
                     <!-- Filtros de pesquisa -->
                     <div class="mb-6 bg-gray-50 p-4 rounded-lg">
@@ -94,12 +110,20 @@
                                         {{ animal.owner?.name }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <Link 
-                                            :href="route('admin.animals.edit', animal.id)" 
-                                            class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring focus:ring-blue-300 disabled:opacity-25 transition"
-                                        >
-                                            Editar
-                                        </Link>
+                                        <div class="flex space-x-2 justify-end">
+                                            <Link 
+                                                :href="route('admin.animals.edit', animal.id)" 
+                                                class="inline-flex items-center px-3 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring focus:ring-blue-300 disabled:opacity-25 transition"
+                                            >
+                                                Editar
+                                            </Link>
+                                            <button 
+                                                @click="confirmDelete(animal)"
+                                                class="inline-flex items-center px-3 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring focus:ring-red-300 disabled:opacity-25 transition"
+                                            >
+                                                Excluir
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr v-if="animals.data.length === 0">
@@ -134,6 +158,14 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal para criar novo animal -->
+        <NewAnimalModal 
+            :show="showCreateModal" 
+            :owners="owners"
+            @close="closeCreateModal"
+            @animal-created="handleAnimalCreated"
+        />
     </AppLayout>
 </template>
 
@@ -141,6 +173,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import { router, Link } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import NewAnimalModal from '@/Components/NewAnimalModal.vue';
 
 const props = defineProps({
     animals: Object,
@@ -153,6 +186,24 @@ const filters = reactive({
     search: props.filters.search || '',
     owner_id: props.filters.owner_id || '',
 });
+
+// Modal state
+const showCreateModal = ref(false);
+
+// Modal functions
+const openCreateModal = () => {
+    showCreateModal.value = true;
+};
+
+const closeCreateModal = () => {
+    showCreateModal.value = false;
+};
+
+const handleAnimalCreated = () => {
+    closeCreateModal();
+    // Recarregar a página para mostrar o novo animal
+    router.reload();
+};
 
 // Search function
 const search = () => {
@@ -183,5 +234,16 @@ const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR');
+};
+
+// Delete function
+const confirmDelete = (animal) => {
+    if (confirm(`Tem certeza que deseja excluir o animal "${animal.name}"?`)) {
+        router.delete(route('admin.animals.destroy', animal.id), {
+            onSuccess: () => {
+                // A página será recarregada automaticamente
+            }
+        });
+    }
 };
 </script>

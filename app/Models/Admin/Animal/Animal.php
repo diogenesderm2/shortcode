@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Admin\Sample\Sample;
+use App\Models\Admin\Owner\Owner;
 
 class Animal extends Model
 {
@@ -20,10 +21,19 @@ class Animal extends Model
         'register',
         'genre',
         'birth',
+        'owner_id',
     ];
 
     protected $casts = [
         'birth' => 'date',
+    ];
+
+    protected $appends = [
+        'rg',
+        'birth_date', 
+        'sex',
+        'genre_text',
+        'species'
     ];
 
     public function animalType()
@@ -34,6 +44,11 @@ class Animal extends Model
     public function breed()
     {
         return $this->belongsTo(Breed::class, 'breed_id');
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(Owner::class, 'owner_id');
     }
 
     public function samples()
@@ -70,7 +85,21 @@ class Animal extends Model
     // Accessor para birth_date (compatibilidade)
     public function getBirthDateAttribute()
     {
-        return $this->birth;
+        if (!$this->birth) {
+            return null;
+        }
+        
+        // Se birth já é uma instância de Carbon, formatar
+        if ($this->birth instanceof \Carbon\Carbon) {
+            return $this->birth->format('Y-m-d');
+        }
+        
+        // Se é uma string, tentar converter
+        try {
+            return \Carbon\Carbon::parse($this->birth)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return $this->birth;
+        }
     }
 
     // Accessor para species (compatibilidade)

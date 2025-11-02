@@ -18,14 +18,13 @@ class AnimalController extends Controller
     public function index(Request $request)
     {
         $query = Animal::query()
-            ->with('owner')
-            ->select('id', 'name', 'rg', 'birth_date', 'sex', 'owner_id');
+            ->with('owner');
 
         // Apply search filters if provided
         if ($request->search) {
             $query->where(function($q) use ($request) {
                 $q->where('name', 'like', "%{$request->search}%")
-                  ->orWhere('rg', 'like', "%{$request->search}%");
+                  ->orWhere('register', 'like', "%{$request->search}%");
             });
         }
 
@@ -40,6 +39,17 @@ class AnimalController extends Controller
             'filters' => $request->only(['search', 'owner_id']),
             'owners' => Owner::select('id', 'name')->get()
         ]);
+    }
+
+    /**
+     * Store a newly created animal in storage.
+     */
+    public function store(AnimalRequest $request)
+    {
+        $animal = Animal::create($request->validated());
+
+        return redirect()->route('admin.animals.index')
+            ->with('message', 'Animal cadastrado com sucesso!');
     }
 
     /**
@@ -70,6 +80,17 @@ class AnimalController extends Controller
 
         return redirect()->route('admin.animals.edit', $animal)
             ->with('message', 'Animal atualizado com sucesso!');
+    }
+
+    /**
+     * Remove the specified animal from storage.
+     */
+    public function destroy(Animal $animal)
+    {
+        $animal->delete();
+
+        return redirect()->route('admin.animals.index')
+            ->with('message', 'Animal excluído com sucesso!');
     }
 
     /**

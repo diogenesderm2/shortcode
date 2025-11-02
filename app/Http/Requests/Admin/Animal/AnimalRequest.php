@@ -24,22 +24,45 @@ class AnimalRequest extends FormRequest
     {
         $rules = [
             'name' => 'required|string|max:255',
-            'birth_date' => 'required|date',
-            'sex' => 'required|in:macho,femea',
+            'birth' => 'required|date',
+            'genre' => 'required|integer|in:1,2',
             'owner_id' => 'required|exists:owners,id',
         ];
 
         // Se for uma atualização, permitir o mesmo RG para o animal atual
         if ($this->isMethod('put') || $this->isMethod('patch')) {
-            $rules['rg'] = [
+            $rules['register'] = [
                 'required',
                 'string',
                 Rule::unique('animals')->ignore($this->animal)
             ];
         } else {
-            $rules['rg'] = 'required|string|unique:animals,rg';
+            $rules['register'] = 'required|string|unique:animals,register';
         }
 
         return $rules;
+    }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation()
+    {
+        // Converter campos do frontend para o formato do backend
+        $data = [];
+        
+        if ($this->has('rg')) {
+            $data['register'] = $this->rg;
+        }
+        
+        if ($this->has('birth_date')) {
+            $data['birth'] = $this->birth_date;
+        }
+        
+        if ($this->has('sex')) {
+            $data['genre'] = $this->sex === 'macho' ? 1 : 2;
+        }
+        
+        $this->merge($data);
     }
 }

@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\Reports\ReportController;
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('owners', OwnerController::class);
+        Route::get('owners/search/{id}', [OwnerController::class, 'searchById'])->name('owners.search');
         Route::resource('categories', CategoriesController::class);
         Route::resource('animals', AnimalController::class);
 
@@ -20,6 +21,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('samples/animals/{owner_id}', [SampleController::class, 'getAnimalsByOwner'])->name('samples.animals');
         Route::post('samples/animals', [SampleController::class, 'storeAnimal'])->name('samples.animals.store');
         Route::post('samples/check-animal', [SampleController::class, 'checkAnimalByRg'])->name('samples.check-animal');
+        Route::post('samples/search-animals', [SampleController::class, 'searchAnimalsByName'])->name('samples.search-animals');
+        Route::get('samples/debug-animals', [SampleController::class, 'debugAnimals'])->name('samples.debug-animals');
         Route::get('samples/add-to-form', [SampleController::class, 'addToForm'])->name('samples.add-to-form');
         Route::post('samples/search-by-code', [SampleController::class, 'searchByCode'])->name('samples.search-by-code');
         Route::post('samples/generate-form', [SampleController::class, 'generateForm'])->name('samples.generate-form');

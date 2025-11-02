@@ -99,14 +99,7 @@
                             </option>
                         </select>
                     </div>
-                            <option value="">Selecione a espécie</option>
-                            <option value="bovino">Bovino</option>
-                            <option value="equino">Equino</option>
-                            <option value="suino">Suíno</option>
-                            <option value="caprino">Caprino</option>
-                            <option value="ovino">Ovino</option>
-                        </select>
-                    </div>
+                   
 
                     <div class="flex justify-end space-x-3 pt-4">
                         <button 
@@ -146,6 +139,10 @@ const props = defineProps({
     rg: {
         type: String,
         default: ''
+    },
+    owner: {
+        type: Object,
+        default: null
     }
 });
 
@@ -163,7 +160,8 @@ const form = reactive({
     birth: '',
     genre: '',
     animal_type: '',
-    breed_id: ''
+    breed_id: '',
+    owner_id: ''
 });
 
 const animalTypeLabel = computed(() => {
@@ -203,6 +201,7 @@ const loadBreeds = async () => {
 watch(() => props.show, (newValue) => {
     if (newValue) {
         form.register = props.rg;
+        form.owner_id = props.owner?.id || '';
         loadAnimalTypes();
         
         if (props.animalType === 'father') {

@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             SampleTypeSeeder::class,
             ExamTypeSeeder::class,
             BillingTypeSeeder::class,
+            TestTypeSeeder::class,
             AnimalSeeder::class,
             SampleSeeder::class,
         ]);

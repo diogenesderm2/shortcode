@@ -280,4 +280,23 @@ class OwnerController extends Controller
 
         return redirect()->route('admin.owners.index')->with('success', 'Proprietário deletado com sucesso!');
     }
+
+    /**
+     * Search owner by ID for sample registration.
+     */
+    public function searchById(string $id)
+    {
+        try {
+            $owner = Owner::with(['phones', 'emails'])->findOrFail($id);
+            return response()->json([
+                'success' => true,
+                'owner' => new OwnerResource($owner)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Proprietário não encontrado'
+            ], 404);
+        }
+    }
 }
