@@ -134,7 +134,7 @@
                                         </div>
                                         <div class="flex justify-between">
                                             <span class="text-gray-600">Data de Coleta:</span>
-                                            <span class="font-medium">{{ formatDate(foundSample.collection_date) }}</span>
+                                            <span class="font-medium">{{ formatDate(foundSample.collected_at) }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -170,15 +170,15 @@
                                     <div class="space-y-2">
                                         <div class="flex justify-between">
                                             <span class="text-gray-600">Nome:</span>
-                                            <span class="font-medium">{{ foundSample.child?.name || 'N/A' }}</span>
+                                            <span class="font-medium">{{ foundSample.animal?.name || 'N/A' }}</span>
                                         </div>
                                         <div class="flex justify-between">
                                             <span class="text-gray-600">RG:</span>
-                                            <span class="font-medium">{{ foundSample.child?.rg || 'N/A' }}</span>
+                                            <span class="font-medium">{{ foundSample.animal?.register || 'N/A' }}</span>
                                         </div>
                                         <div class="flex justify-between">
                                             <span class="text-gray-600">Sexo:</span>
-                                            <span class="font-medium">{{ formatSex(foundSample.child?.sex) }}</span>
+                                            <span class="font-medium">{{ formatSex(foundSample.animal?.genre) }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -197,14 +197,14 @@
                                         <h5 class="font-medium text-gray-900 mb-2">Pai</h5>
                                         <div class="space-y-1 text-sm">
                                             <div><span class="text-gray-600">Nome:</span> {{ foundSample.father.name }}</div>
-                                            <div><span class="text-gray-600">RG:</span> {{ foundSample.father.rg }}</div>
+                                            <div><span class="text-gray-600">RG:</span> {{ foundSample.father.register }}</div>
                                         </div>
                                     </div>
                                     <div v-if="foundSample.mother" class="bg-white p-4 rounded-lg border border-blue-100">
                                         <h5 class="font-medium text-gray-900 mb-2">Mãe</h5>
                                         <div class="space-y-1 text-sm">
                                             <div><span class="text-gray-600">Nome:</span> {{ foundSample.mother.name }}</div>
-                                            <div><span class="text-gray-600">RG:</span> {{ foundSample.mother.rg }}</div>
+                                            <div><span class="text-gray-600">RG:</span> {{ foundSample.mother.register }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -297,7 +297,7 @@
                                 <div class="space-y-1 text-sm">
                                     <div class="flex justify-between">
                                         <span class="text-gray-600">Animal:</span>
-                                        <span class="font-medium">{{ sample.child?.name || 'N/A' }}</span>
+                                        <span class="font-medium">{{ sample.animal?.name || 'N/A' }}</span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-600">Proprietário:</span>
@@ -474,9 +474,9 @@ const formatStatus = (status) => {
     return statuses[status] || status
 }
 
-const formatSex = (sex) => {
-    if (!sex) return 'N/A'
-    return sex === 'macho' ? 'Macho' : 'Fêmea'
+const formatSex = (genre) => {
+    if (!genre) return 'N/A'
+    return genre === 1 ? 'Macho' : genre === 2 ? 'Fêmea' : 'N/A'
 }
 
 const getStatusClass = (status) => {

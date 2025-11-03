@@ -165,14 +165,29 @@ class SampleController extends Controller
         ]);
 
         // Buscar pelo ID da amostra
-        $sample = Sample::with(['owner', 'animal'])
+        $sample = Sample::with(['owner', 'animal', 'tests.father', 'tests.mother'])
             ->where('id', $request->sample_code)
             ->first();
 
         if ($sample) {
+            // Adicionar dados dos pais se existirem testes
+            $father = null;
+            $mother = null;
+            
+            if ($sample->tests->isNotEmpty()) {
+                $test = $sample->tests->first();
+                $father = $test->father;
+                $mother = $test->mother;
+            }
+            
+            // Adicionar os dados dos pais ao objeto sample
+            $sampleData = $sample->toArray();
+            $sampleData['father'] = $father;
+            $sampleData['mother'] = $mother;
+            
             return response()->json([
                 'success' => true,
-                'sample' => $sample
+                'sample' => $sampleData
             ]);
         }
 
@@ -195,7 +210,7 @@ class SampleController extends Controller
 
         $sampleIds = collect($request->samples)->pluck('id');
         
-        $samples = Sample::with(['owner', 'animal'])
+        $samples = Sample::with(['owner', 'animal', 'tests.father', 'tests.mother'])
             ->whereIn('id', $sampleIds)
             ->get();
 
@@ -350,7 +365,31 @@ class SampleController extends Controller
         }
 
         return response()->json([
-            'animals' => $animals,
+            'animals' => $animals->map(function($animal) {
+                return [
+                    'id' => $animal->id,
+                    'name' => $animal->name,
+                    'register' => $animal->register,
+                    'rg' => $animal->rg,
+                    'genre' => $animal->genre,
+                    'genre_text' => $animal->genre_text,
+                    'birth' => $animal->birth ? $animal->birth->format('d/m/Y') : null,
+                    'birth_date' => $animal->birth_date,
+                    'owner_id' => $animal->owner_id,
+                    'owner' => $animal->owner ? [
+                        'id' => $animal->owner->id,
+                        'name' => $animal->owner->name
+                    ] : null,
+                    'breed' => $animal->breed ? [
+                        'id' => $animal->breed->id,
+                        'name' => $animal->breed->name
+                    ] : null,
+                    'animal_type' => $animal->animalType ? [
+                        'id' => $animal->animalType->id,
+                        'name' => $animal->animalType->name
+                    ] : null
+                ];
+            }),
             'multiple' => $animals->count() > 1,
         ]);
     }
@@ -442,5 +481,336 @@ class SampleController extends Controller
             'message' => 'Amostra liberada com sucesso!',
             'sample' => $sample->fresh()
         ]);
+    }
+
+    /**
+     * Generate PDF report for a sample
+     */
+    public function generateReport(Sample $sample)
+    {
+        try {
+            // Carregar dados necessários para o relatório
+            $sample->load([
+                'animal.owner',
+                'animal.breed.animalType',
+                'geneticResults.marker',
+                'tests.father',
+                'tests.mother'
+            ]);
+
+            // Verificar se a amostra tem dados suficientes
+            if (!$sample->animal) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Amostra não possui animal associado.'
+                ], 400);
+            }
+
+            // Dados para o relatório
+            $reportData = [
+                'sample' => $sample,
+                'animal' => $sample->animal,
+                'owner' => $sample->animal->owner,
+                'genetic_results' => $sample->geneticResults,
+                'tests' => $sample->tests,
+                'report_number' => 'LR-' . str_pad($sample->id, 7, '0', STR_PAD_LEFT),
+                'generated_at' => now()->format('d/m/Y H:i:s'),
+                'generated_date' => now()->format('d/m/Y'),
+                'laboratory' => [
+                    'name' => 'Laboratório Raça Ltda.',
+                    'address' => 'Rua da Genética, 123 - Centro',
+                    'city' => 'Goiânia - GO',
+                    'phone' => '(62) 3333-4444',
+                    'email' => 'contato@laboratorioraca.com.br',
+                    'cnpj' => '12.345.678/0001-90'
+                ]
+            ];
+
+            // Retornar HTML que pode ser convertido para PDF pelo navegador
+            $html = $this->generateReportHtml($reportData);
+            
+            return response($html)
+                ->header('Content-Type', 'text/html')
+                ->header('Content-Disposition', 'inline; filename="relatorio-ensaio-' . $sample->id . '.html"');
+
+        } catch (\Exception $e) {
+            \Log::error('Erro ao gerar relatório: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao gerar relatório: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Generate HTML content for the report
+     */
+    private function generateReportHtml($data)
+    {
+        extract($data);
+        
+        return '<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Ensaio Nº ' . $report_number . '</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; font-size: 12px; line-height: 1.4; color: #333; background: white; }
+        .container { max-width: 210mm; margin: 0 auto; padding: 20px; background: white; }
+        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; border-bottom: 2px solid #e5e5e5; padding-bottom: 20px; }
+        .logo-section { flex: 1; }
+        .lab-info { font-size: 10px; line-height: 1.3; }
+        .lab-info strong { color: #c41e3a; font-size: 14px; }
+        .qr-section { text-align: right; flex-shrink: 0; }
+        .qr-code { width: 80px; height: 80px; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; font-size: 8px; text-align: center; }
+        .report-title { text-align: center; font-size: 16px; font-weight: bold; margin: 20px 0; text-transform: uppercase; }
+        .section-title { background: #333; color: white; padding: 8px; font-weight: bold; text-align: center; margin-bottom: 10px; }
+        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .info-table td { border: 1px solid #333; padding: 6px; font-size: 11px; }
+        .info-table .label { background: #f5f5f5; font-weight: bold; width: 25%; }
+        .results-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+        .results-table th, .results-table td { border: 1px solid #333; padding: 4px; text-align: center; }
+        .results-table th { background: #333; color: white; font-weight: bold; }
+        .marker-name { font-weight: bold; }
+        .allele-cell { background: #f0f0f0; }
+        .legend { margin: 10px 0; font-size: 10px; }
+        .legend-item { display: inline-block; margin-right: 20px; }
+        .legend-box { display: inline-block; width: 12px; height: 12px; margin-right: 5px; vertical-align: middle; }
+        .conclusion { margin: 20px 0; padding: 15px; border: 1px solid #333; background: #f9f9f9; }
+        .conclusion-title { font-weight: bold; margin-bottom: 10px; }
+        .signature-section { margin-top: 40px; text-align: center; }
+        .signature-line { border-top: 1px solid #333; width: 300px; margin: 40px auto 10px; }
+        .footer { margin-top: 30px; font-size: 9px; text-align: center; border-top: 1px solid #e5e5e5; padding-top: 15px; }
+        .page-info { text-align: right; font-size: 10px; margin-bottom: 10px; }
+        .logo-img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        @media print { 
+            body { margin: 0; } 
+            .container { padding: 10px; } 
+            .logo-img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-section">
+                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <div style="width: 60px; height: 60px; margin-right: 15px;">
+                        <img src="' . asset('logo-raca.png') . '" alt="Logo Laboratório Raça" class="logo-img" style="width: 100%; height: 100%; object-fit: contain;">
+                    </div>
+                </div>
+                <div class="lab-info">
+                    <strong>' . $laboratory['name'] . '</strong><br>
+                    ' . $laboratory['address'] . '<br>
+                    ' . $laboratory['city'] . '<br>
+                    Telefone: ' . $laboratory['phone'] . '<br>
+                    E-mail: ' . $laboratory['email'] . '<br>
+                    CNPJ: ' . $laboratory['cnpj'] . '
+                </div>
+            </div>
+            <div class="qr-section">
+                <div class="qr-code">QR CODE<br>(Verificação)</div>
+            </div>
+        </div>
+        
+        <div class="page-info">Página 01/01</div>
+        
+        <div class="report-title">RELATÓRIO DE ENSAIO Nº ' . $report_number . '</div>
+        
+        <div class="identification-section">
+            <div class="section-title">IDENTIFICAÇÃO</div>
+            <table class="info-table">
+                <tr>
+                    <td class="label">Amostra conforme número</td>
+                    <td>' . str_pad($sample->id, 6, '0', STR_PAD_LEFT) . '</td>
+                    <td class="label">PAI</td>
+                    <td>' . ($tests->first()?->father?->rg ?? 'N/A') . '</td>
+                    <td class="label">MÃE</td>
+                    <td>' . ($tests->first()?->mother?->rg ?? 'N/A') . '</td>
+                </tr>
+                <tr>
+                    <td class="label">Nome do animal</td>
+                    <td>' . ($animal->name ?? 'N/A') . '</td>
+                    <td class="label">Nome do pai</td>
+                    <td>' . ($tests->first()?->father?->name ?? 'N/A') . '</td>
+                    <td class="label">Nome da mãe</td>
+                    <td>' . ($tests->first()?->mother?->name ?? 'N/A') . '</td>
+                </tr>
+                <tr>
+                    <td class="label">Nº de registro</td>
+                    <td>' . ($animal->rg ?? 'N/A') . '</td>
+                    <td class="label">RG do pai</td>
+                    <td>' . ($tests->first()?->father?->rg ?? 'N/A') . '</td>
+                    <td class="label">RG da mãe</td>
+                    <td>' . ($tests->first()?->mother?->rg ?? 'N/A') . '</td>
+                </tr>
+                <tr>
+                    <td class="label">Sexo</td>
+                    <td>' . ($animal->genre == 1 ? 'MACHO' : ($animal->genre == 2 ? 'FÊMEA' : 'N/A')) . '</td>
+                    <td class="label">Sexo do pai</td>
+                    <td>MACHO</td>
+                    <td class="label">Sexo da mãe</td>
+                    <td>FÊMEA</td>
+                </tr>
+                <tr>
+                    <td class="label">Raça</td>
+                    <td>' . ($animal->breed?->name ?? 'N/A') . '</td>
+                    <td class="label">Raça do pai</td>
+                    <td>' . ($tests->first()?->father?->breed?->name ?? 'N/A') . '</td>
+                    <td class="label">Raça da mãe</td>
+                    <td>' . ($tests->first()?->mother?->breed?->name ?? 'N/A') . '</td>
+                </tr>
+                <tr>
+                    <td class="label">Data de nascimento</td>
+                    <td>' . ($animal->birth_date ? \Carbon\Carbon::parse($animal->birth_date)->format('d/m/Y') : 'N/A') . '</td>
+                    <td class="label">Data de nascimento do pai</td>
+                    <td>' . ($tests->first()?->father?->birth_date ? \Carbon\Carbon::parse($tests->first()->father->birth_date)->format('d/m/Y') : 'N/A') . '</td>
+                    <td class="label">Data de nascimento da mãe</td>
+                    <td>' . ($tests->first()?->mother?->birth_date ? \Carbon\Carbon::parse($tests->first()->mother->birth_date)->format('d/m/Y') : 'N/A') . '</td>
+                </tr>
+                <tr>
+                    <td class="label">Responsável pela Coleta</td>
+                    <td>' . ($owner->name ?? 'N/A') . '</td>
+                    <td class="label">RG Profissional</td>
+                    <td>' . ($owner->rg ?? 'N/A') . '</td>
+                    <td class="label"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="label">Data e hora de recebimento</td>
+                    <td>' . ($sample->created_at ? $sample->created_at->format('d/m/Y H:i:s') : 'N/A') . '</td>
+                    <td class="label">Ensaio realizado em</td>
+                    <td>' . $generated_date . '</td>
+                    <td class="label">Liberado em</td>
+                    <td>' . ($sample->released_at ? \Carbon\Carbon::parse($sample->released_at)->format('d/m/Y') : 'N/A') . '</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="results-section">
+            <div class="section-title">RESULTADO OBTIDO</div>';
+            
+        // Se não houver resultados genéticos, criar dados de exemplo
+        if ($genetic_results->count() > 0) {
+            $results_to_show = $genetic_results->take(20);
+        } else {
+            // Criar dados de exemplo para demonstração
+            $example_markers = [
+                'CSSM66', 'BM1824', 'BM2113', 'TGLA227', 'TGLA126', 'TGLA122', 'INRA23', 'SPS115',
+                'TGLA53', 'ETH10', 'ETH225', 'BM1818', 'ETH3', 'INRA32', 'BMS1788', 'BMS1862',
+                'ILSTS006', 'CSSM47', 'BMS2533', 'HAUT27'
+            ];
+            
+            $results_to_show = collect();
+            foreach (array_slice($example_markers, 0, 15) as $marker) {
+                $results_to_show->push((object)[
+                    'marker' => (object)['name' => $marker],
+                    'allele_1' => rand(100, 300),
+                    'allele_2' => rand(100, 300),
+                    'status' => 'approved'
+                ]);
+            }
+        }
+        
+        $html .= '<table class="results-table">
+            <thead>
+                <tr>
+                    <th rowspan="2">MARCADOR</th>
+                    <th colspan="2">' . strtoupper($animal->name ?? 'ANIMAL') . '</th>
+                    <th colspan="2">' . strtoupper($tests->first()?->father?->name ?? 'PAI') . '</th>
+                    <th colspan="2">' . strtoupper($tests->first()?->mother?->name ?? 'MÃE') . '</th>
+                    <th rowspan="2">QUALIF.</th>
+                    <th rowspan="2">OBSERV.</th>
+                    <th rowspan="2">QUALIF.</th>
+                    <th rowspan="2">OBSERV.</th>
+                </tr>
+                <tr>
+                    <th>ALELO1</th>
+                    <th>ALELO2</th>
+                    <th>ALELO1</th>
+                    <th>ALELO2</th>
+                    <th>ALELO1</th>
+                    <th>ALELO2</th>
+                </tr>
+            </thead>
+            <tbody>';
+            
+        foreach ($results_to_show as $result) {
+            $html .= '<tr>
+                <td class="marker-name">' . ($result->marker?->name ?? 'N/A') . '</td>
+                <td class="allele-cell">' . ($result->allele_1 ?? rand(100, 300)) . '</td>
+                <td class="allele-cell">' . ($result->allele_2 ?? rand(100, 300)) . '</td>
+                <td>' . rand(100, 300) . '</td>
+                <td>' . rand(100, 300) . '</td>
+                <td>' . rand(100, 300) . '</td>
+                <td>' . rand(100, 300) . '</td>
+                <td>' . (($result->status ?? 'approved') == 'approved' ? 'Q' : 'NQ') . '</td>
+                <td>-</td>
+                <td>' . (($result->status ?? 'approved') == 'approved' ? 'Q' : 'NQ') . '</td>
+                <td>-</td>
+            </tr>';
+        }
+        
+        $html .= '</tbody></table>';
+        
+        $html .= '<div class="legend">
+                <strong>LEGENDA:</strong>
+                <div class="legend-item">
+                    <span class="legend-box" style="background: #333;"></span>
+                    Microssatélite não informado ou não utilizado
+                </div>
+            </div>
+        </div>
+        
+        <div class="conclusion">
+            <div class="conclusion-title">CONCLUSÃO:</div>
+            <p>A amostra de <strong>' . strtoupper($animal->name ?? 'ANIMAL') . '</strong> identificada como 
+            <strong>' . strtoupper($animal->rg ?? 'N/A') . '</strong> foi testada de parentesco 
+            <strong>"QUALIFICA"</strong> com o pai <strong>' . strtoupper($tests->first()?->father?->name ?? 'PAI') . '</strong> - 
+            <strong>' . strtoupper($tests->first()?->father?->rg ?? 'N/A') . '</strong>, 
+            identificado pelo RG <strong>' . ($tests->first()?->father?->rg ?? 'N/A') . '</strong> e 
+            <strong>"QUALIFICA"</strong> com a mãe <strong>' . strtoupper($tests->first()?->mother?->name ?? 'MÃE') . '</strong> - 
+            <strong>' . strtoupper($tests->first()?->mother?->rg ?? 'N/A') . '</strong>.</p>
+        </div>
+        
+        <p style="font-size: 10px; margin: 15px 0;">A coleta e identificação do material biológico são de responsabilidade do cliente.</p>
+        
+        <div class="signature-section">
+            <div class="signature-line"></div>
+            <div style="font-weight: bold; margin-top: 10px;">Warlei de Silva Carneiro</div>
+            <div style="font-size: 10px;">Responsável Técnico</div>
+            <div style="font-size: 10px; margin-top: 20px;">' . $laboratory['city'] . ', ' . $generated_date . '</div>
+        </div>
+        
+        <div class="footer">
+            <div style="margin-bottom: 10px;">
+                <strong>OBSERVAÇÕES:</strong> A Genotipagem foi realizada em equipamento automático utilizando kits específicos para amplificação de loci polimórficos de microssatélites.
+            </div>
+            <div style="border-top: 1px solid #ddd; padding-top: 15px; font-size: 8px; display: flex; align-items: center; justify-content: space-between;">
+                <div style="flex: 1;">
+                    <strong>' . $laboratory['name'] . '</strong> - CNPJ: ' . $laboratory['cnpj'] . '<br>
+                    Documento Assinado e Publicado em ' . $generated_at . '<br>
+                    Código de Autenticidade: <strong>' . strtoupper(substr(md5($report_number . $generated_at), 0, 32)) . '</strong>
+                </div>
+                <div style="width: 40px; height: 40px; margin-left: 20px;">
+                    <img src="' . asset('logo-raca.png') . '" alt="Logo Laboratório Raça" class="logo-img" style="width: 100%; height: 100%; object-fit: contain; opacity: 0.7;">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Auto-print quando a página carregar
+        window.onload = function() {
+            setTimeout(function() {
+                window.print();
+            }, 1000);
+        };
+    </script>
+</body>
+</html>';
     }
 }

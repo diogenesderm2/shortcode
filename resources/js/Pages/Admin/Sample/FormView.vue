@@ -17,6 +17,12 @@
                                 ← Voltar
                             </button>
                             <div class="space-x-2">
+                                <button @click="saveForm"
+                                    class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+                                    :disabled="isSaving">
+                                    <span v-if="isSaving">💾 Salvando...</span>
+                                    <span v-else>💾 Gerar Formulário</span>
+                                </button>
                                 <button @click="printForm"
                                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                     🖨️ Imprimir
@@ -31,254 +37,137 @@
 
                     <!-- Form Content -->
                     <div id="printable-form" class="lab-form">
-                        <!-- Header -->
+                        <!-- Form Header -->
                         <div class="form-header">
-                            <div class="logo-section" style="width: 180px;">
-                                <img src="/logo-form.png" alt="Laboratório Raça DNA Animal" class="logo-image" />
+                            <div class="logo-section">
+                                <img src="/logo-form.png" alt="Logo" class="logo-image">
                             </div>
-
                             <div class="form-titles">
                                 <h1 class="form-title">FORMULÁRIO DE REGISTRO</h1>
-                                <h2 class="form-subtitle">PLANILHA DE EXAMES</h2>
+                                <h2 class="form-subtitle">PLANILHA DE EXAMES - SNP</h2>
                                 <div class="form-meta">
-                                    N° DA CORRIDA: {{ formNumber }} &nbsp;&nbsp;&nbsp; DATA: {{ formatDate(generatedAt)
-                                    }}
+                                    <span class="meta-item">Nº DA CORRIDA:</span>
+                                    <span class="meta-value">{{ formNumber }}</span>
+                                    <span class="meta-item">DATA:</span>
+                                    <span class="meta-date">{{ formatDateShort(generatedAt) }}</span>
                                 </div>
                             </div>
-
                             <div class="quality-box">
-                                <strong>GARANTIA DA QUALIDADE</strong><br />
-                                Código: FR 026 &nbsp; Página 1 de 2<br />
-                                Revisão: 13/09/2022 Versão: 2.4
+                                <div class="quality-title">GARANTIA DE QUALIDADE</div>
+                                <div class="quality-line">Código: FR081 &nbsp;&nbsp;&nbsp;&nbsp; Página 1 de 2</div>
+                                <div class="quality-line">Revisão: 07/02/2025 &nbsp;&nbsp; Versão: 1.1</div>
                             </div>
                         </div>
 
-                        <!-- Sample Grid Table -->
+                        <!-- Sample Grid -->
                         <table class="sample-table">
                             <thead>
                                 <tr>
-                                    <th style="width: 30px;"></th>
+                                    <th></th>
                                     <th v-for="col in 12" :key="col">{{ col }}</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(rowLetter, rowIndex) in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']"
-                                    :key="rowLetter">
-                                    <th>{{ rowLetter }}</th>
-                                    <td v-for="col in 12" :key="col" class="sample-cell">
-                                        <span class="sample-label">{{ getSampleLabel(rowIndex, col - 1) }}</span>
-                                        <span class="sample-id">{{ getSampleForPosition(rowIndex, col - 1) }}</span>
+                                <tr v-for="(rowLetter, rowIndex) in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']" :key="rowLetter">
+                                    <td class="row-header">{{ rowLetter }}</td>
+                                    <td v-for="col in 12" :key="col" 
+                                        class="sample-cell"
+                                        :class="{ urgent: isSampleUrgent(rowIndex, col - 1) }">
+                                        <template v-if="getSampleForPosition(rowIndex, col - 1)">
+                                            <div class="sample-label" 
+                                                 :class="{ urgent: isSampleUrgent(rowIndex, col - 1) }">
+                                                {{ getSampleLabel(rowIndex, col - 1) }}
+                                            </div>
+                                            <div class="sample-id">{{ getSampleForPosition(rowIndex, col - 1) }}</div>
+                                        </template>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
 
-                        <!-- Bottom Section -->
-                        <table class="section-table">
-                            <tbody>
-                                <tr>
-                                    <td style="width: 33%;">
-                                        <div class="section-header">TRIAGEM</div>
-                                        <table class="info-table">
-                                            <tbody>
-                                                <tr>
-                                                    <td>Data:</td>
-                                                    <td><span class="underline-field">&nbsp;</span>/<span
-                                                            class="underline-field">&nbsp;</span>/<span
-                                                            class="underline-field">&nbsp;</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Horário:</td>
-                                                    <td><span class="underline-field">&nbsp;</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2">Observações:</td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2" class="observation-box"></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                    <td style="width: 33%;">
-                                        <div class="section-header">EXTRAÇÃO PELO</div>
-                                        <table class="info-table">
-                                            <tbody>
-                                                <tr>
-                                                    <td>Data:</td>
-                                                    <td><span class="underline-field">&nbsp;</span>/<span
-                                                            class="underline-field">&nbsp;</span>/<span
-                                                            class="underline-field">&nbsp;</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Horário:</td>
-                                                    <td><span class="underline-field">&nbsp;</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2"><strong>Preparo do Tampão de Extração</strong></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Data de preparo:</td>
-                                                    <td><span class="underline-field">&nbsp;</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Validade:</td>
-                                                    <td><span class="underline-field">&nbsp;</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2"><strong>Reagentes utilizados no preparo:</strong>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Tampão 10X:</td>
-                                                    <td>Lote: <span class="field-line">&nbsp;</span> validade: <span
-                                                            class="underline-field">&nbsp;</span>/<span
-                                                            class="underline-field">&nbsp;</span>/<span
-                                                            class="underline-field">&nbsp;</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Tween 20X:</td>
-                                                    <td>Lote: <span class="field-line">&nbsp;</span> validade: <span
-                                                            class="underline-field">&nbsp;</span>/<span
-                                                            class="underline-field">&nbsp;</span>/<span
-                                                            class="underline-field">&nbsp;</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Água Ultrapura:</td>
-                                                    <td>Lote: <span class="field-line">&nbsp;</span> validade: <span
-                                                            class="underline-field">&nbsp;</span>/<span
-                                                            class="underline-field">&nbsp;</span>/<span
-                                                            class="underline-field">&nbsp;</span></td>
-                                                </tr>
+                        <!-- Bottom Sections -->
+                        <div class="bottom-sections">
+                            <!-- TRIAGEM Section -->
+                            <div class="section-column">
+                                <div class="section-title">TRIAGEM</div>
+                                <div class="section-content">
+                                    <div class="field-row">Data:</div>
+                                    <div class="field-row">Horário:</div>
+                                    <div class="field-row">Observações:</div>
+                                </div>
+                            </div>
 
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                    <td style="width: 33%;">
-                                        <div class="section-header">EXTRAÇÃO PELO</div>
-                                        <table class="info-table">
-                                            <tbody>
-                                                <tr>
-                                                    <td colspan="2"><strong>Proteinase K 10 mg/mL:</strong></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Lote:</td>
-                                                    <td><span class="underline-field">&nbsp;</span> validade: <span
-                                                            class="underline-field">&nbsp;</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2"><strong>Equipamentos Utilizados:</strong></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Termobloco:</td>
-                                                    <td>Centrífuga: <span class="underline-field">&nbsp;</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Micropipetas:</td>
-                                                    <td><span class="underline-field">&nbsp;</span></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                    <td style="width: 33%;">
-                                        <div class="section-header">EXTRAÇÃO: &nbsp;&nbsp;&nbsp; SANGUE( ) SÊMEN( )
-                                        </div>
-                                        <table class="info-table">
-                                            <tbody>
-                                                <tr>
-                                                    <td>Data:</td>
-                                                    <td><span class="underline-field">&nbsp;</span>/<span
-                                                            class="underline-field">&nbsp;</span>/<span
-                                                            class="underline-field">&nbsp;</span></td>
-                                                    <td>Horário:</td>
-                                                    <td><span class="underline-field">&nbsp;</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Tampão PBS</td>
-                                                    <td>Lote: <span class="field-line">&nbsp;</span></td>
-                                                    <td>Validade:</td>
-                                                    <td><span class="underline-field">&nbsp;</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2">Tampão de Extração</td>
-                                                    <td>Lote:</td>
-                                                    <td>Validade:</td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2">Tampão Lise Celular (TLC)</td>
-                                                    <td>Lote</td>
-                                                    <td>Validade:</td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2">Tampão Lise Nuclear (TLN)</td>
-                                                    <td>Lote</td>
-                                                    <td>Validade:</td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2"><strong>Proteína K 10 mg/ml</strong></td>
-                                                    <td>Lote</td>
-                                                    <td>Validade:</td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="4"><strong>Mercaptoetanol ( ) ou Ditiotreitol 40 mM (
-                                                            )</strong></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Lote</td>
-                                                    <td colspan="3">Validade</td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2"><strong>NaCl 5M</strong></td>
-                                                    <td>Lote</td>
-                                                    <td>Validade:</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><strong>Isopropanol</strong></td>
-                                                    <td></td>
-                                                    <td>Lote</td>
-                                                    <td>Validade:</td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2"><strong>Etanol 70%</strong></td>
-                                                    <td>Lote:</td>
-                                                    <td>Validade:</td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2"><strong>Água Ultrapura</strong></td>
-                                                    <td>Lote:</td>
-                                                    <td>Validade:</td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="4"><strong>Equipamentos Utilizados:</strong></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Termobloco:</td>
-                                                    <td colspan="3">Centrífuga: <span
-                                                            class="underline-field">&nbsp;</span>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Micropipetas:</td>
-                                                    <td colspan="3"><span class="underline-field">&nbsp;</span></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="4">
-                                        Resp.: <span
-                                            className="underline-field">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        Resp.: <span
-                                            className="underline-field">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        Resp.: <span
-                                            className="underline-field">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                            <!-- EXTRAÇÃO PELO Section -->
+                            <div class="section-column">
+                                <div class="section-title">EXTRAÇÃO PELO</div>
+                                <div class="section-content">
+                                    <div class="field-row">Data:</div>
+                                    <div class="field-row">Horário:</div>
+                                    <div class="field-row"><span class="field-label">Preparo do Tampão de Extração</span></div>
+                                    <div class="field-row">Data de preparo:</div>
+                                    <div class="field-row">Validade:</div>
+                                    <div class="field-row"><span class="field-label">Reagentes usados no preparo:</span></div>
+                                    <div class="field-row">Tampão 10X &nbsp;&nbsp; Lote: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Val.:</div>
+                                    <div class="field-row">Tween 20 &nbsp;&nbsp;&nbsp;&nbsp; Lote: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Val.:</div>
+                                    <div class="field-row">Etanol 100% &nbsp; Lote: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Val.:</div>
+                                    <div class="field-row">Etanol 70% &nbsp;&nbsp; Lote: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Val.:</div>
+                                    <div class="field-row">Água Ultrap. &nbsp; Lote: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Val.:</div>
+                                    <div class="field-row"><span class="field-label">Proteinase K 10 mg/mL</span></div>
+                                    <div class="field-row">Lote: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Validade:</div>
+                                    <div class="field-row"><span class="field-label">Equipamentos utilizados</span></div>
+                                    <div class="field-row">Termobloco:</div>
+                                    <div class="field-row">Centrífuga:</div>
+                                    <div class="field-row">Vórtex:</div>
+                                    <div class="field-row">Micropipetas:</div>
+                                    <div class="field-row">Resp.:</div>
+                                </div>
+                            </div>
+
+                            <!-- EXTRAÇÃO SANGUE Section -->
+                            <div class="section-column">
+                                <div class="section-title">EXTRAÇÃO: SANGUE (✓) SÊMEN ( )</div>
+                                <div class="section-content">
+                                    <div class="field-row">Data:</div>
+                                    <div class="field-row">Horário:</div>
+                                    <div class="field-row"><span class="field-label">Tampão PBS</span></div>
+                                    <div class="field-row">Lote: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Val.:</div>
+                                    <div class="field-row"><span class="field-label">Tampão de Extração</span></div>
+                                    <div class="field-row">Lote: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Val.:</div>
+                                    <div class="field-row">Tampão de Lise Celular (TLC) &nbsp;&nbsp; Lote: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Val.:</div>
+                                    <div class="field-row">Tampão de Lise Nuclear (TLN) &nbsp; Lote:</div>
+                                    <div class="field-row">NaCl 5M &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Lote: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Val.:</div>
+                                    <div class="field-row">Etanol 100% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Lote: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Val.:</div>
+                                    <div class="field-row">Etanol 70% &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Lote: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Val.:</div>
+                                    <div class="field-row">Água Ultrapura &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Lote: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Val.:</div>
+                                    <div class="field-row"><span class="field-label">Proteinase K 10 mg/mL</span></div>
+                                    <div class="field-row">Lote: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Validade:</div>
+                                    <div class="field-row"><span class="field-label">Equipamentos utilizados</span></div>
+                                    <div class="field-row">Termobloco:</div>
+                                    <div class="field-row">Centrífuga:</div>
+                                    <div class="field-row">Vórtex:</div>
+                                    <div class="field-row">Micropipetas:</div>
+                                    <div class="field-row">Resp.:</div>
+                                </div>
+                            </div>
+
+                            <!-- QUANTIFICAÇÃO DNA Section -->
+                            <div class="section-column">
+                                <div class="section-title">QUANTIFICAÇÃO DNA</div>
+                                <div class="section-content">
+                                    <div class="field-row">Data:</div>
+                                    <div class="field-row">Horário:</div>
+                                    <div class="field-row"><span class="field-label">Kit dsDNA HS Assay</span></div>
+                                    <div class="field-row">Lote: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Val.:</div>
+                                    <div class="field-row"><span class="field-label">Equipamentos utilizados</span></div>
+                                    <div class="field-row">Fluorímetro:</div>
+                                    <div class="field-row">Centrífuga:</div>
+                                    <div class="field-row">Vórtex:</div>
+                                    <div class="field-row">Micropipetas:</div>
+                                    <div class="field-row">Observações:</div>
+                                    <div class="field-row" style="margin-top: 2rem;">Resp.:</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -288,15 +177,34 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { router } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
+
+// Função global route (disponível globalmente no Laravel)
+const route = window.route
 
 const props = defineProps({
     samples: Array,
     formNumber: String,
-    generatedAt: String
+    generatedAt: String,
+    isStoredForm: {
+        type: Boolean,
+        default: false
+    },
+    labForm: Object
 })
+
+// Debug: verificar dados recebidos
+console.log('FormView - Props recebidas:', {
+    samples: props.samples,
+    formNumber: props.formNumber,
+    generatedAt: props.generatedAt,
+    isStoredForm: props.isStoredForm
+})
+
+// Estado para salvar formulário
+const isSaving = ref(false)
 
 // Computed properties
 const samplesWithObservations = computed(() => {
@@ -312,43 +220,50 @@ const generatedAt = computed(() => {
 });
 
 const getSampleLabel = (row, col) => {
-    // Labels específicos para algumas posições especiais
-    const specialLabels = {
-        '2-10': '05/05/2020', // C11 (C13 na imagem)
-        '3-10': '05/05/2020', // D11 (C14 na imagem)
-        '4-4': '07',          // E5
-        '4-5': 'BRANCO'       // E6
-    };
-
-    const key = `${row}-${col}`;
-    return specialLabels[key] || 'URGENTE 14/05/2020';
+    // Calcula a posição linear na grade
+    const position = row * 12 + col;
+    
+    // Retorna dados da amostra real se existir
+    if (props.samples && props.samples[position]) {
+        const sample = props.samples[position];
+        
+        // Verifica se é urgente baseado no campo priority
+        const isUrgent = sample.priority > 0;
+        
+        // Formatar a data de criação da amostra
+        const createdDate = sample.created_at ? formatDateShort(sample.created_at) : '';
+        
+        // Retorna label com urgência e data
+        if (isUrgent && createdDate) {
+            return `URGENTE ${createdDate}`;
+        } else if (createdDate) {
+            return createdDate;
+        }
+    }
+    
+    // Retorna vazio se não há amostra nesta posição
+    return '';
 };
 
 const getSampleForPosition = (row, col) => {
-    // Números específicos da imagem para cada posição da grade
-    const sampleNumbers = [
-        // Linha A
-        ['1009055', '1009058', '1009061', '1009064', '1009067', '1009070', '1009073', '1009076', '1009079', '1009082', '1009085', '1009088'],
-        // Linha B
-        ['1009057', '1009060', '1009063', '1009066', '1009069', '1009072', '1009075', '1009078', '1009081', '1009084', '1009087', '1009090'],
-        // Linha C
-        ['1009059', '1009062', '1009065', '1009068', '1009071', '1009074', '1009077', '1009080', '1009083', '1009086', 'C11', '1009092'],
-        // Linha D
-        ['1009078', '1009091', '1009169', '1009192', '1009207', '1009247', '1009391', '1009109', '1009118', '1009127', '', '1009276'],
-        // Linha E
-        ['1009079', '1009092', '1009174', '1009194', 'E5', '1009253', '1009102', '1009110', '1009119', '1009128', '1009134', '1009277'],
-        // Linha F
-        ['1009080', '1009375', '1009176', '1009196', '1009225', '1009460', '1009103', '1009111', '1009121', '1009129', '1009140', '1009279'],
-        // Linha G
-        ['1009081', '1009156', '1009178', '1009198', '1009227', '1009271', '1009104', '1009112', '1009122', '1009130', '1009142', '1009280'],
-        // Linha H
-        ['1009085', '1009157', '1009179', '1009201', '1009231', '1009273', '1009105', '1009113', '1009123', '1009131', '1009143', '1009210']
-    ];
-
-    if (row >= 0 && row < sampleNumbers.length && col >= 0 && col < sampleNumbers[row].length) {
-        return sampleNumbers[row][col];
+    // Calcula a posição linear na grade
+    const position = row * 12 + col;
+    
+    // Retorna ID da amostra real se existir
+    if (props.samples && props.samples[position]) {
+        return props.samples[position].id;
     }
-    return '';
+    
+    // Retorna null se não há amostra nesta posição
+    return null;
+};
+
+const isSampleUrgent = (row, col) => {
+    const position = row * 12 + col;
+    if (props.samples && props.samples[position]) {
+        return props.samples[position].priority > 0;
+    }
+    return false;
 };
 
 const getSampleDetails = (row, col) => {
@@ -358,14 +273,33 @@ const getSampleDetails = (row, col) => {
     // Retorna detalhes da amostra se existir
     if (props.samples && props.samples[position]) {
         const sample = props.samples[position];
+        
+        // Obter dados dos pais através dos testes
+        const test = sample.tests && sample.tests.length > 0 ? sample.tests[0] : null;
+        const father = test?.father;
+        const mother = test?.mother;
+        
         return {
-            id: sample.id || getSampleForPosition(row, col),
+            id: sample.id || '',
+            childName: sample.animal?.name || 'N/A',
+            childRg: sample.animal?.register || 'N/A',
+            childSex: sample.animal?.genre === 1 ? 'M' : sample.animal?.genre === 2 ? 'F' : 'N/A',
+            childBirth: sample.animal?.birth_date ? formatDateShort(sample.animal.birth_date) : 'N/A',
+            fatherName: father?.name || 'N/A',
+            fatherRg: father?.register || 'N/A',
+            motherName: mother?.name || 'N/A',
+            motherRg: mother?.register || 'N/A',
+            ownerName: sample.owner?.name || 'N/A',
+            collectionDate: sample.collected_at ? formatDateShort(sample.collected_at) : 'N/A',
             owner: sample.owner?.name || '',
-            animal: sample.child?.name || '',
-            date: sample.collection_date ? formatDateShort(sample.collection_date) : '',
+            animal: sample.animal?.name || '',
+            date: sample.collected_at ? formatDateShort(sample.collected_at) : '',
             observations: sample.observations || '',
             created_at: sample.created_at,
-            species: sample.child?.species || 'bovino'
+            species: sample.animal?.species || 'bovino',
+            isUrgent: sample.priority > 0,
+            insertionDate: sample.created_at ? formatDateShort(sample.created_at) : 'N/A',
+            urgencyLabel: sample.priority > 0 ? 'URGENTE' : 'NORMAL'
         };
     }
 
@@ -373,7 +307,77 @@ const getSampleDetails = (row, col) => {
 };
 
 const goBackToSamples = () => {
-    router.visit(route('admin.samples.add-to-form'))
+    if (props.isStoredForm) {
+        router.visit(route('admin.lab-forms.index'))
+    } else {
+        router.visit(route('admin.samples.add-to-form'))
+    }
+}
+
+// Função para salvar o formulário no banco de dados
+const saveForm = async () => {
+    if (props.isStoredForm) {
+        alert('Este formulário já está salvo no banco de dados.')
+        return
+    }
+
+    isSaving.value = true
+
+    try {
+        // Preparar dados das amostras com suas posições
+        const samplePositions = []
+        const samplesData = []
+
+        props.samples.forEach((sample, index) => {
+            // Calcular posição no grid (8 linhas x 12 colunas)
+            const row = Math.floor(index / 12)
+            const col = index % 12
+            const rowLetter = String.fromCharCode(65 + row) // A, B, C, etc.
+
+            samplePositions.push({
+                sample_id: sample.id,
+                position: {
+                    row: rowLetter,
+                    col: col + 1,
+                    index: index
+                }
+            })
+
+            samplesData.push({
+                id: sample.id,
+                label: sample.label || `${rowLetter}${col + 1}`,
+                urgency: sample.urgency || false
+            })
+        })
+
+        const response = await fetch(route('admin.lab-forms.store'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                samples: samplesData,
+                form_number: props.formNumber,
+                sample_positions: samplePositions
+            })
+        })
+
+        const result = await response.json()
+
+        if (result.success) {
+            alert(`Formulário salvo com sucesso! Número: ${result.form_number}`)
+            // Redirecionar para a lista de formulários
+            router.visit(route('admin.lab-forms.index'))
+        } else {
+            alert(result.message || 'Erro ao salvar formulário.')
+        }
+    } catch (error) {
+        console.error('Erro ao salvar formulário:', error)
+        alert('Erro ao salvar formulário. Tente novamente.')
+    } finally {
+        isSaving.value = false
+    }
 }
 
 // Methods
@@ -495,11 +499,21 @@ const printForm = () => {
                         padding: 0.5mm;
                     }
                     
+                    .sample-cell.urgent {
+                        background-color: #ffebee;
+                        border: 1px solid #f44336;
+                    }
+                    
                     .sample-label {
                         font-size: 6pt;
                         color: #666;
                         display: block;
                         margin-bottom: 1mm;
+                    }
+                    
+                    .sample-label.urgent {
+                        color: #d32f2f;
+                        font-weight: bold;
                     }
                     
                     .sample-id {
@@ -908,6 +922,7 @@ const getStatusClass = (status) => {
 
     .sample-table {
         page-break-inside: avoid;
+        margin: 0 !important;
     }
 
     .section-table {
@@ -973,15 +988,33 @@ const getStatusClass = (status) => {
     margin: 1mm 0;
 }
 
+.meta-item {
+    font-weight: normal;
+}
+
+.meta-value, .meta-date {
+    font-weight: normal;
+    margin-left: 2mm;
+    margin-right: 8mm;
+}
+
 .quality-box {
     text-align: right;
     font-size: 7pt;
     line-height: 1.3;
     min-width: 50mm;
+    border: 1px solid #000;
+    padding: 2mm;
 }
 
-.quality-box strong {
+.quality-title {
+    font-weight: bold;
     font-size: 8pt;
+    margin-bottom: 1mm;
+}
+
+.quality-line {
+    margin-bottom: 0.5mm;
 }
 
 .sample-table {
@@ -1004,10 +1037,23 @@ const getStatusClass = (status) => {
     font-weight: bold;
 }
 
+.row-header {
+    background: #fff;
+    font-weight: bold;
+    width: 20px;
+}
+
 .sample-cell {
     font-size: 7pt;
     position: relative;
     height: 12mm;
+    vertical-align: top;
+    padding: 1mm;
+}
+
+.sample-cell.urgent {
+    background-color: #fef2f2;
+    border: 2px solid #ef4444;
 }
 
 .sample-label {
@@ -1015,6 +1061,12 @@ const getStatusClass = (status) => {
     color: #666;
     display: block;
     margin-bottom: 1mm;
+    line-height: 1.1;
+}
+
+.sample-label.urgent {
+    color: #dc2626;
+    font-weight: bold;
 }
 
 .sample-id {
@@ -1076,5 +1128,156 @@ const getStatusClass = (status) => {
 
 .info-table strong {
     font-size: 7pt;
+}
+
+/* Print styles for bottom sections */
+.bottom-sections {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 0 !important;
+    margin-top: 1rem !important;
+    border: 1px solid #000 !important;
+}
+
+.section-column {
+    border-right: 1px solid #000 !important;
+    padding: 0.3rem !important;
+    break-inside: avoid !important;
+    font-size: 6pt !important;
+    line-height: 1.1 !important;
+}
+
+.section-column:last-child {
+    border-right: none !important;
+}
+
+.section-title {
+    font-weight: bold !important;
+    font-size: 6pt !important;
+    text-align: center !important;
+    padding: 0.2rem !important;
+    border-bottom: 1px solid #000 !important;
+    margin-bottom: 0.3rem !important;
+    background-color: #fff !important;
+}
+
+.section-content {
+    font-size: 5.5pt !important;
+    line-height: 1.2 !important;
+}
+
+.field-row {
+    margin-bottom: 0.1rem !important;
+    line-height: 1.1 !important;
+}
+
+.field-label {
+    font-weight: bold !important;
+}
+
+/* Styles for urgent samples */
+.sample-cell.urgent {
+    background-color: #fef2f2;
+    border: 2px solid #ef4444;
+}
+
+.sample-label.urgent {
+    color: #dc2626;
+    font-weight: bold;
+}
+
+/* Sample table styles */
+.sample-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    font-size: 8pt;
+}
+
+.sample-table th,
+.sample-table td {
+    border: 1px solid #000;
+    padding: 0.5rem;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.sample-table th {
+    background: #fff;
+    font-weight: bold;
+    font-size: 9pt;
+}
+
+.row-header {
+    background: #fff;
+    font-weight: bold;
+    width: 30px;
+    font-size: 9pt;
+}
+
+.sample-cell {
+    height: 40px;
+    position: relative;
+    padding: 0.2rem;
+    font-size: 7pt;
+    vertical-align: top;
+}
+
+.sample-label {
+    font-size: 6pt;
+    color: #666;
+    display: block;
+    margin-bottom: 0.2rem;
+    line-height: 1.1;
+}
+
+.sample-id {
+    font-weight: bold;
+    font-size: 8pt;
+    color: #000;
+}
+
+/* Bottom sections grid layout */
+.bottom-sections {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 2rem;
+    border: 1px solid #000;
+}
+
+.section-column {
+    border-right: 1px solid #000;
+    padding: 0.5rem;
+    font-size: 7pt;
+    line-height: 1.2;
+}
+
+.section-column:last-child {
+    border-right: none;
+}
+
+.section-title {
+    font-weight: bold;
+    font-size: 7pt;
+    text-align: center;
+    padding: 0.3rem;
+    border-bottom: 1px solid #000;
+    margin-bottom: 0.5rem;
+    background-color: #fff;
+}
+
+.section-content {
+    font-size: 6.5pt;
+    line-height: 1.3;
+}
+
+.field-row {
+    margin-bottom: 0.2rem;
+    line-height: 1.2;
+}
+
+.field-label {
+    font-weight: bold;
 }
 </style>

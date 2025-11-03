@@ -456,19 +456,19 @@
                                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                                     <div>
                                         <span class="font-medium text-gray-700">RG Animal:</span>
-                                        <div class="text-gray-900">{{ animals.child?.register || childRg || 'TESTEPAE' }}</div>
+                                        <div class="text-gray-900">{{ animals.child?.register || childRg || 'N/A' }}</div>
                                     </div>
                                     <div>
                                         <span class="font-medium text-gray-700">Nome Animal:</span>
-                                        <div class="text-gray-900">{{ animals.child?.name || 'TESTEPAE' }}</div>
+                                        <div class="text-gray-900">{{ animals.child?.name || childName || 'N/A' }}</div>
                                     </div>
                                     <div>
                                         <span class="font-medium text-gray-700">Nascimento:</span>
-                                        <div class="text-gray-900">{{ animals.child?.birth || '00/00/0000' }}</div>
+                                        <div class="text-gray-900">{{ animals.child?.birth || 'N/A' }}</div>
                                     </div>
                                     <div>
                                         <span class="font-medium text-gray-700">Sexo:</span>
-                                        <div class="text-gray-900">{{ animals.child?.genre === '1' ? 'MACHO' : animals.child?.genre === '2' ? 'FÊMEA' : 'FÊMEA' }}</div>
+                                        <div class="text-gray-900">{{ animals.child?.genre === 1 ? 'MACHO' : animals.child?.genre === 2 ? 'FÊMEA' : 'N/A' }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -490,7 +490,7 @@
                                         </div>
                                         <div>
                                             <span class="font-medium text-blue-700">Nome:</span>
-                                            <div class="text-blue-900">{{ animals.father?.name || '-' }}</div>
+                                            <div class="text-blue-900">{{ animals.father?.name || fatherName || '-' }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -510,7 +510,7 @@
                                         </div>
                                         <div>
                                             <span class="font-medium text-pink-700">Nome:</span>
-                                            <div class="text-pink-900">{{ animals.mother?.name || '-' }}</div>
+                                            <div class="text-pink-900">{{ animals.mother?.name || motherName || '-' }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -1145,6 +1145,13 @@ const searchAnimalsByName = (type) => {
                 } else if (type === 'mother') {
                     motherSuggestions.value = response.data.animals;
                     showMotherSuggestions.value = true;
+                }
+
+                // Se há apenas um animal encontrado, selecionar automaticamente
+                if (response.data.animals.length === 1 && !response.data.multiple) {
+                    const animal = response.data.animals[0];
+                    selectAnimalFromSuggestion(animal, type);
+                    return;
                 }
 
                 // Se há múltiplos animais com o mesmo nome, mostrar modal de seleção

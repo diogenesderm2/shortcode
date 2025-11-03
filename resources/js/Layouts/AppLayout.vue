@@ -364,10 +364,7 @@ const showTechnicalMenu = ref(false);
                                     class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Criar
                                 Formulário
                                 </Link>
-                                <Link href="#"
-                                    class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Ver
-                                Formulários</Link>
-                                <Link href="#"
+                                <Link :href="route('admin.lab-forms.index')"
                                     class="block px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100">Listar
                                 formulários</Link>
                                 <Link href="#"

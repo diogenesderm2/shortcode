@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\Owner\OwnerController;
 use App\Http\Controllers\Admin\Sample\SampleController;
 use App\Http\Controllers\Admin\Animal\AnimalController;
 use App\Http\Controllers\Admin\User\UserController;
+use App\Http\Controllers\Admin\LabFormController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Posts\PostController;
 use App\Http\Controllers\Admin\Reports\ReportController;
@@ -67,6 +68,13 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::post('samples/search-by-code', [SampleController::class, 'searchByCode'])->name('samples.search-by-code')->middleware('permission:view samples');
         Route::post('samples/generate-form', [SampleController::class, 'generateForm'])->name('samples.generate-form')->middleware('permission:create samples');
         Route::post('samples/{sample}/release', [SampleController::class, 'release'])->name('samples.release')->middleware('permission:release samples');
+        Route::get('samples/{sample}/report', [SampleController::class, 'generateReport'])->name('samples.report')->middleware('permission:view samples');
+        
+        // === FORMULÁRIOS DE LABORATÓRIO ===
+        Route::get('lab-forms', [LabFormController::class, 'index'])->name('lab-forms.index')->middleware('permission:view samples');
+        Route::post('lab-forms', [LabFormController::class, 'store'])->name('lab-forms.store')->middleware('permission:create samples');
+        Route::get('lab-forms/{labForm}', [LabFormController::class, 'show'])->name('lab-forms.show')->middleware('permission:view samples');
+        Route::delete('lab-forms/{labForm}', [LabFormController::class, 'destroy'])->name('lab-forms.destroy')->middleware('permission:delete samples');
         
         // === TIPOS DE ANIMAIS E RAÇAS ===
         Route::get('animal-types', [SampleController::class, 'getAnimalTypes'])->name('animal-types.index')->middleware('permission:view animals');
