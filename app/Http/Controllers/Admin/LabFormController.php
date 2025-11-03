@@ -8,6 +8,7 @@ use App\Models\Admin\Sample\Sample;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class LabFormController extends Controller
 {
@@ -57,35 +58,49 @@ class LabFormController extends Controller
             'sample_positions' => 'required|array'
         ]);
 
-        // Gerar número do formulário se não fornecido
-        $formNumber = $request->form_number ?: LabForm::generateFormNumber();
+        return DB::transaction(function () use ($request) {
+            // Gerar número do formulário se não fornecido
+            $formNumber = $request->form_number ?: LabForm::generateFormNumber();
 
-        // Verificar se já existe
-        if (LabForm::where('form_number', $formNumber)->exists()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Número do formulário já existe.'
-            ], 422);
-        }
+            // Verificar se já existe (com lock para evitar race condition)
+            if (LabForm::where('form_number', $formNumber)->lockForUpdate()->exists()) {
+                // Se existir, gerar um novo número
+                $formNumber = LabForm::generateFormNumber();
+                
+                // Verificar novamente
+                if (LabForm::where('form_number', $formNumber)->lockForUpdate()->exists()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Erro ao gerar número único do formulário. Tente novamente.'
+                    ], 422);
+                }
+            }
 
-        // Preparar dados das amostras com suas posições
-        $samplePositions = [];
-        $formData = [
-            'samples' => [],
-            'metadata' => [
-                'total_samples' => count($request->samples),
-                'generated_by' => Auth::user()->name,
-                'generated_at' => now()->toISOString()
-            ]
-        ];
+            // Preparar dados das amostras com suas posições
+            $samplePositions = [];
+            $formData = [
+                'samples' => [],
+                'metadata' => [
+                    'total_samples' => count($request->samples),
+                    'generated_by' => Auth::user()->name,
+                    'generated_at' => now()->toISOString()
+                ]
+            ];
 
         foreach ($request->samples as $index => $sample) {
             $sampleData = Sample::with(['animal', 'owner', 'examType'])
                 ->find($sample['id']);
             
             if ($sampleData) {
-                // Armazenar posição no grid
-                $position = $request->sample_positions[$index] ?? null;
+                // Encontrar a posição correspondente a esta amostra
+                $position = null;
+                foreach ($request->sample_positions as $posData) {
+                    if ($posData['sample_id'] == $sampleData->id) {
+                        $position = $posData['position'];
+                        break;
+                    }
+                }
+                
                 if ($position) {
                     $samplePositions[] = [
                         'sample_id' => $sampleData->id,
@@ -125,6 +140,7 @@ class LabFormController extends Controller
             'form' => $labForm,
             'form_number' => $formNumber
         ]);
+        }); // Fechar a transação
     }
 
     /**
@@ -135,13 +151,8 @@ class LabFormController extends Controller
         $labForm->load('creator');
 
         // Reconstruir dados das amostras com suas posições originais
-        $samples = new \SplFixedArray(96); // Array fixo de 96 posições (8x12)
+        $samples = array_fill(0, 96, null); // Array de 96 posições inicializado com null
         
-        // Inicializar todas as posições como null
-        for ($i = 0; $i < 96; $i++) {
-            $samples[$i] = null;
-        }
-
         // Buscar dados atuais das amostras
         $sampleIds = collect($labForm->sample_positions)->pluck('sample_id');
         $currentSamples = Sample::with(['animal', 'owner', 'examType', 'tests'])
@@ -161,7 +172,7 @@ class LabFormController extends Controller
                 if ($currentSample) {
                     $samples[$index] = [
                         'id' => $currentSample->id,
-                        'label' => $currentSample->id, // Usar ID como label
+                        'label' => $currentSample->id,
                         'animal' => $currentSample->animal,
                         'owner' => $currentSample->owner,
                         'examType' => $currentSample->examType,
@@ -175,19 +186,8 @@ class LabFormController extends Controller
             }
         }
 
-        // Converter para array normal, mantendo nulls para posições vazias
-        $samplesArray = [];
-        for ($i = 0; $i < 96; $i++) {
-            $samplesArray[] = $samples[$i];
-        }
-
-        // Filtrar apenas amostras não-null para o componente
-        $filteredSamples = array_filter($samplesArray, function($sample) {
-            return $sample !== null;
-        });
-
         return Inertia::render('Admin/Sample/FormView', [
-            'samples' => array_values($filteredSamples), // Re-indexar array
+            'samples' => $samples,
             'formNumber' => $labForm->form_number,
             'generatedAt' => $labForm->generated_at->toISOString(),
             'isStoredForm' => true,

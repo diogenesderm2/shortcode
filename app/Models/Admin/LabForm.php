@@ -37,10 +37,23 @@ class LabForm extends Model
      */
     public static function generateFormNumber()
     {
-        do {
-            $number = 'FORM-' . date('Ymd') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
-        } while (self::where('form_number', $number)->exists());
-
-        return $number;
+        $today = date('Ymd');
+        $prefix = 'FORM-' . $today . '-';
+        
+        // Buscar o último número do dia
+        $lastForm = self::where('form_number', 'LIKE', $prefix . '%')
+            ->orderBy('form_number', 'desc')
+            ->first();
+        
+        if ($lastForm) {
+            // Extrair o número sequencial do último formulário
+            $lastNumber = (int) substr($lastForm->form_number, -4);
+            $nextNumber = $lastNumber + 1;
+        } else {
+            // Primeiro formulário do dia
+            $nextNumber = 1;
+        }
+        
+        return $prefix . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
     }
 }

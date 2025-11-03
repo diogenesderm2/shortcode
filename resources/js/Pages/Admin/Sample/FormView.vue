@@ -125,7 +125,7 @@
 
                             <!-- EXTRAÇÃO SANGUE Section -->
                             <div class="section-column">
-                                <div class="section-title">EXTRAÇÃO: SANGUE (✓) SÊMEN ( )</div>
+                                <div class="section-title">EXTRAÇÃO: SANGUE ( ) SÊMEN ( )</div>
                                 <div class="section-content">
                                     <div class="field-row">Data:</div>
                                     <div class="field-row">Horário:</div>
@@ -192,8 +192,9 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
-    labForm: Object
-})
+    labForm: Object,
+    debugInfo: Object
+});
 
 // Debug: verificar dados recebidos
 console.log('FormView - Props recebidas:', {
@@ -329,25 +330,28 @@ const saveForm = async () => {
         const samplesData = []
 
         props.samples.forEach((sample, index) => {
-            // Calcular posição no grid (8 linhas x 12 colunas)
-            const row = Math.floor(index / 12)
-            const col = index % 12
-            const rowLetter = String.fromCharCode(65 + row) // A, B, C, etc.
+            // Só processar se a amostra não for null
+            if (sample && sample.id) {
+                // Calcular posição no grid (8 linhas x 12 colunas)
+                const row = Math.floor(index / 12)
+                const col = index % 12
+                const rowLetter = String.fromCharCode(65 + row) // A, B, C, etc.
 
-            samplePositions.push({
-                sample_id: sample.id,
-                position: {
-                    row: rowLetter,
-                    col: col + 1,
-                    index: index
-                }
-            })
+                samplePositions.push({
+                    sample_id: sample.id,
+                    position: {
+                        row: rowLetter,
+                        col: col + 1,
+                        index: index
+                    }
+                })
 
-            samplesData.push({
-                id: sample.id,
-                label: sample.label || `${rowLetter}${col + 1}`,
-                urgency: sample.urgency || false
-            })
+                samplesData.push({
+                    id: sample.id,
+                    label: sample.label || `${rowLetter}${col + 1}`,
+                    urgency: sample.urgency || false
+                })
+            }
         })
 
         const response = await fetch(route('admin.lab-forms.store'), {
@@ -491,6 +495,54 @@ const printForm = () => {
                     
                     .sample-table th {
                         background: #f0f0f0;
+                        font-weight: bold;
+                    }
+                    
+                    /* Bottom sections for print */
+                    .bottom-sections {
+                        display: grid;
+                        grid-template-columns: repeat(4, 1fr);
+                        gap: 0;
+                        margin-top: 3mm;
+                        border: 1px solid #000;
+                        page-break-inside: avoid;
+                        width: 100%;
+                    }
+
+                    .section-column {
+                        border-right: 1px solid #000;
+                        padding: 2mm;
+                        font-size: 6pt;
+                        line-height: 1.1;
+                        vertical-align: top;
+                    }
+
+                    .section-column:last-child {
+                        border-right: none;
+                    }
+
+                    .section-title {
+                        font-weight: bold;
+                        font-size: 6pt;
+                        text-align: center;
+                        padding: 1mm;
+                        border-bottom: 1px solid #000;
+                        margin-bottom: 2mm;
+                        background-color: #fff;
+                    }
+
+                    .section-content {
+                        font-size: 5.5pt;
+                        line-height: 1.2;
+                    }
+
+                    .field-row {
+                        margin-bottom: 1mm;
+                        line-height: 1.1;
+                        word-wrap: break-word;
+                    }
+
+                    .field-label {
                         font-weight: bold;
                     }
                     
@@ -1131,48 +1183,54 @@ const getStatusClass = (status) => {
 }
 
 /* Print styles for bottom sections */
-.bottom-sections {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 0 !important;
-    margin-top: 1rem !important;
-    border: 1px solid #000 !important;
-}
+@media print {
+    .bottom-sections {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 0 !important;
+        margin-top: 3mm !important;
+        border: 1px solid #000 !important;
+        page-break-inside: avoid !important;
+        width: 100% !important;
+    }
 
-.section-column {
-    border-right: 1px solid #000 !important;
-    padding: 0.3rem !important;
-    break-inside: avoid !important;
-    font-size: 6pt !important;
-    line-height: 1.1 !important;
-}
+    .section-column {
+        border-right: 1px solid #000 !important;
+        padding: 2mm !important;
+        break-inside: avoid !important;
+        font-size: 6pt !important;
+        line-height: 1.1 !important;
+        vertical-align: top !important;
+    }
 
-.section-column:last-child {
-    border-right: none !important;
-}
+    .section-column:last-child {
+        border-right: none !important;
+    }
 
-.section-title {
-    font-weight: bold !important;
-    font-size: 6pt !important;
-    text-align: center !important;
-    padding: 0.2rem !important;
-    border-bottom: 1px solid #000 !important;
-    margin-bottom: 0.3rem !important;
-    background-color: #fff !important;
-}
+    .section-title {
+        font-weight: bold !important;
+        font-size: 6pt !important;
+        text-align: center !important;
+        padding: 1mm !important;
+        border-bottom: 1px solid #000 !important;
+        margin-bottom: 2mm !important;
+        background-color: #fff !important;
+    }
 
-.section-content {
-    font-size: 5.5pt !important;
-    line-height: 1.2 !important;
-}
+    .section-content {
+        font-size: 5.5pt !important;
+        line-height: 1.2 !important;
+    }
 
-.field-row {
-    margin-bottom: 0.1rem !important;
-    line-height: 1.1 !important;
-}
+    .field-row {
+        margin-bottom: 1mm !important;
+        line-height: 1.1 !important;
+        word-wrap: break-word !important;
+    }
 
-.field-label {
-    font-weight: bold !important;
+    .field-label {
+        font-weight: bold !important;
+    }
 }
 
 /* Styles for urgent samples */
@@ -1237,7 +1295,7 @@ const getStatusClass = (status) => {
     color: #000;
 }
 
-/* Bottom sections grid layout */
+/* Screen styles for bottom sections */
 .bottom-sections {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
